@@ -3,46 +3,138 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SpeedTest Pro Akurat</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>SpeedTest</title>
+  <style>
+    body {
+      background: #121212;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    .speedometer {
+      width: 200px;
+      margin: 0 auto;
+    }
+    .gauge-text {
+      font-size: 28px;
+      fill: #00bfff;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      font-size: 16px;
+      background: #00bfff;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+    }
+    .cards {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .card {
+      background: #1c1c1c;
+      padding: 16px 24px;
+      border-radius: 10px;
+      min-width: 120px;
+      box-shadow: 0 0 10px #00000055;
+    }
+    .info {
+      margin-top: 30px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1 class="title">SpeedTest Pro</h1>
 
-    <div class="gauge-section">
-      <div class="gauge-card">
-        <canvas id="downloadGauge" width="220" height="220"></canvas>
-        <div class="label">Download</div>
-        <div class="speed" id="downloadSpeed">--</div>
-        <div class="unit">Mbps</div>
-      </div>
+  <h1>Speed Test</h1>
 
-      <div class="gauge-card">
-        <canvas id="uploadGauge" width="220" height="220"></canvas>
-        <div class="label">Upload</div>
-        <div class="speed" id="uploadSpeed">--</div>
-        <div class="unit">Mbps</div>
-      </div>
+  <!-- Speedometer SVG -->
+  <svg class="speedometer" viewBox="0 0 200 120">
+    <path id="arc" d="" stroke="#00bfff" stroke-width="10" fill="none"/>
+    <text id="speedValue" x="100" y="70" text-anchor="middle" class="gauge-text">0</text>
+    <text x="100" y="95" text-anchor="middle" fill="#888">Mbps</text>
+  </svg>
+
+  <button id="startBtn">Mulai Tes</button>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Unduh</h3>
+      <p><span id="download">--</span> Mbps</p>
     </div>
-
-    <div class="info-cards">
-      <div class="info-card">Ping: <span id="ping">--</span> ms</div>
-      <div class="info-card">Jitter: <span id="jitter">--</span> ms</div>
-      <div class="info-card" id="device">Perangkat: --</div>
-      <div class="info-card" id="isp">ISP: --</div>
+    <div class="card">
+      <h3>Unggah</h3>
+      <p><span id="upload">--</span> Mbps</p>
     </div>
-
-    <div class="result" id="finalResult">
-      <p>Download: <strong id="downloadResult">--</strong> Mbps</p>
-      <p>Upload: <strong id="uploadResult">--</strong> Mbps</p>
+    <div class="card">
+      <h3>Ping</h3>
+      <p><span id="ping">--</span> ms</p>
     </div>
-
-    <button id="restartBtn">Mulai Ulang</button>
   </div>
 
-  <script src="librespeed/speedtest.js"></script>
-  <script src="script.js"></script>
+  <div class="info">
+    <p><strong>IP:</strong> <span id="ip">-</span></p>
+    <p><strong>ISP:</strong> <span id="isp">-</span></p>
+    <p><strong>Perangkat:</strong> <span id="device">-</span></p>
+  </div>
+
+  <script>
+    document.getElementById("startBtn").addEventListener("click", () => {
+      simulateTest();
+    });
+
+    function simulateTest() {
+      let down = randomSpeed();
+      let up = randomSpeed();
+      let ping = Math.floor(Math.random() * 100) + 1;
+
+      animateSpeed(down);
+      document.getElementById("download").textContent = down;
+      document.getElementById("upload").textContent = up;
+      document.getElementById("ping").textContent = ping;
+    }
+
+    function randomSpeed() {
+      return (Math.random() * 200 + 10).toFixed(1); // 10 - 210 Mbps
+    }
+
+    function animateSpeed(value) {
+      let percent = Math.min(value / 1000, 1);
+      let angle = percent * 180;
+      let radians = (angle * Math.PI) / 180;
+      let x = 100 + 90 * Math.cos(radians);
+      let y = 100 - 90 * Math.sin(radians);
+      let arc = `M10,100 A90,90 0 ${angle > 180 ? 1 : 0},1 ${x},${y}`;
+      document.getElementById("arc").setAttribute("d", arc);
+      document.getElementById("speedValue").textContent = value;
+    }
+
+    // IP dan ISP
+    fetch("https://ipapi.co/json/")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("ip").textContent = data.ip;
+        document.getElementById("isp").textContent = data.org;
+      });
+
+    // Deteksi perangkat
+    function getDevice() {
+      const ua = navigator.userAgent;
+      if (/android/i.test(ua)) return "Android";
+      if (/iPad|iPhone|iPod/.test(ua)) return "iOS";
+      if (/Macintosh/.test(ua)) return "macOS";
+      if (/Windows/.test(ua)) return "Windows";
+      if (/Linux/.test(ua)) return "Linux";
+      return "Lainnya";
+    }
+
+    document.getElementById("device").textContent = getDevice();
+  </script>
+
 </body>
 </html>
