@@ -122,6 +122,7 @@
   </div>
 
   <script>
+  document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("startBtn").addEventListener("click", simulateTest);
 
     function simulateTest() {
@@ -146,11 +147,10 @@
       let x = 100 + 90 * Math.cos(radians);
       let y = 100 - 90 * Math.sin(radians);
       let arc = `M10,100 A90,90 0 ${angle > 180 ? 1 : 0},1 ${x},${y}`;
-      
+
       const arcElement = document.getElementById("arc");
       arcElement.setAttribute("d", arc);
 
-      // Warna dinamis
       if (value < 30) arcElement.setAttribute("stroke", "#ff3b3b");
       else if (value < 100) arcElement.setAttribute("stroke", "#ffc107");
       else arcElement.setAttribute("stroke", "#00ff88");
@@ -158,12 +158,16 @@
       document.getElementById("speedValue").textContent = value;
     }
 
-    // IP & ISP
-    fetch("https://ipapi.co/json/")
-      .then(res => res.json())
+    // Ganti API: gunakan ipinfo.io agar lebih stabil
+    fetch("https://ipinfo.io/json?token=45ecf5c5d6460f") // Token gratis
+      .then(response => response.json())
       .then(data => {
-        document.getElementById("ip").textContent = data.ip;
-        document.getElementById("isp").textContent = data.org;
+        document.getElementById("ip").textContent = data.ip || "-";
+        document.getElementById("isp").textContent = data.org || "-";
+      })
+      .catch(() => {
+        document.getElementById("ip").textContent = "-";
+        document.getElementById("isp").textContent = "-";
       });
 
     // Deteksi perangkat
@@ -177,6 +181,7 @@
       return "Lainnya";
     }
     document.getElementById("device").textContent = getDevice();
-  </script>
+  });
+</script>
 </body>
 </html>
