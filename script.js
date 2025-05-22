@@ -4,28 +4,69 @@ const jitterEl = document.getElementById("jitter");
 const ispEl = document.getElementById("isp");
 const deviceEl = document.getElementById("device");
 
-// Simulasi speed animasi
+const canvas = document.getElementById("gauge");
+const ctx = canvas.getContext("2d");
+const centerX = canvas.width / 2;
+const centerY = canvas.height / 2 + 50;
+const radius = 100;
 let speed = 0;
 let increasing = true;
 
-function simulateSpeed() {
-  setInterval(() => {
-    if (increasing) {
-      speed += Math.random() * 10;
-      if (speed >= 66.44) increasing = false;
-    } else {
-      speed -= Math.random() * 5;
-      if (speed <= 60) increasing = true;
+function drawGauge(angle, value) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Arc background
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, Math.PI, 2 * Math.PI);
+  ctx.lineWidth = 20;
+  ctx.strokeStyle = "#1e40af";
+  ctx.stroke();
+
+  // Needle
+  const needleLength = radius - 20;
+  const rad = angle * (Math.PI / 180);
+  const x = centerX + needleLength * Math.cos(rad);
+  const y = centerY + needleLength * Math.sin(rad);
+
+  ctx.beginPath();
+  ctx.moveTo(centerX, centerY);
+  ctx.lineTo(x, y);
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "#38bdf8";
+  ctx.stroke();
+
+  // Speed text update
+  downloadSpeed.textContent = value.toFixed(2);
+}
+
+function simulateSpeed(duration = 10000) {
+  let start = Date.now();
+  const interval = setInterval(() => {
+    const now = Date.now();
+    if (now - start >= duration) {
+      clearInterval(interval);
+      return;
     }
-    downloadSpeed.textContent = speed.toFixed(2);
+
+    if (increasing) {
+      speed += Math.random() * 6;
+      if (speed >= 75) increasing = false;
+    } else {
+      speed -= Math.random() * 4;
+      if (speed <= 5) increasing = true;
+    }
+
+    const maxSpeed = 100;
+    const angle = (speed / maxSpeed) * 180;
+    drawGauge(180 + angle, speed);
   }, 100);
 }
 
-// Simulasi ping & jitter
+// Dummy ping & jitter
 pingEl.textContent = Math.floor(Math.random() * 20) + 20;
 jitterEl.textContent = Math.floor(Math.random() * 5) + 1;
 
-// Ambil info ISP & kota dari ipinfo
+// ISP info from ipinfo.io
 fetch('https://ipinfo.io/json?token=db955ecd23c16c')
   .then(response => response.json())
   .then(data => {
@@ -35,7 +76,7 @@ fetch('https://ipinfo.io/json?token=db955ecd23c16c')
     ispEl.textContent = "Gagal memuat ISP";
   });
 
-// Deteksi perangkat dari user-agent
+// Device detection
 const userAgent = navigator.userAgent;
 let device = "Tidak Dikenal";
 if (/iPhone/.test(userAgent)) device = "iPhone";
@@ -45,4 +86,5 @@ else if (/Mac/.test(userAgent)) device = "Mac";
 else if (/Windows/.test(userAgent)) device = "Windows PC";
 deviceEl.textContent = device;
 
+// Start animation
 simulateSpeed();
