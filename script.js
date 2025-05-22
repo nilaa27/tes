@@ -1,63 +1,61 @@
-const pingEl = document.getElementById('ping');
-const downloadEl = document.getElementById('download');
-const uploadEl = document.getElementById('upload');
-const ispEl = document.getElementById('isp');
-const ipEl = document.getElementById('ip');
-const deviceEl = document.getElementById('device');
-const startBtn = document.getElementById('startBtn');
+// Ambil elemen HTML
+const pingEl = document.getElementById("ping");
+const downloadEl = document.getElementById("download");
+const uploadEl = document.getElementById("upload");
+const startBtn = document.getElementById("startTest");
 
-function simulateSpeed(target, el, duration) {
-  return new Promise(resolve => {
-    let start = 0;
-    const interval = 30;
-    const steps = duration / interval;
-    const increment = target / steps;
-
-    const step = () => {
-      start += increment;
-      if (start >= target) {
-        el.textContent = target.toFixed(2);
-        resolve();
-      } else {
-        el.textContent = start.toFixed(2);
-        setTimeout(step, interval);
-      }
-    };
-    step();
-  });
+// Fungsi delay
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Fungsi animasi angka
+async function animateValue(element, start, end, duration) {
+  let range = end - start;
+  let current = start;
+  let increment = range / (duration / 50);
+  let timer = setInterval(() => {
+    current += increment;
+    element.textContent = current.toFixed(2);
+    if (current >= end) {
+      clearInterval(timer);
+      element.textContent = end.toFixed(2);
+    }
+  }, 50);
+}
+
+// Fungsi untuk mengukur ping (simulasi ping ke server luar)
+async function measurePing() {
+  const start = performance.now();
+  try {
+    await fetch("https://www.google.com", { mode: "no-cors" });
+  } catch (e) {
+    // error expected due to no-cors, still measure time
+  }
+  const end = performance.now();
+  return Math.round(end - start) || Math.floor(Math.random() * 60) + 20;
+}
+
+// Fungsi utama menjalankan tes
 async function startTest() {
   startBtn.disabled = true;
-  pingEl.textContent = '...';
-  downloadEl.textContent = '...';
-  uploadEl.textContent = '...';
+  startBtn.textContent = "Tes Berlangsung...";
 
-  // Ping simulation
-  const ping = Math.floor(Math.random() * 40) + 10;
-  await new Promise(r => setTimeout(r, 1000));
-  pingEl.textContent = ping;
+  pingEl.textContent = "...";
+  downloadEl.textContent = "...";
+  uploadEl.textContent = "...";
 
-  // Download speed simulation
-  const downloadSpeed = Math.random() * 400 + 50;
-  await simulateSpeed(downloadSpeed, downloadEl, 2000);
+  // Ukur ping
+  const ping = await measurePing();
+  pingEl.textContent = `${ping} ms`;
 
-  // Upload speed simulation
-  const uploadSpeed = Math.random() * 100 + 10;
-  await simulateSpeed(uploadSpeed, uploadEl, 2000);
+  // Simulasi unduh dan unggah
+  const downloadSpeed = Math.random() * 90 + 10;  // 10 - 100 Mbps
+  const uploadSpeed = Math.random() * 45 + 5;     // 5 - 50 Mbps
+
+  await animateValue(downloadEl, 0, downloadSpeed, 3000);
+  await animateValue(uploadEl, 0, uploadSpeed, 3000);
 
   startBtn.disabled = false;
-  startBtn.textContent = 'Tes Lagi';
+  startBtn.textContent = "Tes Lagi";
 }
-
-// Get IP & ISP
-fetch('https://ipinfo.io/json?token=db955ecd23c16c')
-  .then(res => res.json())
-  .then(data => {
-    ispEl.textContent = data.org || 'Tidak diketahui';
-    ipEl.textContent = data.ip;
-  });
-
-deviceEl.textContent = navigator.userAgent;
-
-startBtn.addEventListener('click', startTest);
