@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Speed Test</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Speed Test</h1>
+    
+    <div class="info">
+      <p><strong>ISP:</strong> <span id="isp">Memuat...</span></p>
+      <p><strong>Perangkat:</strong> <span id="device">Memuat...</span></p>
+    </div>
+
+    <div class="speed-display">
+      <span id="speed">--</span>
+      <span class="unit">Mbps</span>
+    </div>
+
+    <button onclick="startTest()">Mulai Tes Kecepatan</button>
+    <p id="status">Klik tombol untuk mulai tes.</p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
