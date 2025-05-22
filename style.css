@@ -24,7 +24,7 @@ body {
 
 .speed-labels {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: 10px;
 }
 
@@ -44,11 +44,12 @@ body {
 
 .speedometer {
   position: relative;
+  margin-top: 20px;
 }
 
-.speed-value {
+#downloadSpeed {
   position: absolute;
-  top: 100px;
+  top: 110px;
   left: 0;
   right: 0;
   font-size: 2.5em;
@@ -58,7 +59,7 @@ body {
 
 .unit-text {
   position: absolute;
-  top: 150px;
+  top: 155px;
   left: 0;
   right: 0;
   font-size: 1em;
