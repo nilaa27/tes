@@ -3,20 +3,22 @@ const speedDisplay = document.getElementById("speed");
 const statusText = document.getElementById("status");
 const needle = document.getElementById("needle");
 const ispSpan = document.getElementById("isp");
+const ipSpan = document.getElementById("ip");
 const deviceSpan = document.getElementById("device");
 
-// Fungsi memutar jarum kecepatan
+// Fungsi memutar jarum speedometer
 function rotateNeedle(speed) {
   const angle = Math.min((speed / 1000) * 180, 180);
   needle.setAttribute("transform", `rotate(${angle}, 100, 100)`);
 }
 
-// Fungsi tes kecepatan simulasi
+// Simulasi speedtest
 function startTest() {
   statusText.textContent = "Mengukur kecepatan...";
   let fakeSpeed = 0;
   let interval = setInterval(() => {
     fakeSpeed += Math.random() * 50;
+
     if (fakeSpeed >= 500) {
       clearInterval(interval);
       fakeSpeed = (Math.random() * 500 + 10).toFixed(2);
@@ -32,7 +34,7 @@ function startTest() {
 
 startBtn.addEventListener("click", startTest);
 
-// Fungsi deteksi browser/perangkat
+// Deteksi perangkat/browser
 function getDevice() {
   const ua = navigator.userAgent;
   if (ua.includes("Chrome")) return "Chrome";
@@ -43,12 +45,14 @@ function getDevice() {
 }
 deviceSpan.textContent = getDevice();
 
-// Deteksi ISP via ipinfo.io (tanpa token untuk publik)
+// Deteksi ISP dan IP via ipinfo.io
 fetch("https://ipinfo.io/json?token=db955ecd23c16c")
   .then(res => res.json())
   .then(data => {
-    ispSpan.textContent = data.org || "Tidak Diketahui";
+    ispSpan.textContent = `${data.org || "Tidak Diketahui"} (${data.hostname || data.city || "-"})`;
+    ipSpan.textContent = data.ip || "-";
   })
   .catch(() => {
     ispSpan.textContent = "Gagal mendeteksi";
+    ipSpan.textContent = "-";
   });
