@@ -1,112 +1,104 @@
-body {
+* {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background-color: #0f172a;
-  color: #fff;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0e1117;
+  color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
+  padding: 20px;
 }
 
 .container {
-  background: #1e293b;
-  padding: 20px 30px;
-  border-radius: 15px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
-  width: 350px;
+  max-width: 900px;
+  width: 100%;
   text-align: center;
 }
 
-.top-section {
-  margin-bottom: 20px;
+.title {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  font-weight: 700;
 }
 
-.speed-labels {
+.gauge-section {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.gauge-card {
+  background: #1c1f26;
+  border-radius: 20px;
+  padding: 20px;
+  width: 240px;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
 }
 
 .label {
-  font-size: 1.1em;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #a5b4fc;
+}
+
+.speed {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.unit {
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.info-cards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.info-card {
+  background: #1c1f26;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 0.95rem;
   color: #cbd5e1;
 }
 
-.icon {
-  color: #38bdf8;
-}
-
-.stats {
-  font-size: 0.9em;
-  color: #94a3b8;
-}
-
-.speedometer {
-  position: relative;
-  margin-top: 10px;
-  margin-bottom: 20px;
-}
-
-#downloadSpeed, #uploadSpeed {
-  position: absolute;
-  top: 110px;
-  left: 0;
-  right: 0;
-  font-size: 2.5em;
-  font-weight: bold;
-}
-
-#downloadSpeed {
-  color: #38bdf8;
-}
-
-#uploadSpeed {
-  color: #facc15;
-}
-
-.unit-text {
-  position: absolute;
-  top: 155px;
-  left: 0;
-  right: 0;
-  font-size: 1em;
-  color: #94a3b8;
-}
-
-#finalResult {
+.result {
+  margin-top: 30px;
+  font-size: 1.2rem;
   opacity: 0;
-  transition: opacity 1s ease-in-out;
-  margin-top: 20px;
-  font-weight: 600;
-  font-size: 1.1em;
-  line-height: 1.6em;
+  transition: opacity 0.5s;
 }
 
-#finalResult.show {
+.result.show {
   opacity: 1;
 }
 
-#downloadResult,
-#uploadResult {
-  color: #10b981;
-}
-
 #restartBtn {
-  display: none;
-  margin-top: 15px;
-  padding: 8px 16px;
-  background: #2563eb;
-  color: white;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #3b82f6;
+  color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
-.info {
-  margin-top: 20px;
-  font-size: 0.85em;
-  color: #64748b;
+#restartBtn:hover {
+  background: #2563eb;
 }
