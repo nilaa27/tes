@@ -1,6 +1,6 @@
 function startTest() {
   const fileSizeInBytes = 1000000; // 1 MB
-  const fileUrl = "https://speed.hetzner.de/1MB.bin";
+  const fileUrl = "https://ipv4.download.thinkbroadband.com/5MB.zip";
   
   document.getElementById("status").textContent = "Mengukur kecepatan...";
   document.getElementById("speed").textContent = "--";
