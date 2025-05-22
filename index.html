@@ -1,36 +1,38 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>SpeedTest Simulasi</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Speed Test</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>SpeedTest 3D</h1>
+    <div class="top-section">
+      <div class="speed-labels">
+        <div class="label">
+          <span class="icon">⬇</span> Unduh <span class="unit">Mbps</span>
+        </div>
+        <div class="label">
+          <span class="icon">⬆</span> Unggah <span class="unit">Mbps</span>
+        </div>
+      </div>
+      <div class="stats">
+        <div>Ping: <span id="ping">--</span> ms</div>
+        <div>Jitter: <span id="jitter">--</span> ms</div>
+      </div>
+    </div>
+
+    <div class="speedometer">
+      <canvas id="gauge" width="300" height="300"></canvas>
+      <div class="speed-value" id="downloadSpeed">--</div>
+      <div class="unit-text">Mbps</div>
+    </div>
 
     <div class="info">
-      <p>ISP: <span id="isp">Memuat...</span></p>
-      <p>IP: <span id="ip">Memuat...</span></p>
-      <p>Perangkat: <span id="device">Memuat...</span></p>
+      <div id="device">Memuat perangkat...</div>
+      <div id="isp">Memuat ISP...</div>
     </div>
-
-    <div class="results">
-      <div class="card">
-        <p>Ping</p>
-        <span id="ping">0</span><small>ms</small>
-      </div>
-      <div class="card">
-        <p>Download</p>
-        <span id="download">0.00</span><small>Mbps</small>
-      </div>
-      <div class="card">
-        <p>Upload</p>
-        <span id="upload">0.00</span><small>Mbps</small>
-      </div>
-    </div>
-
-    <button id="startBtn">Mulai Tes</button>
   </div>
 
   <script src="script.js"></script>
