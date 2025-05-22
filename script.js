@@ -37,7 +37,7 @@ function detectDevice() {
 }
 
 // Ambil data ISP dari ipinfo.io (gratis untuk IP dasar)
-fetch("https://ipinfo.io/json?token=1234567890abcdef") // Ganti token dengan milikmu jika rate-limit
+fetch("https://ipinfo.io/json?token=db955ecd23c16c") // Ganti token dengan milikmu jika rate-limit
   .then(res => res.json())
   .then(data => {
     document.getElementById("isp").textContent = data.org || "Tidak diketahui";
