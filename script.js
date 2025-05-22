@@ -1,101 +1,65 @@
-const downloadCanvas = document.getElementById("downloadGauge");
-const uploadCanvas = document.getElementById("uploadGauge");
-const downloadCtx = downloadCanvas.getContext("2d");
-const uploadCtx = uploadCanvas.getContext("2d");
+const downloadCtx = document.getElementById("downloadGauge").getContext("2d");
+const uploadCtx = document.getElementById("uploadGauge").getContext("2d");
 
-const downloadSpeedText = document.getElementById("downloadSpeed");
-const uploadSpeedText = document.getElementById("uploadSpeed");
+function drawFullGauge(ctx, percent, color) {
+  const centerX = 110;
+  const centerY = 110;
+  const radius = 90;
 
-const pingEl = document.getElementById("ping");
-const jitterEl = document.getElementById("jitter");
-const ispEl = document.getElementById("isp");
-const deviceEl = document.getElementById("device");
-const finalResult = document.getElementById("finalResult");
-const restartBtn = document.getElementById("restartBtn");
+  ctx.clearRect(0, 0, 220, 220);
 
-function drawGauge(ctx, speedEl, angle, value, color = "#38bdf8") {
-  const centerX = 150;
-  const centerY = 200;
-  const radius = 100;
-
-  ctx.clearRect(0, 0, 300, 300);
-
-  // Background arc
+  // Background circle
   ctx.beginPath();
-  ctx.arc(centerX, centerY, radius, Math.PI, 2 * Math.PI);
-  ctx.lineWidth = 20;
-  ctx.strokeStyle = "#1e40af";
+  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+  ctx.strokeStyle = "#1e293b";
+  ctx.lineWidth = 16;
   ctx.stroke();
 
-  // Needle
-  const needleLength = radius - 20;
-  const rad = angle * (Math.PI / 180);
-  const x = centerX + needleLength * Math.cos(rad);
-  const y = centerY + needleLength * Math.sin(rad);
-
+  // Progress arc
+  const angle = (percent / 100) * 2 * Math.PI;
   ctx.beginPath();
-  ctx.moveTo(centerX, centerY);
-  ctx.lineTo(x, y);
-  ctx.lineWidth = 4;
+  ctx.arc(centerX, centerY, radius, -Math.PI / 2, angle - Math.PI / 2);
   ctx.strokeStyle = color;
+  ctx.lineWidth = 16;
+  ctx.lineCap = "round";
   ctx.stroke();
-
-  speedEl.textContent = value.toFixed(2);
 }
 
-function simulateDownload(duration = 5000, callback) {
-  let speed = 0;
-  let increasing = true;
-  let start = Date.now();
-
+function simulateTest(duration, updateFn, finishFn) {
+  let value = 0;
+  let direction = 1;
+  const start = Date.now();
   const interval = setInterval(() => {
     const now = Date.now();
-    if (now - start >= duration) {
+    const elapsed = now - start;
+    if (elapsed >= duration) {
       clearInterval(interval);
-      callback(speed);
+      finishFn(value);
       return;
     }
-
-    speed += (increasing ? 1 : -1) * (Math.random() * 5);
-    if (speed >= 75) increasing = false;
-    if (speed <= 5) increasing = true;
-
-    const angle = (speed / 100) * 180;
-    drawGauge(downloadCtx, downloadSpeedText, 180 + angle, speed, "#38bdf8");
-  }, 100);
-}
-
-function simulateUpload(duration = 5000, callback) {
-  let speed = 0;
-  let increasing = true;
-  let start = Date.now();
-
-  const interval = setInterval(() => {
-    const now = Date.now();
-    if (now - start >= duration) {
-      clearInterval(interval);
-      callback(speed);
-      return;
-    }
-
-    speed += (increasing ? 1 : -1) * (Math.random() * 3);
-    if (speed >= 40) increasing = false;
-    if (speed <= 3) increasing = true;
-
-    const angle = (speed / 50) * 180;
-    drawGauge(uploadCtx, uploadSpeedText, 180 + angle, speed, "#facc15");
+    value += direction * Math.random() * 5;
+    if (value >= 100) direction = -1;
+    if (value <= 5) direction = 1;
+    updateFn(value);
   }, 100);
 }
 
 function startTest() {
-  finalResult.classList.remove("show");
-  restartBtn.style.display = "none";
-  simulateDownload(5000, (downloadValue) => {
-    document.getElementById("downloadResult").textContent = `Unduh: ${downloadValue.toFixed(2)} Mbps`;
-    simulateUpload(5000, (uploadValue) => {
-      document.getElementById("uploadResult").textContent = `Unggah: ${uploadValue.toFixed(2)} Mbps`;
-      finalResult.classList.add("show");
-      restartBtn.style.display = "inline-block";
+  document.getElementById("restartBtn").style.display = "none";
+  document.getElementById("finalResult").classList.remove("show");
+
+  simulateTest(4000, (val) => {
+    drawFullGauge(downloadCtx, val, "#3b82f6");
+    document.getElementById("downloadSpeed").textContent = val.toFixed(1);
+  }, (finalVal) => {
+    document.getElementById("downloadResult").textContent = finalVal.toFixed(1);
+    simulateTest(4000, (val) => {
+      drawFullGauge(uploadCtx, val, "#facc15");
+      document.getElementById("uploadSpeed").textContent = val.toFixed(1);
+    }, (finalVal) => {
+      document.getElementById("uploadResult").textContent = finalVal.toFixed(1);
+      document.getElementById("finalResult").classList.add("show");
+      document.getElementById("restartBtn").style.display = "inline-block";
     });
   });
 }
@@ -103,26 +67,24 @@ function startTest() {
 function detectDevice() {
   const ua = navigator.userAgent;
   if (/iPhone/.test(ua)) return "iPhone";
-  if (/iPad/.test(ua)) return "iPad";
   if (/Android/.test(ua)) return "Android";
   if (/Windows/.test(ua)) return "Windows PC";
   if (/Mac/.test(ua)) return "Mac";
   return "Tidak Dikenal";
 }
 
-// Inisialisasi
-pingEl.textContent = Math.floor(Math.random() * 20) + 20;
-jitterEl.textContent = Math.floor(Math.random() * 5) + 1;
+document.getElementById("ping").textContent = Math.floor(Math.random() * 20 + 10);
+document.getElementById("jitter").textContent = Math.floor(Math.random() * 10 + 1);
+document.getElementById("device").textContent = `Perangkat: ${detectDevice()}`;
 
-fetch('https://ipinfo.io/json?token=db955ecd23c16c')
+fetch("https://ipinfo.io/json?token=db955ecd23c16c")
   .then(res => res.json())
   .then(data => {
-    ispEl.textContent = `${data.org} - ${data.city}`;
+    document.getElementById("isp").textContent = `ISP: ${data.org} - ${data.city}`;
   })
   .catch(() => {
-    ispEl.textContent = "Gagal memuat ISP";
+    document.getElementById("isp").textContent = "ISP: Tidak Terdeteksi";
   });
 
-deviceEl.textContent = detectDevice();
-restartBtn.addEventListener("click", startTest);
+document.getElementById("restartBtn").addEventListener("click", startTest);
 startTest();
