@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Speed Test</title>
+  <meta charset="UTF-8">
+  <title>SpeedTest Simulasi</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Speed Test</h1>
-    <p><strong>ISP:</strong> <span id="isp">Mendeteksi...</span></p>
-    <p><strong>Perangkat:</strong> <span id="device">Mendeteksi...</span></p>
+    <h1>SpeedTest 3D</h1>
 
-    <div class="speedometer">
-      <svg viewBox="0 0 200 100">
-        <path d="M10,100 A90,90 0 0,1 190,100" fill="none" stroke="#333" stroke-width="8"/>
-        <line id="needle" x1="100" y1="100" x2="100" y2="30" stroke="#00f" stroke-width="4" stroke-linecap="round" />
-      </svg>
-      <div class="speed-display"><span id="speed">0.00</span> Mbps</div>
+    <div class="info">
+      <p>ISP: <span id="isp">Memuat...</span></p>
+      <p>IP: <span id="ip">Memuat...</span></p>
+      <p>Perangkat: <span id="device">Memuat...</span></p>
     </div>
 
-    <button id="startBtn">Mulai Tes Kecepatan</button>
-    <p id="status">Tekan tombol untuk memulai tes.</p>
+    <div class="results">
+      <div class="card">
+        <p>Ping</p>
+        <span id="ping">0</span><small>ms</small>
+      </div>
+      <div class="card">
+        <p>Download</p>
+        <span id="download">0.00</span><small>Mbps</small>
+      </div>
+      <div class="card">
+        <p>Upload</p>
+        <span id="upload">0.00</span><small>Mbps</small>
+      </div>
+    </div>
+
+    <button id="startBtn">Mulai Tes</button>
   </div>
 
   <script src="script.js"></script>
