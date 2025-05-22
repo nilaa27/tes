@@ -3,6 +3,8 @@ const pingEl = document.getElementById("ping");
 const jitterEl = document.getElementById("jitter");
 const ispEl = document.getElementById("isp");
 const deviceEl = document.getElementById("device");
+const finalResult = document.getElementById("finalResult");
+const restartBtn = document.getElementById("restartBtn");
 
 const canvas = document.getElementById("gauge");
 const ctx = canvas.getContext("2d");
@@ -35,7 +37,7 @@ function drawGauge(angle, value) {
   ctx.strokeStyle = "#38bdf8";
   ctx.stroke();
 
-  // Speed text update
+  // Update speed text
   downloadSpeed.textContent = value.toFixed(2);
 }
 
@@ -45,6 +47,11 @@ function simulateSpeed(duration = 10000) {
     const now = Date.now();
     if (now - start >= duration) {
       clearInterval(interval);
+
+      // Tampilkan hasil akhir
+      finalResult.textContent = `Hasil: ${speed.toFixed(2)} Mbps`;
+      finalResult.classList.add("show");
+      restartBtn.style.display = "inline-block";
       return;
     }
 
@@ -62,13 +69,25 @@ function simulateSpeed(duration = 10000) {
   }, 100);
 }
 
-// Dummy ping & jitter
+function resetTest() {
+  speed = 0;
+  increasing = true;
+  finalResult.textContent = '';
+  finalResult.classList.remove("show");
+  restartBtn.style.display = "none";
+  simulateSpeed();
+}
+
+// Event tombol restart
+restartBtn.addEventListener("click", resetTest);
+
+// Ping & jitter dummy
 pingEl.textContent = Math.floor(Math.random() * 20) + 20;
 jitterEl.textContent = Math.floor(Math.random() * 5) + 1;
 
-// ISP info from ipinfo.io
+// ISP info dari ipinfo.io
 fetch('https://ipinfo.io/json?token=db955ecd23c16c')
-  .then(response => response.json())
+  .then(res => res.json())
   .then(data => {
     ispEl.textContent = `${data.org} - ${data.city}`;
   })
@@ -86,5 +105,5 @@ else if (/Mac/.test(userAgent)) device = "Mac";
 else if (/Windows/.test(userAgent)) device = "Windows PC";
 deviceEl.textContent = device;
 
-// Start animation
+// Mulai test saat halaman dibuka
 simulateSpeed();
