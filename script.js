@@ -49,7 +49,11 @@ function simulateSpeed(duration = 10000) {
       clearInterval(interval);
 
       // Tampilkan hasil akhir
-      finalResult.textContent = `Hasil: ${speed.toFixed(2)} Mbps`;
+      const unduhSpeed = speed.toFixed(2);
+      const unggahSpeed = (Math.random() * 20 + 5).toFixed(2);
+
+      document.getElementById("downloadResult").textContent = `Unduh: ${unduhSpeed} Mbps`;
+      document.getElementById("uploadResult").textContent = `Unggah: ${unggahSpeed} Mbps`;
       finalResult.classList.add("show");
       restartBtn.style.display = "inline-block";
       return;
@@ -72,20 +76,20 @@ function simulateSpeed(duration = 10000) {
 function resetTest() {
   speed = 0;
   increasing = true;
-  finalResult.textContent = '';
+  document.getElementById("downloadResult").textContent = 'Unduh: -- Mbps';
+  document.getElementById("uploadResult").textContent = 'Unggah: -- Mbps';
   finalResult.classList.remove("show");
   restartBtn.style.display = "none";
   simulateSpeed();
 }
 
-// Event tombol restart
 restartBtn.addEventListener("click", resetTest);
 
-// Ping & jitter dummy
+// Dummy ping/jitter
 pingEl.textContent = Math.floor(Math.random() * 20) + 20;
 jitterEl.textContent = Math.floor(Math.random() * 5) + 1;
 
-// ISP info dari ipinfo.io
+// ISP dari ipinfo.io
 fetch('https://ipinfo.io/json?token=db955ecd23c16c')
   .then(res => res.json())
   .then(data => {
@@ -95,7 +99,7 @@ fetch('https://ipinfo.io/json?token=db955ecd23c16c')
     ispEl.textContent = "Gagal memuat ISP";
   });
 
-// Device detection
+// Device
 const userAgent = navigator.userAgent;
 let device = "Tidak Dikenal";
 if (/iPhone/.test(userAgent)) device = "iPhone";
@@ -105,5 +109,5 @@ else if (/Mac/.test(userAgent)) device = "Mac";
 else if (/Windows/.test(userAgent)) device = "Windows PC";
 deviceEl.textContent = device;
 
-// Mulai test saat halaman dibuka
+// Mulai test
 simulateSpeed();
