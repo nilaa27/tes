@@ -2,158 +2,22 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Speed Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      background-color: #0f172a;
-      font-family: 'Segoe UI', sans-serif;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 32px;
-      margin-bottom: 8px;
-    }
-
-    .info {
-      font-size: 16px;
-      color: #94a3b8;
-      margin-bottom: 30px;
-    }
-
-    .speed {
-      font-size: 72px;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    .unit {
-      font-size: 28px;
-      color: #60a5fa;
-      margin-left: 5px;
-    }
-
-    button {
-      background-color: #2563eb;
-      color: white;
-      padding: 14px 28px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      margin-top: 30px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background-color: #1d4ed8;
-    }
-
-    #status {
-      margin-top: 20px;
-      color: #94a3b8;
-      font-style: italic;
-      font-size: 14px;
-    }
-
-    .speed-container {
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      margin-bottom: 10px;
-    }
-
-    .fade {
-      animation: fadeIn 0.4s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  <title>Speed Test 3D</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Speed Test</h1>
-  <div class="info">
-    <div><strong>ISP:</strong> <span id="isp">Mendeteksi...</span></div>
-    <div><strong>Perangkat:</strong> <span id="device">Mendeteksi...</span></div>
+  <div class="speed-test-container">
+    <h1>Speed Test</h1>
+    <div class="speedometer">
+      <img src="speedometer-bg.png" class="speed-bg" alt="speed-bg" />
+      <div class="needle" id="needle"></div>
+      <div class="speed-display" id="speedValue">0.00 <span>Mbps</span></div>
+    </div>
+    <button onclick="startTest()">Mulai Tes Kecepatan</button>
+    <p id="status">Tes belum dimulai</p>
   </div>
 
-  <div class="speed-container">
-    <div class="speed fade" id="speed">0.00</div>
-    <div class="unit">Mbps</div>
-  </div>
-
-  <button onclick="startTest()">Mulai Tes Kecepatan</button>
-  <div id="status">Klik tombol untuk mulai.</div>
-
-  <script>
-    // Tampilkan nama perangkat
-    document.getElementById("device").textContent = navigator.userAgent.includes("Safari") ? "Safari" : navigator.userAgent;
-
-    // Ambil info ISP
-    fetch("https://ipapi.co/json")
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("isp").textContent = `${data.org}`;
-      })
-      .catch(() => {
-        document.getElementById("isp").textContent = "Tidak diketahui";
-      });
-
-    function animateSpeed(el, to) {
-      let start = 0;
-      const duration = 2000;
-      const step = (timestamp) => {
-        if (!start) start = timestamp;
-        const progress = timestamp - start;
-        const value = Math.min((progress / duration) * to, to);
-        el.textContent = value.toFixed(2);
-        if (progress < duration) {
-          window.requestAnimationFrame(step);
-        } else {
-          el.textContent = to.toFixed(2);
-        }
-      };
-      window.requestAnimationFrame(step);
-    }
-
-    function startTest() {
-      const speedEl = document.getElementById("speed");
-      const statusEl = document.getElementById("status");
-      speedEl.textContent = "0.00";
-      statusEl.textContent = "Mengukur kecepatan...";
-
-      const fileSize = 1000000; // 1 MB
-      const fileUrl = "/1mb.bin";
-
-      const startTime = new Date().getTime();
-
-      fetch(fileUrl + "?cache=" + Math.random())
-        .then(res => res.blob())
-        .then(() => {
-          const endTime = new Date().getTime();
-          const duration = (endTime - startTime) / 1000;
-          const bitsLoaded = fileSize * 8;
-          const speedMbps = bitsLoaded / duration / 1024 / 1024;
-
-          animateSpeed(speedEl, speedMbps);
-          statusEl.textContent = "Tes selesai.";
-        })
-        .catch(() => {
-          statusEl.textContent = "Tes gagal. Periksa koneksi internet.";
-        });
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
