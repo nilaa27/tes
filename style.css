@@ -25,6 +25,7 @@ body {
 .speed-labels {
   display: flex;
   justify-content: center;
+  margin-top: 10px;
   margin-bottom: 10px;
 }
 
@@ -44,17 +45,25 @@ body {
 
 .speedometer {
   position: relative;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
-#downloadSpeed {
+#downloadSpeed, #uploadSpeed {
   position: absolute;
   top: 110px;
   left: 0;
   right: 0;
   font-size: 2.5em;
   font-weight: bold;
+}
+
+#downloadSpeed {
   color: #38bdf8;
+}
+
+#uploadSpeed {
+  color: #facc15;
 }
 
 .unit-text {
@@ -69,7 +78,7 @@ body {
 #finalResult {
   opacity: 0;
   transition: opacity 1s ease-in-out;
-  margin-top: 30px;
+  margin-top: 20px;
   font-weight: 600;
   font-size: 1.1em;
   line-height: 1.6em;
@@ -86,7 +95,7 @@ body {
 
 #restartBtn {
   display: none;
-  margin-top: 10px;
+  margin-top: 15px;
   padding: 8px 16px;
   background: #2563eb;
   color: white;
