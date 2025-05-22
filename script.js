@@ -1,58 +1,63 @@
-const startBtn = document.getElementById("startBtn");
-const speedDisplay = document.getElementById("speed");
-const statusText = document.getElementById("status");
-const needle = document.getElementById("needle");
-const ispSpan = document.getElementById("isp");
-const ipSpan = document.getElementById("ip");
-const deviceSpan = document.getElementById("device");
+const pingEl = document.getElementById('ping');
+const downloadEl = document.getElementById('download');
+const uploadEl = document.getElementById('upload');
+const ispEl = document.getElementById('isp');
+const ipEl = document.getElementById('ip');
+const deviceEl = document.getElementById('device');
+const startBtn = document.getElementById('startBtn');
 
-// Fungsi memutar jarum speedometer
-function rotateNeedle(speed) {
-  const angle = Math.min((speed / 1000) * 180, 180);
-  needle.setAttribute("transform", `rotate(${angle}, 100, 100)`);
+function simulateSpeed(target, el, duration) {
+  return new Promise(resolve => {
+    let start = 0;
+    const interval = 30;
+    const steps = duration / interval;
+    const increment = target / steps;
+
+    const step = () => {
+      start += increment;
+      if (start >= target) {
+        el.textContent = target.toFixed(2);
+        resolve();
+      } else {
+        el.textContent = start.toFixed(2);
+        setTimeout(step, interval);
+      }
+    };
+    step();
+  });
 }
 
-// Simulasi speedtest
-function startTest() {
-  statusText.textContent = "Mengukur kecepatan...";
-  let fakeSpeed = 0;
-  let interval = setInterval(() => {
-    fakeSpeed += Math.random() * 50;
+async function startTest() {
+  startBtn.disabled = true;
+  pingEl.textContent = '...';
+  downloadEl.textContent = '...';
+  uploadEl.textContent = '...';
 
-    if (fakeSpeed >= 500) {
-      clearInterval(interval);
-      fakeSpeed = (Math.random() * 500 + 10).toFixed(2);
-      speedDisplay.textContent = fakeSpeed;
-      rotateNeedle(fakeSpeed);
-      statusText.textContent = "Tes selesai.";
-    } else {
-      speedDisplay.textContent = fakeSpeed.toFixed(2);
-      rotateNeedle(fakeSpeed);
-    }
-  }, 200);
+  // Ping simulation
+  const ping = Math.floor(Math.random() * 40) + 10;
+  await new Promise(r => setTimeout(r, 1000));
+  pingEl.textContent = ping;
+
+  // Download speed simulation
+  const downloadSpeed = Math.random() * 400 + 50;
+  await simulateSpeed(downloadSpeed, downloadEl, 2000);
+
+  // Upload speed simulation
+  const uploadSpeed = Math.random() * 100 + 10;
+  await simulateSpeed(uploadSpeed, uploadEl, 2000);
+
+  startBtn.disabled = false;
+  startBtn.textContent = 'Tes Lagi';
 }
 
-startBtn.addEventListener("click", startTest);
-
-// Deteksi perangkat/browser
-function getDevice() {
-  const ua = navigator.userAgent;
-  if (ua.includes("Chrome")) return "Chrome";
-  if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
-  if (ua.includes("Firefox")) return "Firefox";
-  if (ua.includes("Edg")) return "Edge";
-  return "Tidak Diketahui";
-}
-deviceSpan.textContent = getDevice();
-
-// Deteksi ISP dan IP via ipinfo.io
-fetch("https://ipinfo.io/json?token=db955ecd23c16c")
+// Get IP & ISP
+fetch('https://ipinfo.io/json?token=db955ecd23c16c')
   .then(res => res.json())
   .then(data => {
-    ispSpan.textContent = `${data.org || "Tidak Diketahui"} (${data.hostname || data.city || "-"})`;
-    ipSpan.textContent = data.ip || "-";
-  })
-  .catch(() => {
-    ispSpan.textContent = "Gagal mendeteksi";
-    ipSpan.textContent = "-";
+    ispEl.textContent = data.org || 'Tidak diketahui';
+    ipEl.textContent = data.ip;
   });
+
+deviceEl.textContent = navigator.userAgent;
+
+startBtn.addEventListener('click', startTest);
