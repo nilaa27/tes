@@ -1,55 +1,48 @@
-// Ambil info IP dan ISP dari ipinfo.io
-fetch("https://ipinfo.io/json?token=db955ecd23c16c")
-  .then((response) => response.json())
-  .then((data) => {
-    document.getElementById("isp").innerText = "ISP: " + data.org;
-    document.getElementById("ip").innerText = "IP: " + data.ip;
+const downloadSpeed = document.getElementById("downloadSpeed");
+const pingEl = document.getElementById("ping");
+const jitterEl = document.getElementById("jitter");
+const ispEl = document.getElementById("isp");
+const deviceEl = document.getElementById("device");
+
+// Simulasi speed animasi
+let speed = 0;
+let increasing = true;
+
+function simulateSpeed() {
+  setInterval(() => {
+    if (increasing) {
+      speed += Math.random() * 10;
+      if (speed >= 66.44) increasing = false;
+    } else {
+      speed -= Math.random() * 5;
+      if (speed <= 60) increasing = true;
+    }
+    downloadSpeed.textContent = speed.toFixed(2);
+  }, 100);
+}
+
+// Simulasi ping & jitter
+pingEl.textContent = Math.floor(Math.random() * 20) + 20;
+jitterEl.textContent = Math.floor(Math.random() * 5) + 1;
+
+// Ambil info ISP & kota dari ipinfo
+fetch('https://ipinfo.io/json?token=db955ecd23c16c')
+  .then(response => response.json())
+  .then(data => {
+    ispEl.textContent = `${data.org} - ${data.city}`;
   })
-  .catch((error) => {
-    console.error("Gagal mengambil data IPInfo:", error);
+  .catch(() => {
+    ispEl.textContent = "Gagal memuat ISP";
   });
 
-// Tampilkan user agent (perangkat)
-document.getElementById("device").innerText = "Perangkat: " + navigator.userAgent;
+// Deteksi perangkat dari user-agent
+const userAgent = navigator.userAgent;
+let device = "Tidak Dikenal";
+if (/iPhone/.test(userAgent)) device = "iPhone";
+else if (/iPad/.test(userAgent)) device = "iPad";
+else if (/Android/.test(userAgent)) device = "Android";
+else if (/Mac/.test(userAgent)) device = "Mac";
+else if (/Windows/.test(userAgent)) device = "Windows PC";
+deviceEl.textContent = device;
 
-// Fungsi acak nilai dengan jeda (biar terlihat seperti proses nyata)
-function animateValue(id, start, end, duration, unit = "") {
-  const obj = document.getElementById(id);
-  const range = end - start;
-  const increment = range / (duration / 30);
-  let current = start;
-  const step = () => {
-    current += increment;
-    if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
-      current = end;
-      obj.innerText = end.toFixed(2) + " " + unit;
-    } else {
-      obj.innerText = current.toFixed(2) + " " + unit;
-      requestAnimationFrame(step);
-    }
-  };
-  step();
-}
-
-// Fungsi untuk simulasi tes kecepatan
-function startTest() {
-  document.getElementById("ping").innerText = "...";
-  document.getElementById("download").innerText = "...";
-  document.getElementById("upload").innerText = "...";
-
-  setTimeout(() => {
-    const ping = Math.random() * 80 + 10; // 10-90 ms
-    const download = Math.random() * 900 + 50; // 50-950 Mbps
-    const upload = Math.random() * 100 + 10; // 10-110 Mbps
-
-    animateValue("ping", 0, ping, 1000, "ms");
-    animateValue("download", 0, download, 2000, "Mbps");
-    animateValue("upload", 0, upload, 2000, "Mbps");
-  }, 500);
-}
-
-// Tombol Tes Lagi
-document.getElementById("test-again").addEventListener("click", startTest);
-
-// Jalankan tes saat halaman pertama kali dibuka
-window.onload = startTest;
+simulateSpeed();
