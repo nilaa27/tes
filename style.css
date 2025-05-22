@@ -1,69 +1,58 @@
 body {
-  background: linear-gradient(145deg, #0c1021, #1a1f3a);
-  color: white;
-  font-family: 'Segoe UI', sans-serif;
   margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at top, #111 0%, #222 100%);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-.speed-test-container {
+.container {
   text-align: center;
-  padding: 50px 20px;
+  background: #1e1e2f;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+  max-width: 400px;
+  width: 100%;
 }
 
 h1 {
-  margin-bottom: 30px;
+  margin-bottom: 10px;
+  font-size: 2em;
+}
+
+p {
+  margin: 5px 0;
 }
 
 .speedometer {
   position: relative;
-  width: 300px;
-  height: 300px;
-  margin: 0 auto 20px;
-}
-
-.speed-bg {
-  width: 100%;
-  filter: drop-shadow(0 0 12px #00f0ff);
-}
-
-.needle {
-  position: absolute;
-  width: 4px;
-  height: 140px;
-  background: #ff4c4c;
-  top: 30px;
-  left: 50%;
-  transform-origin: bottom center;
-  transform: rotate(-120deg);
-  transition: transform 0.8s ease-in-out;
-  z-index: 10;
-  box-shadow: 0 0 10px red;
+  width: 200px;
+  height: 100px;
+  margin: 20px auto;
 }
 
 .speed-display {
   position: absolute;
-  bottom: 25px;
+  bottom: -30px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 28px;
+  font-size: 24px;
   font-weight: bold;
-  color: #00f0ff;
-  text-shadow: 0 0 6px #00f0ff;
 }
 
 button {
   background: #007bff;
   border: none;
   color: white;
-  padding: 14px 28px;
-  font-size: 16px;
+  padding: 12px 25px;
   border-radius: 8px;
+  font-size: 16px;
   cursor: pointer;
-  margin-top: 20px;
-  box-shadow: 0 0 12px #007bff;
-  transition: background 0.3s;
+  margin-top: 10px;
 }
 
 button:hover {
@@ -72,6 +61,6 @@ button:hover {
 
 #status {
   margin-top: 15px;
-  font-size: 14px;
-  color: #ccc;
+  font-style: italic;
+  color: #aaa;
 }
