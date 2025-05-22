@@ -1,4 +1,11 @@
-const downloadSpeed = document.getElementById("downloadSpeed");
+const downloadCanvas = document.getElementById("downloadGauge");
+const uploadCanvas = document.getElementById("uploadGauge");
+const downloadCtx = downloadCanvas.getContext("2d");
+const uploadCtx = uploadCanvas.getContext("2d");
+
+const downloadSpeedText = document.getElementById("downloadSpeed");
+const uploadSpeedText = document.getElementById("uploadSpeed");
+
 const pingEl = document.getElementById("ping");
 const jitterEl = document.getElementById("jitter");
 const ispEl = document.getElementById("isp");
@@ -6,18 +13,14 @@ const deviceEl = document.getElementById("device");
 const finalResult = document.getElementById("finalResult");
 const restartBtn = document.getElementById("restartBtn");
 
-const canvas = document.getElementById("gauge");
-const ctx = canvas.getContext("2d");
-const centerX = canvas.width / 2;
-const centerY = canvas.height / 2 + 50;
-const radius = 100;
-let speed = 0;
-let increasing = true;
+function drawGauge(ctx, speedEl, angle, value, color = "#38bdf8") {
+  const centerX = 150;
+  const centerY = 200;
+  const radius = 100;
 
-function drawGauge(angle, value) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, 300, 300);
 
-  // Arc background
+  // Background arc
   ctx.beginPath();
   ctx.arc(centerX, centerY, radius, Math.PI, 2 * Math.PI);
   ctx.lineWidth = 20;
@@ -34,62 +37,83 @@ function drawGauge(angle, value) {
   ctx.moveTo(centerX, centerY);
   ctx.lineTo(x, y);
   ctx.lineWidth = 4;
-  ctx.strokeStyle = "#38bdf8";
+  ctx.strokeStyle = color;
   ctx.stroke();
 
-  // Update speed text
-  downloadSpeed.textContent = value.toFixed(2);
+  speedEl.textContent = value.toFixed(2);
 }
 
-function simulateSpeed(duration = 10000) {
+function simulateDownload(duration = 5000, callback) {
+  let speed = 0;
+  let increasing = true;
   let start = Date.now();
+
   const interval = setInterval(() => {
     const now = Date.now();
     if (now - start >= duration) {
       clearInterval(interval);
-
-      // Tampilkan hasil akhir
-      const unduhSpeed = speed.toFixed(2);
-      const unggahSpeed = (Math.random() * 20 + 5).toFixed(2);
-
-      document.getElementById("downloadResult").textContent = `Unduh: ${unduhSpeed} Mbps`;
-      document.getElementById("uploadResult").textContent = `Unggah: ${unggahSpeed} Mbps`;
-      finalResult.classList.add("show");
-      restartBtn.style.display = "inline-block";
+      callback(speed);
       return;
     }
 
-    if (increasing) {
-      speed += Math.random() * 6;
-      if (speed >= 75) increasing = false;
-    } else {
-      speed -= Math.random() * 4;
-      if (speed <= 5) increasing = true;
-    }
+    speed += (increasing ? 1 : -1) * (Math.random() * 5);
+    if (speed >= 75) increasing = false;
+    if (speed <= 5) increasing = true;
 
-    const maxSpeed = 100;
-    const angle = (speed / maxSpeed) * 180;
-    drawGauge(180 + angle, speed);
+    const angle = (speed / 100) * 180;
+    drawGauge(downloadCtx, downloadSpeedText, 180 + angle, speed, "#38bdf8");
   }, 100);
 }
 
-function resetTest() {
-  speed = 0;
-  increasing = true;
-  document.getElementById("downloadResult").textContent = 'Unduh: -- Mbps';
-  document.getElementById("uploadResult").textContent = 'Unggah: -- Mbps';
-  finalResult.classList.remove("show");
-  restartBtn.style.display = "none";
-  simulateSpeed();
+function simulateUpload(duration = 5000, callback) {
+  let speed = 0;
+  let increasing = true;
+  let start = Date.now();
+
+  const interval = setInterval(() => {
+    const now = Date.now();
+    if (now - start >= duration) {
+      clearInterval(interval);
+      callback(speed);
+      return;
+    }
+
+    speed += (increasing ? 1 : -1) * (Math.random() * 3);
+    if (speed >= 40) increasing = false;
+    if (speed <= 3) increasing = true;
+
+    const angle = (speed / 50) * 180;
+    drawGauge(uploadCtx, uploadSpeedText, 180 + angle, speed, "#facc15");
+  }, 100);
 }
 
-restartBtn.addEventListener("click", resetTest);
+function startTest() {
+  finalResult.classList.remove("show");
+  restartBtn.style.display = "none";
+  simulateDownload(5000, (downloadValue) => {
+    document.getElementById("downloadResult").textContent = `Unduh: ${downloadValue.toFixed(2)} Mbps`;
+    simulateUpload(5000, (uploadValue) => {
+      document.getElementById("uploadResult").textContent = `Unggah: ${uploadValue.toFixed(2)} Mbps`;
+      finalResult.classList.add("show");
+      restartBtn.style.display = "inline-block";
+    });
+  });
+}
 
-// Dummy ping/jitter
+function detectDevice() {
+  const ua = navigator.userAgent;
+  if (/iPhone/.test(ua)) return "iPhone";
+  if (/iPad/.test(ua)) return "iPad";
+  if (/Android/.test(ua)) return "Android";
+  if (/Windows/.test(ua)) return "Windows PC";
+  if (/Mac/.test(ua)) return "Mac";
+  return "Tidak Dikenal";
+}
+
+// Inisialisasi
 pingEl.textContent = Math.floor(Math.random() * 20) + 20;
 jitterEl.textContent = Math.floor(Math.random() * 5) + 1;
 
-// ISP dari ipinfo.io
 fetch('https://ipinfo.io/json?token=db955ecd23c16c')
   .then(res => res.json())
   .then(data => {
@@ -99,15 +123,6 @@ fetch('https://ipinfo.io/json?token=db955ecd23c16c')
     ispEl.textContent = "Gagal memuat ISP";
   });
 
-// Device
-const userAgent = navigator.userAgent;
-let device = "Tidak Dikenal";
-if (/iPhone/.test(userAgent)) device = "iPhone";
-else if (/iPad/.test(userAgent)) device = "iPad";
-else if (/Android/.test(userAgent)) device = "Android";
-else if (/Mac/.test(userAgent)) device = "Mac";
-else if (/Windows/.test(userAgent)) device = "Windows PC";
-deviceEl.textContent = device;
-
-// Mulai test
-simulateSpeed();
+deviceEl.textContent = detectDevice();
+restartBtn.addEventListener("click", startTest);
+startTest();
