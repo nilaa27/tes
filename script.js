@@ -1,6 +1,6 @@
 function startTest() {
   const fileSizeInBytes = 1000000; // 1 MB
-  const fileUrl = "https://ipv4.download.thinkbroadband.com/5MB.zip";
+  const fileUrl = "/1mb.bin";
   
   document.getElementById("status").textContent = "Mengukur kecepatan...";
   document.getElementById("speed").textContent = "--";
