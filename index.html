@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Speed Test 3D</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Speed Test</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="speed-test-container">
+  <div class="container">
     <h1>Speed Test</h1>
+    <p><strong>ISP:</strong> <span id="isp">Mendeteksi...</span></p>
+    <p><strong>Perangkat:</strong> <span id="device">Mendeteksi...</span></p>
+
     <div class="speedometer">
-      <img src="speedometer-bg.png" class="speed-bg" alt="speed-bg" />
-      <div class="needle" id="needle"></div>
-      <div class="speed-display" id="speedValue">0.00 <span>Mbps</span></div>
+      <svg viewBox="0 0 200 100">
+        <path d="M10,100 A90,90 0 0,1 190,100" fill="none" stroke="#333" stroke-width="8"/>
+        <line id="needle" x1="100" y1="100" x2="100" y2="30" stroke="#00f" stroke-width="4" stroke-linecap="round" />
+      </svg>
+      <div class="speed-display"><span id="speed">0.00</span> Mbps</div>
     </div>
-    <button onclick="startTest()">Mulai Tes Kecepatan</button>
-    <p id="status">Tes belum dimulai</p>
+
+    <button id="startBtn">Mulai Tes Kecepatan</button>
+    <p id="status">Tekan tombol untuk memulai tes.</p>
   </div>
 
   <script src="script.js"></script>
