@@ -22,17 +22,29 @@
     </div>
 
     <div class="speedometer">
-      <canvas id="gauge" width="300" height="300"></canvas>
+      <canvas id="downloadGauge" width="300" height="300"></canvas>
       <div class="speed-value" id="downloadSpeed">--</div>
       <div class="unit-text">Mbps</div>
-
-      <div id="finalResult">
-        <div id="downloadResult">Unduh: -- Mbps</div>
-        <div id="uploadResult">Unggah: -- Mbps</div>
-      </div>
-
-      <button id="restartBtn">Mulai Ulang</button>
     </div>
+
+    <div class="speed-labels">
+      <div class="label">
+        <span class="icon">⬆</span> Unggah <span class="unit">Mbps</span>
+      </div>
+    </div>
+
+    <div class="speedometer">
+      <canvas id="uploadGauge" width="300" height="300"></canvas>
+      <div class="speed-value" id="uploadSpeed">--</div>
+      <div class="unit-text">Mbps</div>
+    </div>
+
+    <div id="finalResult">
+      <div id="downloadResult">Unduh: -- Mbps</div>
+      <div id="uploadResult">Unggah: -- Mbps</div>
+    </div>
+
+    <button id="restartBtn">Mulai Ulang</button>
 
     <div class="info">
       <div id="device">Memuat perangkat...</div>
