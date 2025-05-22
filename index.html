@@ -2,96 +2,132 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SpeedTest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Speedtest 3D</title>
   <style>
     body {
-      background: #121212;
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #111;
       color: #fff;
-      font-family: 'Arial', sans-serif;
       text-align: center;
-      padding: 20px;
     }
-    .speedometer {
-      width: 200px;
-      margin: 0 auto;
-    }
-    .gauge-text {
-      font-size: 28px;
-      fill: #00bfff;
-    }
-    button {
+
+    h1 {
+      color: #00bfff;
       margin-top: 20px;
-      padding: 12px 24px;
-      font-size: 16px;
-      background: #00bfff;
-      border: none;
-      border-radius: 6px;
-      color: #fff;
-      cursor: pointer;
+      letter-spacing: 2px;
     }
-    .cards {
-      margin-top: 30px;
+
+    .speedometer {
+      margin: 30px auto;
+      width: 200px;
+      height: 120px;
+    }
+
+    #speedValue {
+      font-size: 32px;
+      font-weight: bold;
+      margin-top: -10px;
+    }
+
+    .info-box {
       display: flex;
       justify-content: center;
-      gap: 30px;
+      gap: 10px;
+      margin: 30px 10px;
       flex-wrap: wrap;
     }
+
     .card {
-      background: #1c1c1c;
-      padding: 16px 24px;
-      border-radius: 10px;
-      min-width: 120px;
-      box-shadow: 0 0 10px #00000055;
+      background-color: #222;
+      border-radius: 12px;
+      padding: 20px;
+      flex: 1 1 100px;
+      max-width: 100px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
-    .info {
-      margin-top: 30px;
+
+    .card h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .card p {
+      margin: 5px 0;
+      color: #00bfff;
+      font-weight: bold;
+    }
+
+    .meta {
+      margin-top: 20px;
+    }
+
+    .meta div {
+      margin: 8px 0;
+      background: #222;
+      padding: 8px 16px;
+      border-radius: 10px;
+    }
+
+    button {
+      background-color: #00bfff;
+      border: none;
+      padding: 12px 30px;
+      font-size: 16px;
+      border-radius: 8px;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.96);
     }
   </style>
 </head>
 <body>
+  <h1>SPEEDTEST</h1>
 
-  <h1>Speed Test</h1>
-
-  <!-- Speedometer SVG -->
   <svg class="speedometer" viewBox="0 0 200 120">
-    <path id="arc" d="" stroke="#00bfff" stroke-width="10" fill="none"/>
-    <text id="speedValue" x="100" y="70" text-anchor="middle" class="gauge-text">0</text>
-    <text x="100" y="95" text-anchor="middle" fill="#888">Mbps</text>
+    <path id="arc" d="" stroke="#666" stroke-width="15" fill="none" />
+    <text x="100" y="90" text-anchor="middle" font-size="30" fill="#fff" id="speedValue">0</text>
   </svg>
 
+  <p>Mbps</p>
   <button id="startBtn">Mulai Tes</button>
 
-  <div class="cards">
+  <div class="info-box">
     <div class="card">
-      <h3>Unduh</h3>
-      <p><span id="download">--</span> Mbps</p>
+      <h2>Unduh</h2>
+      <p id="download">--</p>
+      <small>Mbps</small>
     </div>
     <div class="card">
-      <h3>Unggah</h3>
-      <p><span id="upload">--</span> Mbps</p>
+      <h2>Unggah</h2>
+      <p id="upload">--</p>
+      <small>Mbps</small>
     </div>
     <div class="card">
-      <h3>Ping</h3>
-      <p><span id="ping">--</span> ms</p>
+      <h2>Ping</h2>
+      <p id="ping">--</p>
+      <small>ms</small>
     </div>
   </div>
 
-  <div class="info">
-    <p><strong>IP:</strong> <span id="ip">-</span></p>
-    <p><strong>ISP:</strong> <span id="isp">-</span></p>
-    <p><strong>Perangkat:</strong> <span id="device">-</span></p>
+  <div class="meta">
+    <div>IP: <span id="ip">-</span></div>
+    <div>ISP: <span id="isp">-</span></div>
+    <div>Perangkat: <span id="device">-</span></div>
   </div>
 
   <script>
-    document.getElementById("startBtn").addEventListener("click", () => {
-      simulateTest();
-    });
+    document.getElementById("startBtn").addEventListener("click", simulateTest);
 
     function simulateTest() {
-      let down = randomSpeed();
-      let up = randomSpeed();
-      let ping = Math.floor(Math.random() * 100) + 1;
+      const down = randomSpeed();
+      const up = randomSpeed();
+      const ping = Math.floor(Math.random() * 100) + 1;
 
       animateSpeed(down);
       document.getElementById("download").textContent = down;
@@ -100,7 +136,7 @@
     }
 
     function randomSpeed() {
-      return (Math.random() * 200 + 10).toFixed(1); // 10 - 210 Mbps
+      return (Math.random() * 200 + 10).toFixed(1);
     }
 
     function animateSpeed(value) {
@@ -110,11 +146,19 @@
       let x = 100 + 90 * Math.cos(radians);
       let y = 100 - 90 * Math.sin(radians);
       let arc = `M10,100 A90,90 0 ${angle > 180 ? 1 : 0},1 ${x},${y}`;
-      document.getElementById("arc").setAttribute("d", arc);
+      
+      const arcElement = document.getElementById("arc");
+      arcElement.setAttribute("d", arc);
+
+      // Warna dinamis
+      if (value < 30) arcElement.setAttribute("stroke", "#ff3b3b");
+      else if (value < 100) arcElement.setAttribute("stroke", "#ffc107");
+      else arcElement.setAttribute("stroke", "#00ff88");
+
       document.getElementById("speedValue").textContent = value;
     }
 
-    // IP dan ISP
+    // IP & ISP
     fetch("https://ipapi.co/json/")
       .then(res => res.json())
       .then(data => {
@@ -132,9 +176,7 @@
       if (/Linux/.test(ua)) return "Linux";
       return "Lainnya";
     }
-
     document.getElementById("device").textContent = getDevice();
   </script>
-
 </body>
 </html>
