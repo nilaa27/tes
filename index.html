@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Speed Test</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      background-color: #1a1a2e;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .dashboard {
+      background-color: #0f3460;
+      border: 8px solid #5333ed;
+      border-radius: 10px;
+      padding: 20px;
+      width: 360px;
+      box-shadow: 0 0 20px #5333ed;
+    }
+    .info-box {
+      background-color: #16213e;
+      border: 2px solid #5333ed;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px 0;
+      text-align: center;
+    }
+    .info-label {
+      font-size: 14px;
+      color: #aaa;
+    }
+    .info-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .test-button {
+      background-color: #5333ed;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 15px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      width: 100%;
+    }
+    .test-button:hover {
+      background-color: #6e44ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="info-box">
+      <div class="info-label">DOWNLOAD SPEED</div>
+      <div class="info-value" id="download">-</div>
+    </div>
+    <div class="info-box">
+      <div class="info-label">UPLOAD SPEED</div>
+      <div class="info-value" id="upload">-</div>
+    </div>
+    <div class="info-box">
+      <div class="info-label">PING</div>
+      <div class="info-value" id="ping">-</div>
+    </div>
+    <button class="test-button" onclick="start()">START TEST</button>
+  </div>
+  <script src="speedtest.js"></script>
+</body>
+</html>
