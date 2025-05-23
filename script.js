@@ -1,83 +1,108 @@
-const downloadCtx = document.getElementById("downloadGauge").getContext("2d");
-const uploadCtx = document.getElementById("uploadGauge").getContext("2d");
-
-function drawFullGauge(ctx, percent, color) {
-  const centerX = 110;
-  const centerY = 110;
-  const radius = 90;
-
-  ctx.clearRect(0, 0, 220, 220);
-
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-  ctx.strokeStyle = "#1e293b";
-  ctx.lineWidth = 16;
-  ctx.stroke();
-
-  const angle = (percent / 100) * 2 * Math.PI;
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, radius, -Math.PI / 2, angle - Math.PI / 2);
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 16;
-  ctx.lineCap = "round";
-  ctx.stroke();
-}
-
-function detectDevice() {
+function getDeviceInfo() {
   const ua = navigator.userAgent;
-  if (/iPhone/.test(ua)) return "iPhone";
-  if (/Android/.test(ua)) return "Android";
-  if (/Windows/.test(ua)) return "Windows PC";
-  if (/Mac/.test(ua)) return "Mac";
-  return "Tidak Dikenal";
+  let os = "Tidak diketahui";
+  if (ua.indexOf("Win") !== -1) os = "Windows";
+  else if (ua.indexOf("Mac") !== -1) os = "macOS";
+  else if (ua.indexOf("Linux") !== -1) os = "Linux";
+  else if (/Android/.test(ua)) os = "Android";
+  else if (/iPhone|iPad|iPod/.test(ua)) os = "iOS";
+
+  let browser = "Tidak diketahui";
+  if (ua.indexOf("Firefox") !== -1) browser = "Firefox";
+  else if (ua.indexOf("Chrome") !== -1) browser = "Chrome";
+  else if (ua.indexOf("Safari") !== -1 && ua.indexOf("Chrome") === -1) browser = "Safari";
+  else if (ua.indexOf("Edg") !== -1) browser = "Edge";
+
+  return `${browser} di ${os}`;
 }
 
-document.getElementById("device").textContent = `Perangkat: ${detectDevice()}`;
 fetch("https://ipinfo.io/json?token=db955ecd23c16c")
   .then(res => res.json())
   .then(data => {
-    document.getElementById("isp").textContent = `ISP: ${data.org} - ${data.city}`;
+    document.getElementById("isp").innerText = data.org || "Tidak diketahui";
+    document.getElementById("lokasi").innerText = data.city || "Tidak diketahui";
+    document.getElementById("ip").innerText = data.ip || "Tidak diketahui";
+    document.getElementById("perangkat").innerText = getDeviceInfo();
+  })
+  .catch(() => {
+    document.getElementById("isp").innerText = "Gagal";
+    document.getElementById("lokasi").innerText = "Gagal";
+    document.getElementById("ip").innerText = "Gagal";
+    document.getElementById("perangkat").innerText = "Gagal";
   });
 
-let s;
+const canvas = document.getElementById("speedometer");
+const ctx = canvas.getContext("2d");
 
-function startTest() {
-  document.getElementById("finalResult").classList.remove("show");
-  document.getElementById("restartBtn").style.display = "none";
+function drawMeter(speed) {
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = 100;
 
-  s = new Speedtest();
-  s.onupdate = function(data) {
-    if (data.downloadStatus) {
-      const val = parseFloat(data.downloadStatus);
-      drawFullGauge(downloadCtx, Math.min(val, 100), "#3b82f6");
-      document.getElementById("downloadSpeed").textContent = val.toFixed(1);
-    }
-    if (data.uploadStatus) {
-      const val = parseFloat(data.uploadStatus);
-      drawFullGauge(uploadCtx, Math.min(val, 100), "#facc15");
-      document.getElementById("uploadSpeed").textContent = val.toFixed(1);
-    }
-    if (data.pingStatus) {
-      document.getElementById("ping").textContent = parseFloat(data.pingStatus).toFixed(1);
-    }
-    if (data.jitterStatus) {
-      document.getElementById("jitter").textContent = parseFloat(data.jitterStatus).toFixed(1);
-    }
-  };
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  s.onend = function() {
-    document.getElementById("downloadResult").textContent = document.getElementById("downloadSpeed").textContent;
-    document.getElementById("uploadResult").textContent = document.getElementById("uploadSpeed").textContent;
-    document.getElementById("finalResult").classList.add("show");
-    document.getElementById("restartBtn").style.display = "inline-block";
-  };
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0.75 * Math.PI, 2.25 * Math.PI);
+  ctx.strokeStyle = "#444";
+  ctx.lineWidth = 20;
+  ctx.stroke();
 
-  s.start();
+  const angle = (speed / 1000) * Math.PI * 1.5;
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0.75 * Math.PI, 0.75 * Math.PI + angle);
+  ctx.strokeStyle = "#00ffcc";
+  ctx.lineWidth = 20;
+  ctx.stroke();
+
+  const needleLength = radius - 30;
+  const needleAngle = 0.75 * Math.PI + angle;
+  const x = centerX + needleLength * Math.cos(needleAngle);
+  const y = centerY + needleLength * Math.sin(needleAngle);
+
+  ctx.beginPath();
+  ctx.moveTo(centerX, centerY);
+  ctx.lineTo(x, y);
+  ctx.strokeStyle = "#ff0000";
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  const steps = [0, 250, 500, 750, 1000];
+  steps.forEach(val => {
+    const a = 0.75 * Math.PI + (val / 1000) * Math.PI * 1.5;
+    const lx = centerX + (radius + 20) * Math.cos(a);
+    const ly = centerY + (radius + 20) * Math.sin(a);
+    ctx.fillStyle = "#ccc";
+    ctx.font = "10px monospace";
+    ctx.fillText(val, lx - 10, ly + 5);
+  });
 }
 
-document.getElementById("restartBtn").addEventListener("click", () => {
-  s.abort();
-  startTest();
-});
+let currentSpeed = 0;
+let animationInterval;
 
-startTest();
+function animateSpeed(targetSpeed) {
+  clearInterval(animationInterval);
+  animationInterval = setInterval(() => {
+    if (currentSpeed >= targetSpeed) {
+      clearInterval(animationInterval);
+    } else {
+      currentSpeed += (targetSpeed - currentSpeed) * 0.05;
+      if (targetSpeed - currentSpeed < 0.5) currentSpeed = targetSpeed;
+      drawMeter(currentSpeed);
+      document.getElementById("speedValue").innerText = currentSpeed.toFixed(1) + " Mbps";
+    }
+  }, 16);
+}
+
+function startTest() {
+  const testDownloadSpeed = Math.floor(Math.random() * 100 + 20);
+  const testUploadSpeed = Math.floor(Math.random() * 50 + 10);
+  const ping = Math.floor(Math.random() * 30 + 5);
+  const jitter = Math.floor(Math.random() * 10 + 2);
+
+  animateSpeed(testDownloadSpeed);
+  document.getElementById("download").innerText = testDownloadSpeed;
+  document.getElementById("upload").innerText = testUploadSpeed;
+  document.getElementById("ping").innerText = ping;
+  document.getElementById("jitter").innerText = jitter;
+}
