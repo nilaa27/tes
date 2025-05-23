@@ -3,26 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SpeedTest</title>
+  <title>Pixel Speed Test</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1 class="title">SpeedTest</h1>
-    <canvas id="speedometer" width="300" height="200"></canvas>
-    <div class="speed">Kecepatan: <span id="speedValue">0 Mbps</span></div>
-    <button onclick="startTest()">Mulai Tes</button>
+    <canvas id="speedometer" width="300" height="300"></canvas>
+    <div class="value" id="speedValue">0.0 Mbps</div>
+
     <div class="info">
-      <p>IP: <span id="ip">-</span></p>
-      <p>Lokasi: <span id="lokasi">-</span></p>
-      <p>ISP: <span id="isp">-</span></p>
-      <p>Perangkat: <span id="perangkat">-</span></p>
-      <p>Download: <span id="download">-</span> Mbps</p>
-      <p>Upload: <span id="upload">-</span> Mbps</p>
-      <p>Ping: <span id="ping">-</span> ms</p>
-      <p>Jitter: <span id="jitter">-</span> ms</p>
+      <p><strong>PING</strong> <span id="ping">--</span> ms</p>
+      <p><strong>JITTER</strong> <span id="jitter">--</span> ms</p>
     </div>
+
+    <div class="result-box">
+      <p><strong>UNDUH</strong></p>
+      <p><span id="download">--</span> Mbps</p>
+      <div class="graph"></div>
+    </div>
+
+    <div class="result-box">
+      <p><strong>UNGGAH</strong></p>
+      <p><span id="upload">--</span> Mbps</p>
+      <div class="graph"></div>
+    </div>
+
+    <div class="isp-info">
+      <p id="isp">--</p>
+      <p id="ip">--</p>
+      <p id="lokasi">--</p>
+      <p id="perangkat">--</p>
+    </div>
+
+    <button onclick="startTest()">MULAI TES</button>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
