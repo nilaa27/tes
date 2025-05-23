@@ -3,42 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pixel Speed Test</title>
+  <title>Speed Test Retro Pixel</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <div class="speedometer">
-      <div class="needle" id="needle"></div>
-      <div class="speed-value" id="speedValue">0.0</div>
-      <div class="unit">Mbps</div>
+    <div class="frame pixel" onclick="startTest()">
+      <canvas id="speedometer" width="250" height="250"></canvas>
+      <div class="speed-value" id="speedValue">0.0 Mbps</div>
     </div>
 
-    <div class="info-group">
-      <div class="box">
-        <span>PING</span>
-        <div><strong>19</strong> ms</div>
-        <span>JITTER</span>
-        <div><strong>2</strong> ms</div>
+    <div class="grid">
+      <div class="box pixel" onclick="startTest()">
+        <p>PING</p><strong id="ping">0</strong> ms
+        <p>JITTER</p><strong id="jitter">0</strong> ms
       </div>
-
-      <div class="box">
-        <span>UNDUH</span>
-        <div class="value"><strong>66.2</strong> Mbps</div>
+      <div class="box pixel" onclick="startTest()">
+        <p>UNDUH</p><strong id="download">0</strong> Mbps
       </div>
-
-      <div class="box">
-        <span>UNGGGAH</span>
-        <div class="value"><strong>42.7</strong> Mbps</div>
+      <div class="box pixel" onclick="startTest()">
+        <p>UNGGAH</p><strong id="upload">0</strong> Mbps
       </div>
-
-      <div class="box">
-        <span>IM3 Ooredoo</span>
-        <div>114.5.110.148</div>
-        <span>PT. Indosat Tbk</span>
-        <div>Surabaya</div>
+      <div class="box pixel">
+        <p id="isp">ISP</p>
+        <p id="ip">IP</p>
+        <p id="lokasi">Kota</p>
+        <p id="perangkat">Perangkat</p>
       </div>
     </div>
   </div>
+  <script src="script.js"></script>
 </body>
 </html>
