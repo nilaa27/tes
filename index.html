@@ -2,186 +2,27 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Speedtest 3D</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      background-color: #111;
-      color: #fff;
-      text-align: center;
-    }
-
-    h1 {
-      color: #00bfff;
-      margin-top: 20px;
-      letter-spacing: 2px;
-    }
-
-    .speedometer {
-      margin: 30px auto;
-      width: 200px;
-      height: 120px;
-    }
-
-    #speedValue {
-      font-size: 32px;
-      font-weight: bold;
-      margin-top: -10px;
-    }
-
-    .info-box {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 30px 10px;
-      flex-wrap: wrap;
-    }
-
-    .card {
-      background-color: #222;
-      border-radius: 12px;
-      padding: 20px;
-      flex: 1 1 100px;
-      max-width: 100px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    }
-
-    .card h2 {
-      margin: 0;
-      font-size: 16px;
-    }
-
-    .card p {
-      margin: 5px 0;
-      color: #00bfff;
-      font-weight: bold;
-    }
-
-    .meta {
-      margin-top: 20px;
-    }
-
-    .meta div {
-      margin: 8px 0;
-      background: #222;
-      padding: 8px 16px;
-      border-radius: 10px;
-    }
-
-    button {
-      background-color: #00bfff;
-      border: none;
-      padding: 12px 30px;
-      font-size: 16px;
-      border-radius: 8px;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:active {
-      transform: scale(0.96);
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SpeedTest</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>SPEEDTEST</h1>
-
-  <svg class="speedometer" viewBox="0 0 200 120">
-    <path id="arc" d="" stroke="#666" stroke-width="15" fill="none" />
-    <text x="100" y="90" text-anchor="middle" font-size="30" fill="#fff" id="speedValue">0</text>
-  </svg>
-
-  <p>Mbps</p>
-  <button id="startBtn">Mulai Tes</button>
-
-  <div class="info-box">
-    <div class="card">
-      <h2>Unduh</h2>
-      <p id="download">--</p>
-      <small>Mbps</small>
-    </div>
-    <div class="card">
-      <h2>Unggah</h2>
-      <p id="upload">--</p>
-      <small>Mbps</small>
-    </div>
-    <div class="card">
-      <h2>Ping</h2>
-      <p id="ping">--</p>
-      <small>ms</small>
+  <div class="container">
+    <h1 class="title">SpeedTest</h1>
+    <canvas id="speedometer" width="300" height="200"></canvas>
+    <div class="speed">Kecepatan: <span id="speedValue">0 Mbps</span></div>
+    <button onclick="startTest()">Mulai Tes</button>
+    <div class="info">
+      <p>IP: <span id="ip">-</span></p>
+      <p>Lokasi: <span id="lokasi">-</span></p>
+      <p>ISP: <span id="isp">-</span></p>
+      <p>Perangkat: <span id="perangkat">-</span></p>
+      <p>Download: <span id="download">-</span> Mbps</p>
+      <p>Upload: <span id="upload">-</span> Mbps</p>
+      <p>Ping: <span id="ping">-</span> ms</p>
+      <p>Jitter: <span id="jitter">-</span> ms</p>
     </div>
   </div>
-
-  <div class="meta">
-    <div>IP: <span id="ip">-</span></div>
-    <div>ISP: <span id="isp">-</span></div>
-    <div>Perangkat: <span id="device">-</span></div>
-  </div>
-
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("startBtn").addEventListener("click", simulateTest);
-
-    function simulateTest() {
-      const down = randomSpeed();
-      const up = randomSpeed();
-      const ping = Math.floor(Math.random() * 100) + 1;
-
-      animateSpeed(down);
-      document.getElementById("download").textContent = down;
-      document.getElementById("upload").textContent = up;
-      document.getElementById("ping").textContent = ping;
-    }
-
-    function randomSpeed() {
-      return (Math.random() * 200 + 10).toFixed(1);
-    }
-
-    function animateSpeed(value) {
-      let percent = Math.min(value / 1000, 1);
-      let angle = percent * 180;
-      let radians = (angle * Math.PI) / 180;
-      let x = 100 + 90 * Math.cos(radians);
-      let y = 100 - 90 * Math.sin(radians);
-      let arc = `M10,100 A90,90 0 ${angle > 180 ? 1 : 0},1 ${x},${y}`;
-
-      const arcElement = document.getElementById("arc");
-      arcElement.setAttribute("d", arc);
-
-      if (value < 30) arcElement.setAttribute("stroke", "#ff3b3b");
-      else if (value < 100) arcElement.setAttribute("stroke", "#ffc107");
-      else arcElement.setAttribute("stroke", "#00ff88");
-
-      document.getElementById("speedValue").textContent = value;
-    }
-
-    // Ganti API: gunakan ipinfo.io agar lebih stabil
-    fetch("https://ipinfo.io/json?token=db955ecd23c16c") // Token gratis
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById("ip").textContent = data.ip || "-";
-        document.getElementById("isp").textContent = data.org || "-";
-      })
-      .catch(() => {
-        document.getElementById("ip").textContent = "-";
-        document.getElementById("isp").textContent = "-";
-      });
-
-    // Deteksi perangkat
-    function getDevice() {
-      const ua = navigator.userAgent;
-      if (/android/i.test(ua)) return "Android";
-      if (/iPad|iPhone|iPod/.test(ua)) return "iOS";
-      if (/Macintosh/.test(ua)) return "macOS";
-      if (/Windows/.test(ua)) return "Windows";
-      if (/Linux/.test(ua)) return "Linux";
-      return "Lainnya";
-    }
-    document.getElementById("device").textContent = getDevice();
-  });
-</script>
+  <script src="script.js"></script>
 </body>
 </html>
