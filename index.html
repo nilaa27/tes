@@ -2,42 +2,43 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pixel Speed Test</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <canvas id="speedometer" width="300" height="300"></canvas>
-    <div class="value" id="speedValue">0.0 Mbps</div>
-
-    <div class="info">
-      <p><strong>PING</strong> <span id="ping">--</span> ms</p>
-      <p><strong>JITTER</strong> <span id="jitter">--</span> ms</p>
+    <div class="speedometer">
+      <div class="needle" id="needle"></div>
+      <div class="speed-value" id="speedValue">0.0</div>
+      <div class="unit">Mbps</div>
     </div>
 
-    <div class="result-box">
-      <p><strong>UNDUH</strong></p>
-      <p><span id="download">--</span> Mbps</p>
-      <div class="graph"></div>
-    </div>
+    <div class="info-group">
+      <div class="box">
+        <span>PING</span>
+        <div><strong>19</strong> ms</div>
+        <span>JITTER</span>
+        <div><strong>2</strong> ms</div>
+      </div>
 
-    <div class="result-box">
-      <p><strong>UNGGAH</strong></p>
-      <p><span id="upload">--</span> Mbps</p>
-      <div class="graph"></div>
-    </div>
+      <div class="box">
+        <span>UNDUH</span>
+        <div class="value"><strong>66.2</strong> Mbps</div>
+      </div>
 
-    <div class="isp-info">
-      <p id="isp">--</p>
-      <p id="ip">--</p>
-      <p id="lokasi">--</p>
-      <p id="perangkat">--</p>
-    </div>
+      <div class="box">
+        <span>UNGGGAH</span>
+        <div class="value"><strong>42.7</strong> Mbps</div>
+      </div>
 
-    <button onclick="startTest()">MULAI TES</button>
+      <div class="box">
+        <span>IM3 Ooredoo</span>
+        <div>114.5.110.148</div>
+        <span>PT. Indosat Tbk</span>
+        <div>Surabaya</div>
+      </div>
+    </div>
   </div>
-
-  <script src="script.js"></script>
 </body>
 </html>
