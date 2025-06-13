@@ -1,70 +1,36 @@
+// script.js (Simulator Speedtest tanpa Backend)
+
 // Mengambil referensi elemen HTML
 const downloadSpeedElement = document.getElementById('downloadSpeed');
 const gaugeNeedle = document.getElementById('gaugeNeedle');
-const gaugeColoredArc = document.getElementById('gaugeColoredArc'); // Elemen busur warna
+const gaugeColoredArc = document.getElementById('gaugeColoredArc'); 
 const startButton = document.getElementById('startButton');
 const pingValueElement = document.getElementById('pingValue');
 const jitterValueElement = document.getElementById('jitterValue');
-const downloadValueElement = document.getElementById('downloadValue'); // Untuk metrik Unduh di bawah
-const uploadValueElement = document.getElementById('uploadValue');     // Untuk metrik Unggah di bawah
-const downloadGraph = document.getElementById('downloadGraph'); // Untuk grafik batang unduh
-const uploadGraph = document.getElementById('uploadGraph');     // Untuk grafik batang unggah
+const downloadValueElement = document.getElementById('downloadValue'); 
+const uploadValueElement = document.getElementById('uploadValue');     
+const downloadGraph = document.getElementById('downloadGraph'); 
+const uploadGraph = document.getElementById('uploadGraph');     
 
-
-// Fungsi untuk memperbarui posisi jarum meteran dan busur warna berdasarkan kecepatan
+// Fungsi untuk memperbarui posisi jarum meteran berdasarkan kecepatan
 function updateGauge(speedMbps) {
-    // Meteran ini dari 0 hingga 1000 (1g)
     const minSpeed = 0;
-    const maxSpeed = 1000;
-    // Rotasi jarum dari -130 derajat (0 Mbps) hingga +130 derajat (1000 Mbps)
-    const minAngle = -130; 
-    const maxAngle = 130;  
+    const maxSpeed = 1000; // Max kecepatan gauge (sesuai gambar referensi)
+    const minAngle = -130; // Rotasi jarum: -130 derajat untuk 0 Mbps
+    const maxAngle = 130;  // Rotasi jarum: +130 derajat untuk 1000 Mbps
 
-    // Hitung sudut rotasi
     let angle = minAngle + (speedMbps / (maxSpeed - minSpeed)) * (maxAngle - minAngle);
-    // Batasi sudut agar tidak melebihi batas
-    angle = Math.max(minAngle, Math.min(maxAngle, angle));
+    angle = Math.max(minAngle, Math.min(maxAngle, angle)); // Batasi sudut
 
-    // Terapkan rotasi pada jarum
-    gaugeNeedle.style.transform = `translateY(70px) rotate(${angle}deg)`; // Sesuaikan translateY jika perlu
-
-    // Hitung persentase untuk mengisi busur berwarna
-    let arcPercentage = (speedMbps / maxSpeed) * 100;
-    arcPercentage = Math.max(0, Math.min(100, arcPercentage)); // Batasi antara 0-100%
-
-    // Sudut untuk busur berwarna harus berlawanan dengan jarum agar mengisi dari kiri ke kanan
-    // Busur dimulai dari -225 derajat (arah jam 7), total 270 derajat
-    // Kita akan memutar clip-path atau mask untuk mengisi
-    // Lebih sederhana, kita bisa menyesuaikan properti CSS yang ada (misalnya border-image-slice atau multiple gradients)
-    // Untuk tujuan ini, kita akan simulasi dengan rotasi pada elemen gauge-colored-arc
-    // Awalnya -225 deg (0%), akhir 45 deg (100%) jika busur penuh 270 deg
-    // 270 derajat = 100%
-    // 1 derajat = 100/270 %
-    // arcFillAngle = (arcPercentage / 100) * 270;
-    // gaugeColoredArc.style.transform = `translate(-50%, -50%) rotate(${minAngle + arcFillAngle}deg)`; 
-    // Pendekatan ini lebih kompleks untuk border. Kita akan menggunakan clipping path atau width.
-    // Karena kita memakai border untuk arc, kita akan putar arc tersebut sesuai kecepatan.
-    // Sudut awal busur adalah 225 derajat (posisi 7.5 di jam) dari 0 derajat.
-    // Jika speed 0, rotasi 225. Jika speed 1000, rotasi 225 + 270 = 495.
-    // Tapi karena kita mau mengisi dari kiri ke kanan, kita atur transform-origin dan rotasi berbeda.
-    // Kita akan biarkan busur awal tetap dan bermain dengan transform needle dan text.
-
-    // Untuk mengisi busur berwarna, kita bisa menyesuaikan width dan clip-path atau 
-    // menggunakan properti CSS gradient atau SVG. Untuk meniru gambar, 
-    // cukup gunakan rotasi jarum dan angka. Busur biru di gambar adalah bagian dari background statis.
-    // Jika Anda ingin mengisi busur biru secara dinamis, itu membutuhkan teknik CSS yang lebih lanjut (misalnya conic-gradient atau SVG).
-    // Untuk saat ini, kita akan biarkan gauge-colored-arc tetap statis sebagai "fill" total,
-    // dan hanya jarum serta angka yang bergerak.
+    gaugeNeedle.style.transform = `translateY(70px) rotate(${angle}deg)`; 
 }
 
-
-// Fungsi simulasi tes kecepatan
+// Fungsi utama untuk menjalankan seluruh simulasi tes
 async function runSpeedTest() {
-    // Menonaktifkan tombol dan mengubah teks
     startButton.disabled = true;
-    startButton.textContent = 'Mengukur...';
-    
-    // Reset nilai yang ditampilkan
+    startButton.textContent = 'Mulai Tes...';
+
+    // Reset UI ke keadaan awal
     downloadSpeedElement.textContent = '0.0';
     pingValueElement.textContent = '--';
     jitterValueElement.textContent = '--';
@@ -72,68 +38,72 @@ async function runSpeedTest() {
     uploadValueElement.textContent = '--';
     downloadGraph.style.width = '0%';
     uploadGraph.style.width = '0%';
-    updateGauge(0); // Set jarum ke nol
+    updateGauge(0);
 
-    // --- Simulasi Pengukuran Ping dan Jitter ---
-    // Menghasilkan nilai ping acak antara 30-50ms
-    const ping = (Math.random() * 20 + 30).toFixed(0); 
-    // Menghasilkan nilai jitter acak antara 1-10ms
-    const jitter = (Math.random() * 9 + 1).toFixed(0); 
-    pingValueElement.textContent = ping;
-    jitterValueElement.textContent = jitter;
+    // --- Simulasi Ping & Jitter ---
+    startButton.textContent = 'Menguji Ping & Jitter...';
+    // Menghasilkan nilai ping acak yang realistis (misal: 20-60ms)
+    const simulatedPing = (Math.random() * 40 + 20).toFixed(0); 
+    // Menghasilkan nilai jitter acak yang realistis (misal: 1-15ms)
+    const simulatedJitter = (Math.random() * 14 + 1).toFixed(0); 
+    
+    // Tampilkan hasil ping dan jitter setelah jeda singkat
+    await new Promise(r => setTimeout(r, 1000)); // Simulasi waktu tes ping
+    pingValueElement.textContent = simulatedPing;
+    jitterValueElement.textContent = simulatedJitter;
+    await new Promise(r => setTimeout(r, 500)); // Jeda sebelum mulai download
 
     // --- Simulasi Tes Unduh ---
-    startButton.textContent = 'Unduh...';
+    startButton.textContent = 'Menguji Unduh...';
     let currentDownloadSpeed = 0;
-    // Menentukan kecepatan unduh target acak antara 50-100 Mbps, mirip gambar
-    const downloadTargetSpeed = (Math.random() * 50 + 50); 
+    // Tentukan target kecepatan unduh yang realistis (misal: 30-100 Mbps)
+    const targetDownloadSpeed = (Math.random() * 70 + 30); 
+    const downloadDuration = 7000; // Durasi simulasi unduh dalam ms (7 detik)
     let downloadElapsedTime = 0;
-    const downloadDuration = 5000; // 5 detik simulasi
 
     const downloadSimInterval = setInterval(() => {
-        downloadElapsedTime += 100; // Setiap 100ms
+        downloadElapsedTime += 100; // Setiap 100ms update
         let progress = downloadElapsedTime / downloadDuration;
         if (progress > 1) progress = 1;
 
-        // Simulasi kecepatan berfluktuasi mendekati target
-        let fluctuation = (Math.random() - 0.5) * 20; // -10 hingga +10
-        currentDownloadSpeed = (downloadTargetSpeed * progress) + fluctuation;
-        currentDownloadSpeed = Math.max(0, Math.min(maxSpeed, currentDownloadSpeed)); // Batasi dalam rentang meteran
+        // Fluuktuasi kecepatan: bergerak menuju target, dengan sedikit acak
+        let fluctuation = (Math.random() - 0.5) * 15; // Fluktuasi antara -7.5 hingga +7.5 Mbps
+        currentDownloadSpeed = (targetDownloadSpeed * progress * 0.8) + (targetDownloadSpeed * 0.2) + fluctuation;
+        currentDownloadSpeed = Math.max(0, Math.min(1000, currentDownloadSpeed)); // Batasi dalam rentang meteran 0-1000
 
         downloadSpeedElement.textContent = currentDownloadSpeed.toFixed(1);
         downloadValueElement.textContent = currentDownloadSpeed.toFixed(1);
-        downloadGraph.style.width = `${progress * 100}%`; // Update grafik batang
-        updateGauge(currentDownloadSpeed); // Memperbarui posisi jarum
+        downloadGraph.style.width = `${progress * 100}%`;
+        updateGauge(currentDownloadSpeed); // Update jarum
 
         if (downloadElapsedTime >= downloadDuration) {
             clearInterval(downloadSimInterval);
             // Nilai akhir unduh bisa sedikit berbeda dari target
-            const finalDownloadSpeed = (downloadTargetSpeed + (Math.random() * 5 - 2.5)).toFixed(1); // +/- 2.5 Mbps
+            const finalDownloadSpeed = (targetDownloadSpeed + (Math.random() * 5 - 2.5)).toFixed(1); // +/- 2.5 Mbps
             downloadSpeedElement.textContent = finalDownloadSpeed;
             downloadValueElement.textContent = finalDownloadSpeed;
             downloadGraph.style.width = '100%';
-            updateGauge(parseFloat(finalDownloadSpeed));
+            updateGauge(parseFloat(finalDownloadSpeed)); // Atur jarum ke nilai akhir
         }
     }, 100);
 
-    await new Promise(resolve => setTimeout(resolve, downloadDuration + 200)); // Tambah sedikit waktu untuk transisi akhir
-
+    await new Promise(resolve => setTimeout(resolve, downloadDuration + 500)); // Tunggu hingga simulasi selesai + jeda
 
     // --- Simulasi Tes Unggah ---
-    startButton.textContent = 'Unggah...';
+    startButton.textContent = 'Menguji Unggah...';
     let currentUploadSpeed = 0;
-    // Menentukan kecepatan unggah target acak antara 10-30 Mbps
-    const uploadTargetSpeed = (Math.random() * 20 + 10); 
+    // Tentukan target kecepatan unggah yang realistis (misal: 10-30 Mbps)
+    const targetUploadSpeed = (Math.random() * 20 + 10); 
+    const uploadDuration = 5000; // Durasi simulasi unggah dalam ms (5 detik)
     let uploadElapsedTime = 0;
-    const uploadDuration = 3000; // 3 detik simulasi
 
     const uploadSimInterval = setInterval(() => {
         uploadElapsedTime += 100;
         let progress = uploadElapsedTime / uploadDuration;
         if (progress > 1) progress = 1;
 
-        let fluctuation = (Math.random() - 0.5) * 5; // -2.5 hingga +2.5
-        currentUploadSpeed = (uploadTargetSpeed * progress) + fluctuation;
+        let fluctuation = (Math.random() - 0.5) * 5; // Fluktuasi antara -2.5 hingga +2.5 Mbps
+        currentUploadSpeed = (targetUploadSpeed * progress * 0.8) + (targetUploadSpeed * 0.2) + fluctuation;
         currentUploadSpeed = Math.max(0, currentUploadSpeed); // Pastikan tidak negatif
 
         uploadValueElement.textContent = currentUploadSpeed.toFixed(1);
@@ -141,16 +111,15 @@ async function runSpeedTest() {
 
         if (uploadElapsedTime >= uploadDuration) {
             clearInterval(uploadSimInterval);
-            const finalUploadSpeed = (uploadTargetSpeed + (Math.random() * 2 - 1)).toFixed(1); // +/- 1 Mbps
+            const finalUploadSpeed = (targetUploadSpeed + (Math.random() * 2 - 1)).toFixed(1); // +/- 1 Mbps
             uploadValueElement.textContent = finalUploadSpeed;
             uploadGraph.style.width = '100%';
         }
     }, 100);
 
-    await new Promise(resolve => setTimeout(resolve, uploadDuration + 200)); 
+    await new Promise(resolve => setTimeout(resolve, uploadDuration + 500)); 
 
-
-    // --- Selesai Tes ---
+    // --- Tes Selesai ---
     startButton.textContent = 'Mulai Tes Lagi!';
     startButton.disabled = false;
 }
@@ -160,3 +129,22 @@ startButton.addEventListener('click', runSpeedTest);
 
 // Mengatur tampilan awal saat halaman dimuat
 updateGauge(0); 
+
+// Menampilkan waktu saat ini secara realtime (opsional, untuk sentuhan realisme)
+function updateTime() {
+    const now = new Date();
+    // Menggunakan informasi lokasi yang disimpan: Surabaya, East Java, Indonesia
+    // Asumsi zona waktu WIB untuk Surabaya (UTC+7)
+    const options = { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: false, 
+        timeZone: 'Asia/Jakarta' // WIB
+    };
+    const timeString = now.toLocaleTimeString('en-GB', options); // en-GB untuk format 24 jam
+    document.getElementById('timeDisplay').textContent = timeString;
+}
+
+// Panggil fungsi updateTime sekali saat dimuat, lalu setiap menit
+updateTime();
+setInterval(updateTime, 60 * 1000); // Update setiap menit
