@@ -3,86 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel 3D Speed Test</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>Speed Test</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container pixel-border">
-        <h1>Pixel Speed Test</h1>
-
-        <div class="header-metrics">
-            <div class="metric-box download pixel-border">
-                <span class="label">Unduh</span>
-                <span class="value" id="headerDownloadValue">--</span>
-                <span class="unit">Mbps</span>
-            </div>
-            <div class="metric-box upload pixel-border">
-                <span class="label">Unggah</span>
-                <span class="value" id="headerUploadValue">--</span>
-                <span class="unit">Mbps</span>
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <span style="font-size: 0.9em; color: #777;">13.47</span>
+            <div style="display: flex; align-items: center;">
+                <span style="font-size: 0.9em; color: #777;">4G</span>
+                <span style="font-size: 0.9em; color: #777; margin-left: 5px;">📶</span>
+                <span style="font-size: 0.9em; color: #777; margin-left: 5px;">69%</span>
             </div>
         </div>
 
-        <div class="icon-row">
-            <div class="icon-item">
-                <div class="icon ping"></div>
-                Ping <span class="value" id="pingValue">--</span> ms
-            </div>
-            <div class="icon-item">
-                <div class="icon game"></div>
-                Jitter <span class="value" id="jitterValue">--</span> ms
-            </div>
-            <div class="icon-item">
-                <div class="icon stream"></div>
-                --
-            </div>
-            <div class="icon-item">
-                <div class="icon user"></div>
-                --
+        <div style="display: flex; align-items: center; background-color: #eee; border-radius: 20px; padding: 8px 15px; margin-bottom: 25px;">
+            <span style="color: #777; margin-right: 10px;">🔍</span>
+            <span style="color: #333; flex-grow: 1;">cbn.id</span>
+            <span style="color: #777; margin-left: 10px;">📤</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <span style="font-size: 1.5em; cursor: pointer;">☰</span>
+            <div style="font-weight: bold; font-size: 1.8em; color: #007bff;">CBN</div>
+            <div style="display: flex; align-items: center;">
+                <span style="font-size: 1.2em; margin-right: 10px;">🔎</span>
+                <span style="font-size: 1.2em; margin-right: 5px;">🇮🇩</span>
+                <span style="font-size: 1.2em; cursor: pointer;">ID ⌵</span>
             </div>
         </div>
 
         <div class="speed-gauge">
             <div class="gauge-background"></div>
-            <div class="gauge-gradient-arc"></div>
+            <div class="gauge-colored-arc" id="gaugeColoredArc"></div>
             <div class="gauge-markings"></div>
             
             <div class="gauge-needle" id="gaugeNeedle"></div>
             <div class="gauge-center-cap"></div>
             
             <div class="gauge-value-display">
-                <span class="speed-value" id="downloadSpeed">0.00</span> <span class="unit">Mbps</span>
+                <span class="speed-value" id="downloadSpeed">0.0</span> <span class="unit">Mbps</span>
             </div>
 
             <div class="gauge-numbers">
                 <span class="m-0">0</span>
-                <span class="m-5">5</span>
                 <span class="m-10">10</span>
                 <span class="m-50">50</span>
                 <span class="m-100">100</span>
-                <span class="m-250">250</span>
+                <span class="m-200">200</span>
+                <span class="m-300">300</span>
                 <span class="m-500">500</span>
                 <span class="m-750">750</span>
-                <span class="m-1000">1.000</span>
+                <span class="m-1g">1g</span>
             </div>
         </div>
         
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <div class="label"><span class="icon-small ping"></span> PING</div>
+                <div class="value" id="pingValue">--</div>
+                <div class="unit">ms</div>
+            </div>
+            <div class="metric-item">
+                <div class="label"><span class="icon-small jitter"></span> JITTER</div>
+                <div class="value" id="jitterValue">--</div>
+                <div class="unit">ms</div>
+            </div>
+            <div class="metric-item">
+                <div class="label"><span class="icon-small download"></span> UNDUH</div>
+                <div class="value" id="downloadValue">--</div>
+                <div class="unit">Mbps</div>
+                <div style="width: 100%; height: 20px; background-color: #e0e0e0; border-radius: 5px; margin-top: 5px;">
+                    <div id="downloadGraph" style="height: 100%; width: 0%; background-color: #007bff; border-radius: 5px;"></div>
+                </div>
+            </div>
+            <div class="metric-item">
+                <div class="label"><span class="icon-small upload"></span> UNGGAH</div>
+                <div class="value" id="uploadValue">--</div>
+                <div class="unit">Mbps</div>
+                <div style="width: 100%; height: 20px; background-color: #e0e0e0; border-radius: 5px; margin-top: 5px;">
+                    <div id="uploadGraph" style="height: 100%; width: 0%; background-color: #ff6e00; border-radius: 5px;"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="buttons">
-            <button id="startButton" class="pixel-border">Mulai Tes!</button>
+            <button id="startButton">Mulai Tes!</button>
         </div>
     </div>
 
-    <div class="info-panel pixel-border">
-        <div class="info-item pixel-border">
-            <span class="label">Provider:</span> <span class="value" id="providerValue">IM3 Ooredoo</span>
+    <div class="info-panel">
+        <div class="info-item">
+            <span class="label">IM3 Ooredoo</span>
+            <span class="value">114.5.103.169</span>
         </div>
-        <div class="info-item pixel-border">
-            <span class="label">Lokasi:</span> <span class="value" id="locationValue">Surabaya</span>
+        <div class="info-item">
+            <span class="label">CBN</span>
+            <div style="display: flex; align-items: center;">
+                <span class="value">Singapore</span>
+                <div class="avatar">
+                    <img src="https://assets.stickpng.com/images/58569bf14f6ae202fedf27f0.png" alt="Avatar">
+                </div>
+            </div>
         </div>
-        <div class="info-item pixel-border">
-            <span class="label">sudah berapa lama kamu bertahan?:</span> <span class="value">2005-09-28</span>
+        <div class="info-item">
+            <span class="label">sudah berapa lama kamu bertahan?:</span>
+            <span class="value">2005-09-28</span>
         </div>
+    </div>
+
+    <div style="background-color: #fff; width: 100%; position: fixed; bottom: 0; left: 0; padding: 15px 0; display: flex; justify-content: space-around; border-top: 1px solid #eee; box-shadow: 0 -2px 10px rgba(0,0,0,0.05);">
+        <span style="font-size: 1.5em; cursor: pointer;">←</span>
+        <span style="font-size: 1.5em; cursor: pointer;">→</span>
+        <span style="font-size: 1.8em; background-color: #007bff; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; cursor: pointer;">+</span>
+        <div style="font-size: 0.9em; background-color: #eee; border-radius: 5px; padding: 5px 10px; color: #555;">44</div>
+        <span style="font-size: 1.5em; cursor: pointer;">⋮</span>
     </div>
 
     <script src="script.js"></script>
