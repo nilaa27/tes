@@ -9,8 +9,7 @@
 <body>
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <span style="font-size: 0.9em; color: #777;">13.47</span>
-            <div style="display: flex; align-items: center;">
+            <span id="timeDisplay" style="font-size: 0.9em; color: #777;">--.--</span> <div style="display: flex; align-items: center;">
                 <span style="font-size: 0.9em; color: #777;">4G</span>
                 <span style="font-size: 0.9em; color: #777; margin-left: 5px;">📶</span>
                 <span style="font-size: 0.9em; color: #777; margin-left: 5px;">69%</span>
@@ -72,7 +71,6 @@
             <div class="metric-item">
                 <div class="label"><span class="icon-small download"></span> UNDUH</div>
                 <div class="value" id="downloadValue">--</div>
-                <div class="unit">Mbps</div>
                 <div style="width: 100%; height: 20px; background-color: #e0e0e0; border-radius: 5px; margin-top: 5px;">
                     <div id="downloadGraph" style="height: 100%; width: 0%; background-color: #007bff; border-radius: 5px;"></div>
                 </div>
@@ -80,7 +78,6 @@
             <div class="metric-item">
                 <div class="label"><span class="icon-small upload"></span> UNGGAH</div>
                 <div class="value" id="uploadValue">--</div>
-                <div class="unit">Mbps</div>
                 <div style="width: 100%; height: 20px; background-color: #e0e0e0; border-radius: 5px; margin-top: 5px;">
                     <div id="uploadGraph" style="height: 100%; width: 0%; background-color: #ff6e00; border-radius: 5px;"></div>
                 </div>
