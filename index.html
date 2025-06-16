@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --primary-color: #4CAF50; /* Hijau Bola */
-            --secondary-color: #3F51B5; /* Biru Tua */
-            --accent-color: #FFC107; /* Kuning Terang (Warna Isi Bar) */
-            --text-color: #E0E0E0;
-            --bg-dark: #1a1a2e;
-            --form-bg: rgba(255, 255, 255, 0.05); /* Lebih transparan */
-            --form-border: rgba(255, 255, 255, 0.1); /* Lebih tipis */
+            --primary-color: #4CAF50; /* Hijau Bola (Hijau utama) */
+            --secondary-color: #388E3C; /* Hijau Tua/Gelap (untuk kontras) */
+            --accent-color: #8BC34A; /* Hijau Cerah/Lime (untuk aksen dan glow) */
+            --text-color: #E0E0E0; /* Teks terang */
+            --bg-dark: #1A2C2A; /* Background gelap kehijauan */
+            --form-bg: rgba(76, 175, 80, 0.08); /* Background form transparan kehijauan */
+            --form-border: rgba(139, 195, 74, 0.3); /* Border form kehijauan */
             --ball-size: 40px; /* Ukuran bola di progress bar */
             --bar-height: 25px; /* Tinggi progress bar */
             --bar-radius: 20px; /* Radius sudut progress bar */
@@ -25,13 +25,13 @@
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-color);
-            /* overflow: hidden;  <-- Ini dihapus atau diubah di JS */
+            overflow: hidden; /* Dikelola oleh JS setelah loading */
             display: flex;
-            flex-direction: column; /* Ubah menjadi kolom */
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            perspective: 1200px; /* Perspektif untuk efek 3D pada konten utama */
+            perspective: 1200px;
         }
 
         /* --- Loading Screen Container --- */
@@ -41,15 +41,31 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #12122c, #0a0a1a);
+            /* Latar belakang gambar lapangan dengan blur dan overlay */
+            background: url('background-lapangan-blur.jpg') no-repeat center center / cover; /* GANTI DENGAN PATH GAMBAR LAPANGAN ANDA */
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
+            justify-content: center; /* Posisikan di tengah vertikal */
             align-items: center;
             z-index: 9999;
             transition: opacity 1s ease-out, visibility 1s ease-out;
-            padding-bottom: 70px;
+            padding-bottom: 0; /* Padding dihapus, posisi diatur oleh justify-content */
             box-sizing: border-box;
+            /* Overlay gelap di atas gambar background */
+            position: relative; /* Untuk pseudo-element overlay */
+        }
+
+        #loading-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Overlay gelap */
+            backdrop-filter: blur(5px); /* Blur tambahan pada overlay jika diperlukan */
+            -webkit-backdrop-filter: blur(5px);
+            z-index: -1; /* Pastikan di belakang konten */
         }
 
         #loading-screen.hidden {
@@ -65,6 +81,9 @@
             width: 80%;
             max-width: 500px;
             perspective: 1000px;
+            /* Posisikan wrapper ke bagian bawah area loading screen */
+            position: absolute;
+            bottom: 70px; /* Sesuaikan jarak dari bawah layar */
         }
 
         .loading-logo-container {
@@ -87,8 +106,8 @@
             height: var(--bar-height);
             overflow: hidden;
             position: relative;
-            border: 3px solid rgba(255, 255, 255, 0.5);
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.4), 0 0 15px rgba(var(--accent-color), 0.3);
+            border: 3px solid rgba(var(--secondary-color), 0.8);
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.4), 0 0 15px rgba(var(--accent-color), 0.5);
             animation: fadeInSlideUp 0.8s ease-out forwards;
             animation-delay: 0.4s;
             opacity: 0;
@@ -96,13 +115,13 @@
         }
 
         #loading-bar-fill {
-            background: linear-gradient(90deg, var(--accent-color), #FFECB3);
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
             height: 100%;
             width: 0%;
             border-radius: var(--bar-radius);
             transition: width 0.05s linear;
             position: relative;
-            box-shadow: 0 0 10px rgba(var(--accent-color), 0.7);
+            box-shadow: 0 0 10px rgba(var(--accent-color), 0.8);
         }
 
         .loading-text-bar {
@@ -125,17 +144,17 @@
             transform: translate(-50%, -50%) rotate(0deg);
             width: var(--ball-size);
             height: var(--ball-size);
-            background: url('football-fire.png') no-repeat center center / contain;
+            background: url('football-fire.png') no-repeat center center / contain; /* GANTI DENGAN PATH LOGO BOLA API ANDA */
             border-radius: 50%;
-            box-shadow: 0 0 15px rgba(255, 255, 0, 1), 0 0 25px rgba(255, 100, 0, 0.8);
+            box-shadow: 0 0 15px rgba(var(--accent-color), 1), 0 0 25px rgba(var(--primary-color), 0.8);
             transition: transform 0.05s linear;
             z-index: 3;
             animation: pulseGlow 1.5s infinite alternate;
         }
 
         @keyframes pulseGlow {
-            0% { box-shadow: 0 0 10px rgba(255, 255, 0, 0.8), 0 0 20px rgba(255, 100, 0, 0.6); }
-            100% { box-shadow: 0 0 20px rgba(255, 255, 0, 1), 0 0 35px rgba(255, 100, 0, 1); }
+            0% { box-shadow: 0 0 10px rgba(var(--accent-color), 0.8), 0 0 20px rgba(var(--primary-color), 0.6); }
+            100% { box-shadow: 0 0 20px rgba(var(--accent-color), 1), 0 0 35px rgba(var(--primary-color), 1); }
         }
 
         .loading-bottom-text {
@@ -144,13 +163,13 @@
             font-weight: 600;
             letter-spacing: 2px;
             color: var(--text-color);
-            text-shadow: 0 0 10px rgba(var(--accent-color), 0.5);
+            text-shadow: 0 0 10px rgba(var(--accent-color), 0.8);
             animation: pulseText 1.5s infinite alternate;
         }
 
         @keyframes pulseText {
-            0% { opacity: 0.8; text-shadow: 0 0 5px rgba(var(--accent-color), 0.3); }
-            100% { opacity: 1; text-shadow: 0 0 15px rgba(var(--accent-color), 0.7); }
+            0% { opacity: 0.8; text-shadow: 0 0 5px rgba(var(--accent-color), 0.5); }
+            100% { opacity: 1; text-shadow: 0 0 15px rgba(var(--accent-color), 1); }
         }
 
         @keyframes fadeInScale {
@@ -169,20 +188,18 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 1s ease-in, visibility 1s ease-in;
-            min-height: 100vh; /* Pastikan minimal setinggi viewport */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: url('https://via.placeholder.com/1920x1080/000000/FFFFFF?text=Background+Stadion+Blur') no-repeat center center / cover;
-            /* position: fixed; <-- Ini diubah! */
-            position: relative; /* Gunakan relative agar bisa di-scroll */
+            background: url('https://via.placeholder.com/1920x1080/1A2C2A/FFFFFF?text=Background+Stadion+Hijau+Blur') no-repeat center center / cover;
+            position: relative;
             top: 0;
             left: 0;
             width: 100%;
-            /* height: 100%; <-- Ini dihapus agar konten bisa melebihi 100% tinggi viewport */
             transform-style: preserve-3d;
-            padding: 50px 0; /* Tambahkan padding atas/bawah agar konten tidak mentok edge saat di-scroll */
+            padding: 50px 0;
             box-sizing: border-box;
         }
 
@@ -193,16 +210,15 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(26, 44, 42, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             z-index: -1;
         }
 
         #main-content.active {
             opacity: 1;
             visibility: visible;
-            /* overflow-y: auto; <-- Ini akan diatur pada body via JS */
         }
 
         .registration-card {
@@ -214,8 +230,8 @@
                 0 10px 20px rgba(0, 0, 0, 0.3),
                 5px 15px 30px rgba(0, 0, 0, 0.25),
                 inset 0 0 10px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
             max-width: 550px;
             width: 90%;
             z-index: 1;
@@ -225,6 +241,9 @@
             position: relative;
             overflow: hidden;
             transform-style: preserve-3d;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         /* --- Shimmer Effect for Card --- */
@@ -268,19 +287,27 @@
             height: auto;
             display: block;
             margin: 0 auto;
-            filter: drop-shadow(0 0 20px rgba(255, 193, 7, 0.8));
+            filter: drop-shadow(0 0 20px rgba(var(--primary-color), 0.8));
+        }
+
+        form#registrationForm {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
         }
 
         .form-group {
-            margin-bottom: 25px;
             position: relative;
             transform-style: preserve-3d;
+            margin-bottom: 0;
         }
 
         /* ----- Efek 3D pada Input & Select ----- */
         input::placeholder,
         select {
-            color: rgba(224, 224, 224, 0.6);
+            color: rgba(var(--text-color), 0.6);
         }
 
         input,
@@ -343,7 +370,7 @@
             color: var(--accent-color);
             opacity: 1;
             text-shadow: 0 0 5px rgba(var(--accent-color), 0.5);
-            background-color: transparent; /* Biarkan background input terlihat */
+            background-color: transparent;
             padding: 0;
             left: 10px;
             transform: translateY(0) translateZ(15px);
@@ -360,7 +387,7 @@
             display: none;
         }
         select:invalid {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(var(--text-color), 0.5);
         }
         select option {
             color: #333;
@@ -384,7 +411,7 @@
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
-            margin-top: 40px;
+            margin-top: 15px;
             letter-spacing: 1px;
             box-shadow:
                 0 5px 10px rgba(0, 0, 0, 0.3),
@@ -401,16 +428,12 @@
         }
 
         button:hover {
-            background-color: #3e8e41;
+            background-color: var(--secondary-color);
             transform: translateY(-3px) scale(1.01) translateZ(15px);
             box-shadow:
                 0 8px 15px rgba(0, 0, 0, 0.4),
                 0 5px 10px rgba(0, 0, 0, 0.3),
                 0 12px 20px rgba(var(--primary-color), 0.6);
-        }
-
-        button:hover i {
-            transform: translateX(5px) translateZ(5px);
         }
 
         button:active {
@@ -460,12 +483,15 @@
                 box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
                 transform: translateY(10px) rotateX(3deg) rotateY(3deg);
             }
+            form#registrationForm {
+                gap: 20px; /* Jarak antar grup form di mobile */
+            }
             .logo-header-container {
                 margin-bottom: 25px;
                 transform: scale(0.9) translateZ(5px);
             }
             .form-group {
-                margin-bottom: 20px;
+                margin-bottom: 0; /* Gap di handle oleh flexbox parent */
             }
             input,
             select {
@@ -641,8 +667,7 @@
                         setTimeout(() => {
                             loadingScreen.classList.add('hidden'); // Sembunyikan loading screen
                             mainContent.classList.add('active'); // Tampilkan konten utama
-                            // Aktifkan scrollbar pada body setelah loading selesai
-                            document.body.style.overflowY = 'auto';
+                            document.body.style.overflowY = 'auto'; // Aktifkan scrollbar
                         }, 200); // Sedikit delay agar transisi terlihat mulus
                     }
                 }
