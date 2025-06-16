@@ -108,22 +108,20 @@
             z-index: 2; /* Pastikan di atas fill tapi di bawah bola jika ingin bola terlihat di atas teks */
         }
 
-        /* ---- PERUBAHAN DI SINI ---- */
         .loading-ball-in-bar {
             position: absolute;
-            top: 0%; /* Diubah dari 50% menjadi 0% atau nilai yang sesuai */
-            /* Menggunakan transform Y untuk menaikkan bola lebih akurat dari top */
-            transform: translate(-50%, -80%) rotate(0deg); /* Adjust -80% untuk menaikkan bola */
-            left: 0; /* Posisi awal, akan diatur oleh JS */
+            top: 50%; /* Posisikan vertikal di tengah bar */
+            right: calc(var(--ball-size) / 2); /* Bola dimulai dari kanan fill bar, dikurangi setengah ukuran bola */
+            transform: translate(50%, -50%) rotate(0deg); /* Transformasi awal */
             width: var(--ball-size); /* Ukuran bola */
             height: var(--ball-size);
+            /* Gunakan gambar untuk bola */
             background: url('football-fire.png') no-repeat center center / contain; /* Ganti dengan path logo bola Anda */
             border-radius: 50%; /* Agar gambar bola tidak kotak */
             box-shadow: 0 0 10px rgba(255, 255, 0, 0.8); /* Glow pada bola */
             transition: transform 0.05s linear; /* Transisi untuk pergerakan bola */
             z-index: 3; /* Pastikan bola di atas teks "LOADING...." */
         }
-        /* -------------------------- */
 
         .loading-bottom-text {
             margin-top: 25px;
@@ -394,7 +392,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const loadingScreen = document.getElementById('loading-screen');
             const loadingBarFill = document.getElementById('loading-bar-fill');
-            const loadingBall = document.querySelector('.loading-ball-in-bar');
+            const loadingBall = document.querySelector('.loading-ball-in-bar'); // Selektor disesuaikan
             const mainContent = document.getElementById('main-content');
             const registrationForm = document.getElementById('registrationForm');
             const sendTimeElement = document.getElementById('sendTime');
@@ -448,9 +446,7 @@
                     // Rotasi bola berdasarkan jarak yang ditempuh
                     const rotationDegrees = (ballCurrentX / ballCircumference) * 360;
 
-                    // Mengatur posisi bola. Transform X akan menggesernya secara horizontal.
-                    // Transform Y digunakan untuk menaikkan/menurunkan posisi vertikal dari 'top: 0%'.
-                    loadingBall.style.transform = `translateX(${ballCurrentX}px) translateY(-80%) rotate(${rotationDegrees}deg)`;
+                    loadingBall.style.transform = `translateX(${ballCurrentX}px) translateY(-50%) rotate(${rotationDegrees}deg)`;
 
 
                     if (progress < 1) {
