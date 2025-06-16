@@ -39,7 +39,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #12122c, #0a0a1a); /* Gradien gelap yang lebih dalam */
+            background: linear-gradient(135deg, #12122c, #0a0a1a);
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -61,7 +61,7 @@
             flex-direction: column;
             align-items: center;
             width: 80%;
-            max-width: 500px; /* Sedikit lebih lebar untuk kesan megah */
+            max-width: 500px;
             perspective: 1000px;
         }
 
@@ -187,8 +187,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7); /* Overlay gelap yang sedikit lebih kuat */
-            backdrop-filter: blur(8px); /* Efek blur yang sedikit lebih kuat */
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             z-index: -1;
         }
@@ -200,22 +200,22 @@
         }
 
         .registration-card {
-            background: rgba(255, 255, 255, 0.08); /* Background form lebih transparan */
-            border: 1px solid rgba(255, 255, 255, 0.3); /* Border lebih jelas */
-            border-radius: 25px; /* Radius sudut lebih besar */
-            padding: 50px; /* Padding lebih besar */
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6); /* Bayangan lebih dalam */
-            backdrop-filter: blur(15px); /* Efek Glassmorphism lebih kuat */
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            max-width: 550px; /* Lebih lebar */
+            max-width: 550px;
             width: 90%;
             z-index: 1;
             transform: translateY(20px);
             opacity: 0;
-            animation: slideUpIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; /* Animasi muncul dengan kurva yang lebih halus */
+            animation: slideUpIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
             animation-delay: 1.2s;
             position: relative;
-            overflow: hidden; /* Penting untuk efek shimmer */
+            overflow: hidden;
         }
 
         /* --- Shimmer Effect for Card --- */
@@ -228,8 +228,8 @@
             height: 100%;
             background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.1) 77%, rgba(255, 255, 255, 0.3) 92%, rgba(255, 255, 255, 0) 100%);
             transform: skewX(-20deg);
-            animation: shimmer 4s infinite; /* Animasi shimmer */
-            animation-delay: 2s; /* Mulai setelah card muncul */
+            animation: shimmer 4s infinite;
+            animation-delay: 2s;
         }
 
         @keyframes shimmer {
@@ -246,165 +246,183 @@
 
         .logo-header-container {
             text-align: center;
-            margin-bottom: 40px; /* Jarak lebih besar */
-            transform: scale(0.9); /* Sedikit diperkecil saat awal muncul */
+            margin-bottom: 40px;
+            transform: scale(0.9);
             animation: fadeInScale 0.6s ease-out forwards;
             animation-delay: 1.5s;
             opacity: 0;
         }
 
         .logo-header-container img {
-            max-width: 95%; /* Sedikit lebih besar dari sebelumnya */
+            max-width: 95%;
             height: auto;
             display: block;
             margin: 0 auto;
-            filter: drop-shadow(0 0 20px rgba(255, 193, 7, 0.8)); /* Efek glow lebih kuat */
+            filter: drop-shadow(0 0 20px rgba(255, 193, 7, 0.8));
         }
 
         .form-group {
-            margin-bottom: 25px; /* Jarak antar grup form lebih besar */
-            position: relative; /* Untuk animasi label */
+            margin-bottom: 25px;
+            position: relative;
         }
 
-        label {
-            position: absolute; /* Posisikan label absolut */
-            top: 15px; /* Posisi awal di dalam input */
-            left: 15px;
-            color: var(--text-color);
-            font-weight: 500;
-            pointer-events: none; /* Agar tidak menghalangi klik input */
-            transition: all 0.2s ease-out; /* Transisi untuk animasi */
-            font-size: 1em;
-            opacity: 0.7;
-        }
-
+        /* ----- PERBAIKAN PENTING DI SINI ----- */
+        /* Gaya dasar untuk input dan select */
         input[type="text"],
         input[type="tel"],
         select {
-            width: calc(100% - 30px); /* Sesuaikan dengan padding */
-            padding: 15px; /* Padding lebih besar */
-            border: 1px solid rgba(255, 255, 255, 0.3); /* Border lebih jelas */
-            border-radius: 10px; /* Radius sudut lebih besar */
-            background-color: rgba(255, 255, 255, 0.05); /* Background input lebih transparan */
+            width: 100%; /* Lebar penuh parent */
+            padding: 15px 15px 15px 15px; /* Padding seragam */
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
             color: var(--text-color);
             font-size: 1em;
             transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
             outline: none;
-            padding-top: 20px; /* Tambahan padding atas untuk label */
+            box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
         }
 
-        /* Animasi label saat input aktif atau terisi */
-        input:focus + label,
-        input:not(:placeholder-shown) + label {
-            top: 0px; /* Geser label ke atas */
-            font-size: 0.8em; /* Ukuran font lebih kecil */
-            color: var(--accent-color); /* Warna label kuning */
-            opacity: 1;
-            text-shadow: 0 0 5px rgba(var(--accent-color), 0.5); /* Glow label */
+        /* Posisi label di awal (saat input kosong/belum difokus) */
+        .form-group label {
+            position: absolute;
+            left: 15px; /* Sama dengan padding kiri input */
+            top: 50%; /* Tengah vertikal */
+            transform: translateY(-50%); /* Penyesuaian presisi tengah */
+            color: var(--text-color);
+            font-weight: 500;
+            pointer-events: none;
+            transition: all 0.2s ease-out;
+            font-size: 1em;
+            opacity: 0.7;
         }
+
+        /* Label mengambang saat input fokus atau terisi */
+        input:focus + label,
+        input:not(:placeholder-shown) + label,
+        select:focus + label, /* Untuk select, selalu anggap "terisi" saat dipilih */
+        select:valid + label /* Label untuk select akan naik jika ada nilai yang valid (bukan opsi disabled selected) */
+        {
+            top: 0px; /* Geser label ke atas */
+            font-size: 0.8em;
+            color: var(--accent-color);
+            opacity: 1;
+            text-shadow: 0 0 5px rgba(var(--accent-color), 0.5);
+            background-color: var(--bg-dark); /* Background untuk label agar tidak tumpang tindih teks */
+            padding: 0 5px; /* Sedikit padding untuk background label */
+            left: 10px; /* Sedikit geser ke dalam */
+            transform: translateY(-50%); /* Pastikan tetap di tengah vertikal */
+            z-index: 1; /* Pastikan di atas input */
+        }
+
+        /* Mengatasi placeholder di input */
+        input[type="text"]::placeholder,
+        input[type="tel"]::placeholder {
+            color: transparent; /* Sembunyikan placeholder, gunakan label sebagai pengganti */
+        }
+
+        /* Mengatasi placeholder di select */
+        select option[value=""][disabled] {
+            display: none; /* Sembunyikan opsi "Pilih RW" setelah dipilih */
+        }
+        /* Style untuk opsi default yang belum dipilih */
+        select:invalid {
+            color: rgba(255, 255, 255, 0.5); /* Warna teks placeholder */
+        }
+        select option {
+            color: #333; /* Warna opsi normal */
+            background-color: #2a2a4a; /* Background opsi dropdown */
+        }
+
 
         input[type="text"]:focus,
         input[type="tel"]:focus,
         select:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(var(--primary-color), 0.4), 0 0 15px rgba(var(--primary-color), 0.6); /* Glow lebih kuat saat fokus */
-            background-color: rgba(255, 255, 255, 0.1); /* Sedikit lebih solid saat fokus */
+            box-shadow: 0 0 0 4px rgba(var(--primary-color), 0.4), 0 0 15px rgba(var(--primary-color), 0.6);
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         select {
             appearance: none;
             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20fill%3D%22%23E0E0E0%22%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat;
-            background-position: right 15px center; /* Panah sedikit ke kanan */
-            background-size: 18px; /* Panah sedikit lebih besar */
-            padding-top: 15px; /* Untuk select, tidak ada label float */
-        }
-
-        /* Karena select tidak punya placeholder-shown, kita beri label di dalamnya */
-        .form-group select + label {
-            /* Pastikan label select tidak mengambang */
-            position: static;
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-color);
-            font-size: 1em; /* Ukuran normal */
-            opacity: 1;
-            text-shadow: none;
+            background-position: right 15px center;
+            background-size: 18px;
         }
 
         button {
-            display: flex; /* Menggunakan flexbox untuk ikon dan teks */
+            display: flex;
             justify-content: center;
             align-items: center;
             width: 100%;
-            padding: 18px; /* Padding lebih besar */
+            padding: 18px;
             background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 12px; /* Radius lebih besar */
-            font-size: 1.3em; /* Lebih besar */
+            border-radius: 12px;
+            font-size: 1.3em;
             font-weight: 700;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
-            margin-top: 40px; /* Jarak lebih besar */
-            letter-spacing: 1px; /* Jarak huruf */
-            box-shadow: 0 5px 15px rgba(var(--primary-color), 0.3); /* Bayangan awal */
+            margin-top: 40px;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(var(--primary-color), 0.3);
         }
 
         button i {
-            margin-right: 12px; /* Jarak ikon lebih besar */
-            transition: transform 0.2s ease; /* Transisi untuk ikon */
+            margin-right: 12px;
+            transition: transform 0.2s ease;
         }
 
         button:hover {
-            background-color: #3e8e41; /* Hijau yang sedikit lebih gelap */
-            transform: translateY(-5px) scale(1.02); /* Sedikit naik dan membesar */
-            box-shadow: 0 10px 25px rgba(var(--primary-color), 0.6); /* Bayangan hover lebih kuat */
+            background-color: #3e8e41;
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(var(--primary-color), 0.6);
         }
 
         button:hover i {
-            transform: translateX(5px); /* Ikon bergerak sedikit ke kanan saat hover */
+            transform: translateX(5px);
         }
 
         button:active {
-            transform: translateY(-2px); /* Sedikit turun saat diklik */
+            transform: translateY(-2px);
             box-shadow: 0 3px 10px rgba(var(--primary-color), 0.4);
-            background-color: #367c39; /* Hijau lebih gelap lagi */
+            background-color: #367c39;
         }
 
-        /* Shine effect on hover */
         button::after {
             content: '';
             position: absolute;
             top: 0;
-            left: -120%; /* Mulai sedikit lebih jauh ke kiri */
-            width: 60%; /* Lebar shimmer lebih besar */
+            left: -120%;
+            width: 60%;
             height: 100%;
-            background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%); /* Gradien shimmer */
-            transition: all 0.7s ease; /* Transisi lebih lambat dan halus */
+            background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+            transition: all 0.7s ease;
             transform: skewX(-20deg);
         }
 
         button:hover::after {
-            left: 120%; /* Pindah lebih jauh ke kanan */
+            left: 120%;
         }
 
         .send-time {
             text-align: center;
-            margin-top: 35px; /* Jarak lebih besar */
-            font-size: 1em; /* Sedikit lebih besar */
+            margin-top: 35px;
+            font-size: 1em;
             color: var(--accent-color);
             font-weight: 600;
-            text-shadow: 0 0 8px rgba(var(--accent-color), 0.5); /* Glow lebih kuat */
-            animation: pulseText 2s infinite alternate; /* Animasi denyutan teks, sedikit lebih lambat */
+            text-shadow: 0 0 8px rgba(var(--accent-color), 0.5);
+            animation: pulseText 2s infinite alternate;
         }
 
         /* Responsive */
         @media (max-width: 600px) {
             .registration-card {
-                padding: 30px; /* Padding lebih kecil di mobile */
+                padding: 30px;
                 border-radius: 15px;
             }
             .logo-header-container {
@@ -416,23 +434,29 @@
             .form-group {
                 margin-bottom: 20px;
             }
-            label {
+            /* Penyesuaian floating label di mobile */
+            .form-group label {
                 font-size: 0.9em;
+                left: 12px;
             }
             input[type="text"],
             input[type="tel"],
             select {
                 padding: 12px;
-                padding-top: 18px; /* Tetap beri ruang untuk label */
+                padding-top: 18px; /* Ruang untuk label yang mengambang */
                 font-size: 0.9em;
             }
             input:focus + label,
-            input:not(:placeholder-shown) + label {
-                top: -2px; /* Sesuaikan posisi label di mobile */
-                font-size: 0.7em;
+            input:not(:placeholder-shown) + label,
+            select:focus + label,
+            select:valid + label {
+                top: -5px; /* Sesuaikan posisi label di mobile */
+                font-size: 0.75em;
+                left: 8px; /* Sedikit geser ke dalam */
+                padding: 0 3px;
             }
-            select + label { /* Adjust label for select in mobile */
-                font-size: 0.9em;
+            select {
+                padding-top: 12px; /* Untuk select, tetap beri padding normal */
             }
             button {
                 padding: 15px;
@@ -482,7 +506,8 @@
 
                 <div class="form-group">
                     <select id="asalRW" required>
-                        <option value="" disabled selected>Pilih RW</option> <option value="1">1</option>
+                        <option value="" disabled selected>Pilih RW</option>
+                        <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
                         <option value="4">4</option>
