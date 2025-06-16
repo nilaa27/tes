@@ -1,150 +1,134 @@
-// script.js (Simulator Speedtest tanpa Backend)
+document.addEventListener('DOMContentLoaded', () => {
+    const registrationForm = document.getElementById('registrationForm');
+    const WA_NUMBER = '62881036683241'; // NOMOR WHATSAPP PENYELENGGARA
 
-// Mengambil referensi elemen HTML
-const downloadSpeedElement = document.getElementById('downloadSpeed');
-const gaugeNeedle = document.getElementById('gaugeNeedle');
-const gaugeColoredArc = document.getElementById('gaugeColoredArc'); 
-const startButton = document.getElementById('startButton');
-const pingValueElement = document.getElementById('pingValue');
-const jitterValueElement = document.getElementById('jitterValue');
-const downloadValueElement = document.getElementById('downloadValue'); 
-const uploadValueElement = document.getElementById('uploadValue');     
-const downloadGraph = document.getElementById('downloadGraph'); 
-const uploadGraph = document.getElementById('uploadGraph');     
+    // Elemen pop-up
+    const successPopup = document.getElementById('success-popup');
+    const closePopupButton = document.getElementById('close-popup');
 
-// Fungsi untuk memperbarui posisi jarum meteran berdasarkan kecepatan
-function updateGauge(speedMbps) {
-    const minSpeed = 0;
-    const maxSpeed = 1000; // Max kecepatan gauge (sesuai gambar referensi)
-    const minAngle = -130; // Rotasi jarum: -130 derajat untuk 0 Mbps
-    const maxAngle = 130;  // Rotasi jarum: +130 derajat untuk 1000 Mbps
+    registrationForm.addEventListener('submit', (event) => {
+        event.preventDefault(); // Mencegah form reload halaman
 
-    let angle = minAngle + (speedMbps / (maxSpeed - minSpeed)) * (maxAngle - minAngle);
-    angle = Math.max(minAngle, Math.min(maxAngle, angle)); // Batasi sudut
+        // Ambil nilai dari input
+        const namaKetua = document.getElementById('namaKetua').value.trim(); // Trim whitespace
+        const noKetua = document.getElementById('noKetua').value.trim();
+        const namaTeam = document.getElementById('namaTeam').value.trim();
+        const asalRw = document.getElementById('asalRw').value;
 
-    gaugeNeedle.style.transform = `translateY(70px) rotate(${angle}deg)`; 
-}
-
-// Fungsi utama untuk menjalankan seluruh simulasi tes
-async function runSpeedTest() {
-    startButton.disabled = true;
-    startButton.textContent = 'Mulai Tes...';
-
-    // Reset UI ke keadaan awal
-    downloadSpeedElement.textContent = '0.0';
-    pingValueElement.textContent = '--';
-    jitterValueElement.textContent = '--';
-    downloadValueElement.textContent = '--';
-    uploadValueElement.textContent = '--';
-    downloadGraph.style.width = '0%';
-    uploadGraph.style.width = '0%';
-    updateGauge(0);
-
-    // --- Simulasi Ping & Jitter ---
-    startButton.textContent = 'Menguji Ping & Jitter...';
-    // Menghasilkan nilai ping acak yang realistis (misal: 20-60ms)
-    const simulatedPing = (Math.random() * 40 + 20).toFixed(0); 
-    // Menghasilkan nilai jitter acak yang realistis (misal: 1-15ms)
-    const simulatedJitter = (Math.random() * 14 + 1).toFixed(0); 
-    
-    // Tampilkan hasil ping dan jitter setelah jeda singkat
-    await new Promise(r => setTimeout(r, 1000)); // Simulasi waktu tes ping
-    pingValueElement.textContent = simulatedPing;
-    jitterValueElement.textContent = simulatedJitter;
-    await new Promise(r => setTimeout(r, 500)); // Jeda sebelum mulai download
-
-    // --- Simulasi Tes Unduh ---
-    startButton.textContent = 'Menguji Unduh...';
-    let currentDownloadSpeed = 0;
-    // Tentukan target kecepatan unduh yang realistis (misal: 30-100 Mbps)
-    const targetDownloadSpeed = (Math.random() * 70 + 30); 
-    const downloadDuration = 7000; // Durasi simulasi unduh dalam ms (7 detik)
-    let downloadElapsedTime = 0;
-
-    const downloadSimInterval = setInterval(() => {
-        downloadElapsedTime += 100; // Setiap 100ms update
-        let progress = downloadElapsedTime / downloadDuration;
-        if (progress > 1) progress = 1;
-
-        // Fluuktuasi kecepatan: bergerak menuju target, dengan sedikit acak
-        let fluctuation = (Math.random() - 0.5) * 15; // Fluktuasi antara -7.5 hingga +7.5 Mbps
-        currentDownloadSpeed = (targetDownloadSpeed * progress * 0.8) + (targetDownloadSpeed * 0.2) + fluctuation;
-        currentDownloadSpeed = Math.max(0, Math.min(1000, currentDownloadSpeed)); // Batasi dalam rentang meteran 0-1000
-
-        downloadSpeedElement.textContent = currentDownloadSpeed.toFixed(1);
-        downloadValueElement.textContent = currentDownloadSpeed.toFixed(1);
-        downloadGraph.style.width = `${progress * 100}%`;
-        updateGauge(currentDownloadSpeed); // Update jarum
-
-        if (downloadElapsedTime >= downloadDuration) {
-            clearInterval(downloadSimInterval);
-            // Nilai akhir unduh bisa sedikit berbeda dari target
-            const finalDownloadSpeed = (targetDownloadSpeed + (Math.random() * 5 - 2.5)).toFixed(1); // +/- 2.5 Mbps
-            downloadSpeedElement.textContent = finalDownloadSpeed;
-            downloadValueElement.textContent = finalDownloadSpeed;
-            downloadGraph.style.width = '100%';
-            updateGauge(parseFloat(finalDownloadSpeed)); // Atur jarum ke nilai akhir
+        // Validasi
+        if (!namaKetua) {
+            alert('Nama Ketua Tim tidak boleh kosong!');
+            document.getElementById('namaKetua').focus();
+            return;
         }
-    }, 100);
-
-    await new Promise(resolve => setTimeout(resolve, downloadDuration + 500)); // Tunggu hingga simulasi selesai + jeda
-
-    // --- Simulasi Tes Unggah ---
-    startButton.textContent = 'Menguji Unggah...';
-    let currentUploadSpeed = 0;
-    // Tentukan target kecepatan unggah yang realistis (misal: 10-30 Mbps)
-    const targetUploadSpeed = (Math.random() * 20 + 10); 
-    const uploadDuration = 5000; // Durasi simulasi unggah dalam ms (5 detik)
-    let uploadElapsedTime = 0;
-
-    const uploadSimInterval = setInterval(() => {
-        uploadElapsedTime += 100;
-        let progress = uploadElapsedTime / uploadDuration;
-        if (progress > 1) progress = 1;
-
-        let fluctuation = (Math.random() - 0.5) * 5; // Fluktuasi antara -2.5 hingga +2.5 Mbps
-        currentUploadSpeed = (targetUploadSpeed * progress * 0.8) + (targetUploadSpeed * 0.2) + fluctuation;
-        currentUploadSpeed = Math.max(0, currentUploadSpeed); // Pastikan tidak negatif
-
-        uploadValueElement.textContent = currentUploadSpeed.toFixed(1);
-        uploadGraph.style.width = `${progress * 100}%`;
-
-        if (uploadElapsedTime >= uploadDuration) {
-            clearInterval(uploadSimInterval);
-            const finalUploadSpeed = (targetUploadSpeed + (Math.random() * 2 - 1)).toFixed(1); // +/- 1 Mbps
-            uploadValueElement.textContent = finalUploadSpeed;
-            uploadGraph.style.width = '100%';
+        if (!namaTeam) {
+            alert('Nama Tim tidak boleh kosong!');
+            document.getElementById('namaTeam').focus();
+            return;
         }
-    }, 100);
+        if (asalRw === "") {
+            alert('Mohon pilih Asal RW!');
+            document.getElementById('asalRw').focus();
+            return;
+        }
+        if (!noKetua) {
+            alert('Nomor Ketua/Perwakilan tidak boleh kosong!');
+            document.getElementById('noKetua').focus();
+            return;
+        }
+        // Validasi format nomor telepon sederhana (misal harus angka)
+        if (!/^\d+$/.test(noKetua)) {
+             alert('Nomor Ketua/Perwakilan harus berupa angka!');
+             document.getElementById('noKetua').focus();
+             return;
+        }
 
-    await new Promise(resolve => setTimeout(resolve, uploadDuration + 500)); 
 
-    // --- Tes Selesai ---
-    startButton.textContent = 'Mulai Tes Lagi!';
-    startButton.disabled = false;
-}
+        // Dapatkan tanggal dan jam saat ini
+        const now = new Date();
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZoneName: 'short',
+            timeZone: 'Asia/Jakarta' // Pastikan zona waktu WIB
+        };
+        const registDate = now.toLocaleDateString('id-ID', options);
 
-// Menambahkan event listener ke tombol "Mulai Tes!"
-startButton.addEventListener('click', runSpeedTest);
+        // Buat pesan WhatsApp dengan format yang diinginkan (ini yang akan dikirim ke WA)
+        const waMessage = `Data Regist Pemain\n` + // \n untuk baris baru
+                        `————————————\n` +
+                        `Nama Ketua   : ${namaKetua}\n` +
+                        `No Ketua       : ${noKetua}\n` +
+                        `Nama Team    : ${namaTeam}\n` +
+                        `Asal Rw          : ${asalRw}\n` +
+                        `————————————\n` +
+                        `Regist Date  : ${registDate}`;
 
-// Mengatur tampilan awal saat halaman dimuat
-updateGauge(0); 
+        // Encode pesan agar aman untuk URL
+        const encodedMessage = encodeURIComponent(waMessage);
 
-// Menampilkan waktu saat ini secara realtime (opsional, untuk sentuhan realisme)
-function updateTime() {
-    const now = new Date();
-    // Menggunakan informasi lokasi yang disimpan: Surabaya, East Java, Indonesia
-    // Asumsi zona waktu WIB untuk Surabaya (UTC+7)
-    const options = { 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        hour12: false, 
-        timeZone: 'Asia/Jakarta' // WIB
+        // Buat link WhatsApp
+        const whatsappLink = `https://wa.me/${WA_NUMBER}?text=${encodedMessage}`;
+
+        // Buka link WhatsApp di tab baru
+        window.open(whatsappLink, '_blank');
+
+        // Tampilkan pop-up setelah berhasil membuka link WhatsApp
+        successPopup.style.display = 'flex'; // Menampilkan pop-up container
+        setTimeout(() => successPopup.classList.add('show'), 10); // Menambahkan class 'show' untuk animasi
+
+        // Reset form setelah berhasil kirim
+        registrationForm.reset();
+        updateSelectLabel(); // Pastikan label select kembali ke posisi awal
+    });
+
+    // Menutup pop-up saat tombol 'Tutup' diklik
+    closePopupButton.addEventListener('click', () => {
+        successPopup.classList.remove('show');
+        setTimeout(() => successPopup.style.display = 'none', 400); // Menunggu animasi selesai
+    });
+
+    // Menutup pop-up jika mengklik di luar konten pop-up
+    successPopup.addEventListener('click', (event) => {
+        if (event.target === successPopup) {
+            successPopup.classList.remove('show');
+            setTimeout(() => successPopup.style.display = 'none', 400); // Menunggu animasi selesai
+        }
+    });
+
+
+    // Inisialisasi floating label untuk input teks
+    document.querySelectorAll('.input-group input').forEach(input => {
+        if (!input.placeholder) {
+            input.placeholder = ' ';
+        }
+    });
+
+    // Logika floating label untuk select (Asal RW)
+    const asalRwSelect = document.getElementById('asalRw');
+    const asalRwLabel = document.querySelector('label[for="asalRw"]');
+
+    const updateSelectLabel = () => {
+        if (asalRwSelect.value !== "") {
+            // Memastikan label selalu "aktif" saat ada nilai
+            asalRwLabel.classList.add('active');
+        } else {
+            // Menghapus "active" hanya jika nilai kosong dan tidak sedang fokus
+            asalRwLabel.classList.remove('active');
+        }
     };
-    const timeString = now.toLocaleTimeString('en-GB', options); // en-GB untuk format 24 jam
-    document.getElementById('timeDisplay').textContent = timeString;
-}
 
-// Panggil fungsi updateTime sekali saat dimuat, lalu setiap menit
-updateTime();
-setInterval(updateTime, 60 * 1000); // Update setiap menit
+    // Panggil saat halaman dimuat
+    updateSelectLabel();
+    // Panggil saat nilai select berubah
+    asalRwSelect.addEventListener('change', updateSelectLabel);
+    // Panggil saat select mendapatkan fokus (untuk mencegah label menutupi saat di-tab)
+    asalRwSelect.addEventListener('focus', () => {
+        asalRwLabel.classList.add('active');
+    });
+    // Panggil saat select kehilangan fokus
+    asalRwSelect.addEventListener('blur', updateSelectLabel);
+});
