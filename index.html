@@ -25,8 +25,9 @@
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-color);
-            overflow: hidden;
+            /* overflow: hidden;  <-- Ini dihapus atau diubah di JS */
             display: flex;
+            flex-direction: column; /* Ubah menjadi kolom */
             align-items: center;
             justify-content: center;
             min-height: 100vh;
@@ -40,14 +41,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #12122c, #0a0a1a); /* Gradien gelap yang lebih dalam */
+            background: linear-gradient(135deg, #12122c, #0a0a1a);
             display: flex;
             flex-direction: column;
-            justify-content: flex-end; /* Posisikan ke bawah */
+            justify-content: flex-end;
             align-items: center;
             z-index: 9999;
             transition: opacity 1s ease-out, visibility 1s ease-out;
-            padding-bottom: 70px; /* Jarak dari bawah layar, sedikit lebih jauh */
+            padding-bottom: 70px;
             box-sizing: border-box;
         }
 
@@ -62,46 +63,46 @@
             flex-direction: column;
             align-items: center;
             width: 80%;
-            max-width: 500px; /* Sedikit lebih lebar untuk kesan megah */
-            perspective: 1000px; /* Untuk efek 3D pada elemen dalamnya */
+            max-width: 500px;
+            perspective: 1000px;
         }
 
         .loading-logo-container {
-            margin-bottom: 30px; /* Jarak antara logo dan bar, sedikit lebih banyak */
-            animation: fadeInScale 0.8s ease-out forwards; /* Animasi muncul logo */
+            margin-bottom: 30px;
+            animation: fadeInScale 0.8s ease-out forwards;
             animation-delay: 0.2s;
-            opacity: 0; /* Mulai tersembunyi */
+            opacity: 0;
         }
 
         .loading-main-logo {
-            max-width: 280px; /* Ukuran logo utama di loading screen, lebih besar */
+            max-width: 280px;
             height: auto;
-            filter: drop-shadow(0 0 25px rgba(var(--primary-color), 0.8)); /* Glow yang lebih kuat */
+            filter: drop-shadow(0 0 25px rgba(var(--primary-color), 0.8));
         }
 
         .loading-bar-container {
-            background-color: rgba(255, 255, 255, 0.25); /* Latar belakang bar lebih terang */
+            background-color: rgba(255, 255, 255, 0.25);
             border-radius: var(--bar-radius);
             width: 100%;
             height: var(--bar-height);
             overflow: hidden;
             position: relative;
-            border: 3px solid rgba(255, 255, 255, 0.5); /* Border lebih tebal dan terang */
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.4), 0 0 15px rgba(var(--accent-color), 0.3); /* Efek cekung dan glow halus */
-            animation: fadeInSlideUp 0.8s ease-out forwards; /* Animasi muncul bar */
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.4), 0 0 15px rgba(var(--accent-color), 0.3);
+            animation: fadeInSlideUp 0.8s ease-out forwards;
             animation-delay: 0.4s;
             opacity: 0;
             transform: translateY(20px);
         }
 
         #loading-bar-fill {
-            background: linear-gradient(90deg, var(--accent-color), #FFECB3); /* Gradien kuning */
+            background: linear-gradient(90deg, var(--accent-color), #FFECB3);
             height: 100%;
             width: 0%;
             border-radius: var(--bar-radius);
-            transition: width 0.05s linear; /* Transisi lebih cepat untuk update JS */
+            transition: width 0.05s linear;
             position: relative;
-            box-shadow: 0 0 10px rgba(var(--accent-color), 0.7); /* Glow pada fill bar */
+            box-shadow: 0 0 10px rgba(var(--accent-color), 0.7);
         }
 
         .loading-text-bar {
@@ -109,27 +110,26 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #222; /* Warna teks lebih gelap agar kontras */
-            font-weight: 700; /* Lebih tebal */
-            font-size: 1em; /* Sedikit lebih besar */
-            letter-spacing: 2px; /* Jarak antar huruf */
-            text-shadow: 0 1px 3px rgba(255,255,255,0.7); /* Bayangan lebih jelas */
-            z-index: 2; /* Pastikan di atas fill tapi di bawah bola jika ingin bola terlihat di atas teks */
+            color: #222;
+            font-weight: 700;
+            font-size: 1em;
+            letter-spacing: 2px;
+            text-shadow: 0 1px 3px rgba(255,255,255,0.7);
+            z-index: 2;
         }
 
         .loading-ball-in-bar {
             position: absolute;
-            top: 50%; /* Posisikan vertikal di tengah bar */
-            left: 0; /* Posisi awal, akan diatur oleh JS */
-            transform: translate(-50%, -50%) rotate(0deg); /* Transformasi awal */
+            top: 50%;
+            left: 0;
+            transform: translate(-50%, -50%) rotate(0deg);
             width: var(--ball-size);
             height: var(--ball-size);
-            background: url('football-fire.png') no-repeat center center / contain; /* Ganti dengan path logo bola Anda */
+            background: url('football-fire.png') no-repeat center center / contain;
             border-radius: 50%;
-            box-shadow: 0 0 15px rgba(255, 255, 0, 1), 0 0 25px rgba(255, 100, 0, 0.8); /* Glow kuning ke oranye */
+            box-shadow: 0 0 15px rgba(255, 255, 0, 1), 0 0 25px rgba(255, 100, 0, 0.8);
             transition: transform 0.05s linear;
-            z-index: 3; /* Pastikan bola di atas teks "LOADING...." */
-            /* Animasi tambahan pada bola */
+            z-index: 3;
             animation: pulseGlow 1.5s infinite alternate;
         }
 
@@ -169,18 +169,21 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 1s ease-in, visibility 1s ease-in;
-            min-height: 100vh;
+            min-height: 100vh; /* Pastikan minimal setinggi viewport */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             background: url('https://via.placeholder.com/1920x1080/000000/FFFFFF?text=Background+Stadion+Blur') no-repeat center center / cover;
-            position: fixed;
+            /* position: fixed; <-- Ini diubah! */
+            position: relative; /* Gunakan relative agar bisa di-scroll */
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            transform-style: preserve-3d; /* Penting untuk efek 3D pada elemen di dalamnya */
+            /* height: 100%; <-- Ini dihapus agar konten bisa melebihi 100% tinggi viewport */
+            transform-style: preserve-3d;
+            padding: 50px 0; /* Tambahkan padding atas/bawah agar konten tidak mentok edge saat di-scroll */
+            box-sizing: border-box;
         }
 
         #main-content::before {
@@ -190,8 +193,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7); /* Overlay gelap yang sedikit lebih kuat */
-            backdrop-filter: blur(8px); /* Efek blur yang sedikit lebih kuat */
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             z-index: -1;
         }
@@ -199,7 +202,7 @@
         #main-content.active {
             opacity: 1;
             visibility: visible;
-            overflow-y: auto;
+            /* overflow-y: auto; <-- Ini akan diatur pada body via JS */
         }
 
         .registration-card {
@@ -208,20 +211,20 @@
             border-radius: 25px;
             padding: 50px;
             box-shadow:
-                0 10px 20px rgba(0, 0, 0, 0.3), /* Lapisan bayangan utama */
-                5px 15px 30px rgba(0, 0, 0, 0.25), /* Lapisan bayangan kedua untuk kedalaman */
-                inset 0 0 10px rgba(0, 0, 0, 0.1); /* Bayangan dalam halus */
+                0 10px 20px rgba(0, 0, 0, 0.3),
+                5px 15px 30px rgba(0, 0, 0, 0.25),
+                inset 0 0 10px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             max-width: 550px;
             width: 90%;
             z-index: 1;
-            transform: translateY(20px) rotateX(5deg) rotateY(5deg); /* Sedikit rotasi awal untuk kesan 3D */
+            transform: translateY(20px) rotateX(5deg) rotateY(5deg);
             animation: slideUpIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
             animation-delay: 1.2s;
             position: relative;
             overflow: hidden;
-            transform-style: preserve-3d; /* Efek 3D untuk elemen di dalam kartu */
+            transform-style: preserve-3d;
         }
 
         /* --- Shimmer Effect for Card --- */
@@ -245,7 +248,7 @@
 
         @keyframes slideUpIn {
             to {
-                transform: translateY(0) rotateX(0deg) rotateY(0deg); /* Kembali ke posisi normal */
+                transform: translateY(0) rotateX(0deg) rotateY(0deg);
                 opacity: 1;
             }
         }
@@ -253,7 +256,7 @@
         .logo-header-container {
             text-align: center;
             margin-bottom: 40px;
-            transform: scale(0.9) translateZ(10px); /* Sedikit maju */
+            transform: scale(0.9) translateZ(10px);
             animation: fadeInScale 0.6s ease-out forwards;
             animation-delay: 1.5s;
             opacity: 0;
@@ -277,25 +280,25 @@
         /* ----- Efek 3D pada Input & Select ----- */
         input::placeholder,
         select {
-            color: rgba(224, 224, 224, 0.6); /* Warna placeholder sedikit lebih gelap */
+            color: rgba(224, 224, 224, 0.6);
         }
 
         input,
         select {
-            width: 100%; /* Lebar penuh parent */
-            padding: 15px 15px 15px 15px; /* Padding seragam */
+            width: 100%;
+            padding: 15px 15px 15px 15px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 10px;
-            background-color: rgba(0, 0, 0, 0.2); /* Latar belakang input lebih gelap */
+            background-color: rgba(0, 0, 0, 0.2);
             color: var(--text-color);
             font-size: 1em;
             transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
             outline: none;
-            box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
+            box-sizing: border-box;
             box-shadow:
-                inset 0 2px 5px rgba(0, 0, 0, 0.3), /* Bayangan dalam atas */
-                0 1px 2px rgba(0, 0, 0, 0.2); /* Bayangan bawah tipis */
-            transform: translateZ(5px); /* Sedikit maju */
+                inset 0 2px 5px rgba(0, 0, 0, 0.3),
+                0 1px 2px rgba(0, 0, 0, 0.2);
+            transform: translateZ(5px);
         }
 
         input:focus,
@@ -303,9 +306,9 @@
             border-color: var(--primary-color);
             box-shadow:
                 inset 0 2px 5px rgba(0, 0, 0, 0.3),
-                0 3px 7px rgba(var(--primary-color), 0.5), /* Glow fokus lebih kuat */
+                0 3px 7px rgba(var(--primary-color), 0.5),
                 0 1px 2px rgba(0, 0, 0, 0.2);
-            transform: translateZ(10px); /* Lebih maju saat fokus */
+            transform: translateZ(10px);
         }
 
         select {
@@ -319,9 +322,9 @@
         /* Posisi label di awal (saat input kosong/belum difokus) */
         .form-group label {
             position: absolute;
-            left: 15px; /* Sama dengan padding kiri input */
-            top: 50%; /* Tengah vertikal */
-            transform: translateY(-50%) translateZ(15px); /* Label sedikit lebih maju */
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%) translateZ(15px);
             color: var(--text-color);
             font-weight: 500;
             pointer-events: none;
@@ -333,37 +336,35 @@
         /* Label mengambang saat input fokus atau terisi */
         input:focus + label,
         input:not(:placeholder-shown) + label,
-        select:focus + label, /* Untuk select, selalu anggap "terisi" saat dipilih */
-        select:valid + label /* Label untuk select akan naik jika ada nilai yang valid (bukan opsi disabled selected) */
-        {
-            top: -10px; /* Lebih ke atas */
+        select:focus + label,
+        select:valid + label {
+            top: -10px;
             font-size: 0.8em;
             color: var(--accent-color);
             opacity: 1;
             text-shadow: 0 0 5px rgba(var(--accent-color), 0.5);
             background-color: transparent; /* Biarkan background input terlihat */
-            padding: 0; /* Hapus padding background */
+            padding: 0;
             left: 10px;
-            transform: translateY(0) translateZ(15px); /* Tetap maju */
+            transform: translateY(0) translateZ(15px);
         }
 
         /* Mengatasi placeholder di input */
         input[type="text"]::placeholder,
         input[type="tel"]::placeholder {
-            color: transparent; /* Sembunyikan placeholder, gunakan label sebagai pengganti */
+            color: transparent;
         }
 
         /* Mengatasi placeholder di select */
         select option[value=""][disabled] {
-            display: none; /* Sembunyikan opsi "Pilih RW" setelah dipilih */
+            display: none;
         }
-        /* Style untuk opsi default yang belum dipilih */
         select:invalid {
-            color: rgba(255, 255, 255, 0.5); /* Warna teks placeholder */
+            color: rgba(255, 255, 255, 0.5);
         }
         select option {
-            color: #333; /* Warna opsi normal */
-            background-color: #2a2a4a; /* Background opsi dropdown */
+            color: #333;
+            background-color: #2a2a4a;
         }
 
         /* ----- Efek 3D pada Tombol ----- */
@@ -388,24 +389,24 @@
             box-shadow:
                 0 5px 10px rgba(0, 0, 0, 0.3),
                 0 2px 5px rgba(0, 0, 0, 0.2),
-                0 8px 15px rgba(var(--primary-color), 0.3); /* Tambah glow bawah */
+                0 8px 15px rgba(var(--primary-color), 0.3);
             transform-style: preserve-3d;
-            transform: translateZ(10px); /* Sedikit maju */
+            transform: translateZ(10px);
         }
 
         button i {
             margin-right: 12px;
             transition: transform 0.2s ease;
-            transform: translateZ(5px); /* Ikon juga sedikit maju */
+            transform: translateZ(5px);
         }
 
         button:hover {
             background-color: #3e8e41;
-            transform: translateY(-3px) scale(1.01) translateZ(15px); /* Lebih timbul dan maju */
+            transform: translateY(-3px) scale(1.01) translateZ(15px);
             box-shadow:
                 0 8px 15px rgba(0, 0, 0, 0.4),
                 0 5px 10px rgba(0, 0, 0, 0.3),
-                0 12px 20px rgba(var(--primary-color), 0.6); /* Glow hover lebih intens */
+                0 12px 20px rgba(var(--primary-color), 0.6);
         }
 
         button:hover i {
@@ -413,7 +414,7 @@
         }
 
         button:active {
-            transform: translateY(0) translateZ(5px); /* Sedikit masuk saat aktif */
+            transform: translateY(0) translateZ(5px);
             box-shadow:
                 0 3px 7px rgba(0, 0, 0, 0.3),
                 0 1px 2px rgba(0, 0, 0, 0.2),
@@ -430,7 +431,7 @@
             height: 100%;
             background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
             transition: all 0.7s ease;
-            transform: skewX(-20deg) translateZ(1px); /* Pastikan tetap di depan */
+            transform: skewX(-20deg) translateZ(1px);
         }
 
         button:hover::after {
@@ -445,23 +446,23 @@
             font-weight: 600;
             text-shadow: 0 0 8px rgba(var(--accent-color), 0.5);
             animation: pulseText 2s infinite alternate;
-            transform: translateZ(5px); /* Sedikit maju */
+            transform: translateZ(5px);
         }
 
         /* Responsive */
         @media (max-width: 600px) {
             body {
-                perspective: 800px; /* Kurangi perspektif di mobile */
+                perspective: 800px;
             }
             .registration-card {
                 padding: 30px;
                 border-radius: 15px;
-                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3); /* Kurangi bayangan di mobile */
-                transform: translateY(10px) rotateX(3deg) rotateY(3deg); /* Kurangi rotasi awal */
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+                transform: translateY(10px) rotateX(3deg) rotateY(3deg);
             }
             .logo-header-container {
                 margin-bottom: 25px;
-                transform: scale(0.9) translateZ(5px); /* Kurangi kedalaman */
+                transform: scale(0.9) translateZ(5px);
             }
             .form-group {
                 margin-bottom: 20px;
@@ -470,7 +471,7 @@
             select {
                 padding: 12px;
                 font-size: 0.9em;
-                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 2px rgba(0, 0, 0, 0.1); /* Bayangan lebih halus di mobile */
+                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 2px rgba(0, 0, 0, 0.1);
                 transform: translateZ(3px);
             }
             input:focus,
@@ -640,7 +641,8 @@
                         setTimeout(() => {
                             loadingScreen.classList.add('hidden'); // Sembunyikan loading screen
                             mainContent.classList.add('active'); // Tampilkan konten utama
-                            document.body.style.overflow = 'auto'; // Aktifkan scrollbar
+                            // Aktifkan scrollbar pada body setelah loading selesai
+                            document.body.style.overflowY = 'auto';
                         }, 200); // Sedikit delay agar transisi terlihat mulus
                     }
                 }
