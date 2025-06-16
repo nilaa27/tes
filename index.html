@@ -25,29 +25,29 @@
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-color);
-            overflow: hidden; /* Sembunyikan scrollbar saat loading */
-            display: flex; /* Menggunakan flexbox untuk memposisikan loading screen */
+            overflow: hidden;
+            display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh; /* Pastikan body mengambil tinggi penuh viewport */
+            min-height: 100vh;
         }
 
         /* --- Loading Screen Container --- */
         #loading-screen {
-            position: fixed; /* Tetap di atas konten lain */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--bg-dark), #0f0f1b); /* Background loading */
+            background: linear-gradient(135deg, #12122c, #0a0a1a); /* Gradien gelap yang lebih dalam */
             display: flex;
             flex-direction: column;
-            justify-content: flex-end; /* Posisikan ke bawah */
+            justify-content: flex-end;
             align-items: center;
             z-index: 9999;
-            transition: opacity 1s ease-out, visibility 1s ease-out; /* Transisi saat menghilang */
-            padding-bottom: 50px; /* Jarak dari bawah layar */
-            box-sizing: border-box; /* Pastikan padding tidak membuat overflow */
+            transition: opacity 1s ease-out, visibility 1s ease-out;
+            padding-bottom: 70px; /* Jarak dari bawah layar, sedikit lebih jauh */
+            box-sizing: border-box;
         }
 
         #loading-screen.hidden {
@@ -55,44 +55,52 @@
             visibility: hidden;
         }
 
-        /* --- Konten Loading Bar --- */
+        /* --- Konten Loading Bar Wrapper --- */
         #loading-animation-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 80%; /* Lebar total container loading */
-            max-width: 450px; /* Sesuaikan agar lebih lebar seperti di gambar */
+            width: 80%;
+            max-width: 500px; /* Sedikit lebih lebar untuk kesan megah */
+            perspective: 1000px; /* Untuk efek 3D pada elemen dalamnya */
         }
 
         .loading-logo-container {
-            margin-bottom: 20px; /* Jarak antara logo dan bar */
+            margin-bottom: 30px; /* Jarak antara logo dan bar, sedikit lebih banyak */
+            animation: fadeInScale 0.8s ease-out forwards; /* Animasi muncul logo */
+            animation-delay: 0.2s;
+            opacity: 0; /* Mulai tersembunyi */
         }
 
         .loading-main-logo {
-            max-width: 250px; /* Ukuran logo utama di loading screen */
+            max-width: 280px; /* Ukuran logo utama di loading screen, lebih besar */
             height: auto;
-            /* Filter glow jika logo aslinya tidak memiliki glow */
-            filter: drop-shadow(0 0 15px rgba(var(--primary-color), 0.7));
+            filter: drop-shadow(0 0 25px rgba(var(--primary-color), 0.8)); /* Glow yang lebih kuat */
         }
 
         .loading-bar-container {
-            background-color: rgba(255, 255, 255, 0.2); /* Latar belakang bar */
+            background-color: rgba(255, 255, 255, 0.25); /* Latar belakang bar lebih terang */
             border-radius: var(--bar-radius);
             width: 100%;
-            height: var(--bar-height); /* Tinggi bar */
-            overflow: hidden; /* Penting untuk menyembunyikan bola yang keluar */
-            position: relative; /* Penting untuk posisi bola */
-            border: 2px solid rgba(255, 255, 255, 0.4); /* Border luar bar */
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.3); /* Efek cekung */
+            height: var(--bar-height);
+            overflow: hidden;
+            position: relative;
+            border: 3px solid rgba(255, 255, 255, 0.5); /* Border lebih tebal dan terang */
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.4), 0 0 15px rgba(var(--accent-color), 0.3); /* Efek cekung dan glow halus */
+            animation: fadeInSlideUp 0.8s ease-out forwards; /* Animasi muncul bar */
+            animation-delay: 0.4s;
+            opacity: 0;
+            transform: translateY(20px);
         }
 
         #loading-bar-fill {
-            background-color: var(--accent-color); /* Warna isi bar (Kuning Terang) */
+            background: linear-gradient(90deg, var(--accent-color), #FFECB3); /* Gradien kuning */
             height: 100%;
-            width: 0%; /* Mulai dari 0% */
+            width: 0%;
             border-radius: var(--bar-radius);
-            transition: width 0.05s linear; /* Transisi lebih cepat untuk update JS */
+            transition: width 0.05s linear;
             position: relative;
+            box-shadow: 0 0 10px rgba(var(--accent-color), 0.7); /* Glow pada fill bar */
         }
 
         .loading-text-bar {
@@ -100,38 +108,63 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #333; /* Warna teks LOADING... */
-            font-weight: 600;
-            font-size: 0.9em;
-            letter-spacing: 1px;
-            text-shadow: 0 1px 2px rgba(255,255,255,0.5); /* Sedikit bayangan untuk keterbacaan */
-            z-index: 2; /* Pastikan di atas fill tapi di bawah bola jika ingin bola terlihat di atas teks */
+            color: #222; /* Warna teks lebih gelap agar kontras */
+            font-weight: 700; /* Lebih tebal */
+            font-size: 1em; /* Sedikit lebih besar */
+            letter-spacing: 2px; /* Jarak antar huruf */
+            text-shadow: 0 1px 3px rgba(255,255,255,0.7); /* Bayangan lebih jelas */
+            z-index: 2;
         }
 
         .loading-ball-in-bar {
             position: absolute;
             top: 50%; /* Posisikan vertikal di tengah bar */
-            right: calc(var(--ball-size) / 2); /* Bola dimulai dari kanan fill bar, dikurangi setengah ukuran bola */
-            transform: translate(50%, -50%) rotate(0deg); /* Transformasi awal */
-            width: var(--ball-size); /* Ukuran bola */
+            left: 0; /* Posisi awal, akan diatur oleh JS */
+            transform: translate(-50%, -50%) rotate(0deg); /* Transformasi awal */
+            width: var(--ball-size);
             height: var(--ball-size);
-            /* Gunakan gambar untuk bola */
             background: url('football-fire.png') no-repeat center center / contain; /* Ganti dengan path logo bola Anda */
-            border-radius: 50%; /* Agar gambar bola tidak kotak */
-            box-shadow: 0 0 10px rgba(255, 255, 0, 0.8); /* Glow pada bola */
-            transition: transform 0.05s linear; /* Transisi untuk pergerakan bola */
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(255, 255, 0, 1), 0 0 25px rgba(255, 100, 0, 0.8); /* Glow kuning ke oranye */
+            transition: transform 0.05s linear;
             z-index: 3; /* Pastikan bola di atas teks "LOADING...." */
+            /* Animasi tambahan pada bola */
+            animation: pulseGlow 1.5s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(255, 255, 0, 0.8), 0 0 20px rgba(255, 100, 0, 0.6); }
+            100% { box-shadow: 0 0 20px rgba(255, 255, 0, 1), 0 0 35px rgba(255, 100, 0, 1); }
         }
 
         .loading-bottom-text {
-            margin-top: 25px;
-            font-size: 1.1em;
-            letter-spacing: 1.5px;
+            margin-top: 30px; /* Jarak lebih banyak */
+            font-size: 1.2em; /* Sedikit lebih besar */
+            font-weight: 600;
+            letter-spacing: 2px; /* Jarak antar huruf lebih banyak */
             color: var(--text-color);
-            text-shadow: 0 0 5px rgba(var(--accent-color), 0.3);
+            text-shadow: 0 0 10px rgba(var(--accent-color), 0.5); /* Glow yang lebih kuat */
+            animation: pulseText 1.5s infinite alternate; /* Animasi denyutan teks */
         }
 
-        /* --- Main Content / Form (Hidden Initially) --- */
+        @keyframes pulseText {
+            0% { opacity: 0.8; text-shadow: 0 0 5px rgba(var(--accent-color), 0.3); }
+            100% { opacity: 1; text-shadow: 0 0 15px rgba(var(--accent-color), 0.7); }
+        }
+
+        /* General Fade-In & Slide-Up Animations for loading elements */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeInSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        /* --- Main Content / Form --- */
         #main-content {
             opacity: 0;
             visibility: hidden;
@@ -141,9 +174,8 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            /* Ganti dengan URL gambar stadion asli atau path file lokalmu */
             background: url('https://via.placeholder.com/1920x1080/000000/FFFFFF?text=Background+Stadion+Blur') no-repeat center center / cover;
-            position: fixed; /* Gunakan fixed agar menutupi seluruh layar setelah loading */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -157,8 +189,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6); /* Overlay gelap */
-            backdrop-filter: blur(5px); /* Efek blur untuk background */
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             z-index: -1;
         }
@@ -166,24 +198,24 @@
         #main-content.active {
             opacity: 1;
             visibility: visible;
-            overflow-y: auto; /* Aktifkan scrollbar setelah konten utama muncul */
+            overflow-y: auto;
         }
 
         .registration-card {
-            background: var(--form-bg); /* Semi-transparan */
+            background: var(--form-bg);
             border: 1px solid var(--form-border);
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px); /* Efek Glassmorphism */
+            backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             max-width: 500px;
             width: 90%;
             z-index: 1;
-            transform: translateY(20px); /* Animasi slide up */
+            transform: translateY(20px);
             opacity: 0;
             animation: slideUpIn 0.8s forwards;
-            animation-delay: 1.2s; /* Delay setelah loading screen hilang */
+            animation-delay: 1.2s;
         }
 
         @keyframes slideUpIn {
@@ -203,7 +235,7 @@
             height: auto;
             display: block;
             margin: 0 auto;
-            filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.6)); /* Efek glow untuk logo */
+            filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.6));
         }
 
         .form-group {
@@ -315,15 +347,15 @@
                 font-size: 1.1em;
             }
             #loading-screen {
-                padding-bottom: 30px; /* Kurangi padding di mobile */
+                padding-bottom: 30px;
             }
             .loading-main-logo {
-                max-width: 180px; /* Sesuaikan ukuran logo di mobile */
+                max-width: 180px;
             }
             .loading-text-bar {
                 font-size: 0.8em;
             }
-            --ball-size: 30px; /* Ukuran bola lebih kecil di mobile */
+            --ball-size: 30px;
         }
     </style>
 </head>
@@ -392,7 +424,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const loadingScreen = document.getElementById('loading-screen');
             const loadingBarFill = document.getElementById('loading-bar-fill');
-            const loadingBall = document.querySelector('.loading-ball-in-bar'); // Selektor disesuaikan
+            const loadingBall = document.querySelector('.loading-ball-in-bar');
             const mainContent = document.getElementById('main-content');
             const registrationForm = document.getElementById('registrationForm');
             const sendTimeElement = document.getElementById('sendTime');
