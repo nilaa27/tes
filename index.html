@@ -46,21 +46,81 @@
             visibility: hidden;
         }
 
-        .loading-football-logo {
-            width: 150px; /* Ukuran logo di loading screen */
-            height: auto;
-            animation: bounce 1.2s ease-in-out infinite alternate, pulse-shadow 1.2s infinite alternate;
+        /* --- Gaya dan Animasi Bola Menggelinding Baru --- */
+        .loading-football {
+            position: relative; /* Untuk shadow */
+            width: 80px; /* Ukuran bola */
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #fff, #bbb, #555); /* Gradien untuk efek 3D */
+            border-radius: 50%;
+            display: flex;
+            flex-wrap: wrap;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); /* Glow */
+            animation: bounce-ball 1.5s infinite ease-in-out alternate; /* Animasi pantul ke atas bawah */
         }
 
-        @keyframes bounce {
+        /* Shadow untuk bola */
+        .loading-football::after {
+            content: '';
+            position: absolute;
+            bottom: -15px; /* Sesuaikan posisi bayangan */
+            left: 50%;
+            transform: translateX(-50%) rotateX(80deg);
+            width: 70%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            filter: blur(8px);
+            animation: shadow-pulse 1.5s infinite ease-in-out alternate;
+            z-index: -1; /* Pastikan bayangan di belakang bola */
+        }
+
+        /* Pola heksagonal pada bola */
+        .loading-football .segment {
+            width: 50%;
+            height: 50%;
+            background-color: transparent;
+            position: relative;
+        }
+
+        .loading-football .segment:nth-child(even) { background-color: #000; } /* Segment hitam */
+        .loading-football .segment:nth-child(odd) { background-color: #FFF; } /* Segment putih */
+
+
+        /* Animasi Menggelinding */
+        .rolling-animation-container {
+            width: 150px; /* Lebar lintasan bola */
+            height: 80px; /* Tinggi disesuaikan dengan bola */
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Sembunyikan bagian bola yang keluar */
+            margin-bottom: 30px; /* Jarak antara bola dan teks */
+        }
+
+        .rolling-ball {
+            position: absolute;
+            animation: roll 2s linear infinite; /* Animasi utama menggelinding */
+            left: -80px; /* Mulai dari luar kiri container */
+        }
+
+        @keyframes roll {
+            0% { transform: translateX(0) rotate(0deg); }
+            100% { transform: translateX(230px) rotate(720deg); } /* Pindah ke kanan dan berputar 2 putaran */
+        }
+
+        @keyframes bounce-ball {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-30px); }
+            50% { transform: translateY(-10px); } /* Pantulan lembut saat menggelinding */
         }
 
-        @keyframes pulse-shadow {
-            0%, 100% { box-shadow: 0 5px 20px rgba(var(--primary-color), 0.5); }
-            50% { box-shadow: 0 15px 40px rgba(var(--primary-color), 0.9); }
+        @keyframes shadow-pulse {
+            0%, 100% { transform: translateX(-50%) rotateX(80deg) scale(1); opacity: 0.3; }
+            50% { transform: translateX(-50%) rotateX(80deg) scale(1.1); opacity: 0.5; }
         }
+
 
         .loading-text {
             margin-top: 20px;
@@ -262,7 +322,14 @@
 <body>
 
     <div id="loading-screen">
-        <img src="logo-minisoccer.png" alt="Mini Soccer Logo" class="loading-football-logo">
+        <div class="rolling-animation-container">
+            <div class="loading-football rolling-ball">
+                <div class="segment"></div>
+                <div class="segment"></div>
+                <div class="segment"></div>
+                <div class="segment"></div>
+            </div>
+        </div>
         <p class="loading-text">Mempersiapkan lapangan...</p>
     </div>
 
