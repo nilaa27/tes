@@ -46,24 +46,20 @@
             visibility: hidden;
         }
 
-        .football-loader {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #fff, #bbb 50%, #000 50%, #333);
-            position: relative;
-            animation: spin 1.5s linear infinite, bounce 1s ease-in-out infinite alternate;
-            box-shadow: 0 0 20px rgba(var(--primary-color), 0.7);
-        }
-
-        @keyframes spin {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
+        .loading-football-logo {
+            width: 150px; /* Ukuran logo di loading screen */
+            height: auto;
+            animation: bounce 1.2s ease-in-out infinite alternate, pulse-shadow 1.2s infinite alternate;
         }
 
         @keyframes bounce {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-20px); }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        @keyframes pulse-shadow {
+            0%, 100% { box-shadow: 0 5px 20px rgba(var(--primary-color), 0.5); }
+            50% { box-shadow: 0 15px 40px rgba(var(--primary-color), 0.9); }
         }
 
         .loading-text {
@@ -90,7 +86,8 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: url('https://via.placeholder.com/1920x1080/000000/FFFFFF?text=Background+Stadion+Blur') no-repeat center center / cover; /* Placeholder background */
+            /* Ganti dengan URL gambar stadion asli atau path file lokalmu */
+            background: url('https://via.placeholder.com/1920x1080/000000/FFFFFF?text=Background+Stadion+Blur') no-repeat center center / cover;
             position: relative;
         }
 
@@ -103,6 +100,7 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.6); /* Overlay gelap */
             backdrop-filter: blur(5px); /* Efek blur untuk background */
+            -webkit-backdrop-filter: blur(5px);
             z-index: 0;
         }
 
@@ -136,12 +134,17 @@
             }
         }
 
-        h1 {
+        .logo-header-container {
             text-align: center;
-            color: var(--accent-color);
             margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 0 0 10px rgba(var(--accent-color), 0.5);
+        }
+
+        .logo-header-container img {
+            max-width: 90%; /* Ukuran logo di header form */
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.6)); /* Efek glow untuk logo */
         }
 
         .form-group {
@@ -247,8 +250,8 @@
             .registration-card {
                 padding: 25px;
             }
-            h1 {
-                font-size: 2em;
+            .logo-header-container img {
+                max-width: 100%;
             }
             button {
                 font-size: 1.1em;
@@ -259,13 +262,16 @@
 <body>
 
     <div id="loading-screen">
-        <div class="football-loader"></div>
+        <img src="logo-minisoccer.png" alt="Mini Soccer Logo" class="loading-football-logo">
         <p class="loading-text">Mempersiapkan lapangan...</p>
     </div>
 
     <div id="main-content">
         <div class="registration-card">
-            <h1>Registrasi Turnamen Sepak Bola</h1>
+            <div class="logo-header-container">
+                <img src="logo-minisoccer.png" alt="Logo Mini Soccer DR Soetomo">
+            </div>
+
             <form id="registrationForm">
                 <div class="form-group">
                     <label for="namaKetua">Nama Ketua Tim:</label>
@@ -313,7 +319,7 @@
 
             // --- CONFIGURASI UTAMA ---
             // Ganti dengan nomor WhatsApp penyelenggara (contoh: 6281234567890)
-            const organizerWhatsAppNumber = '6281234567890'; // ** GANTI DENGAN NOMOR ASLI **
+            const organizerWhatsAppNumber = '6281234567890'; // ** GANTI DENGAN NOMOR ASLI KAMU **
             // --- AKHIR KONFIGURASI ---
 
             // Fungsi untuk memperbarui waktu pengiriman
@@ -327,7 +333,7 @@
                     hour: '2-digit',
                     minute: '2-digit',
                     hour12: false, // Format 24 jam
-                    timeZone: 'Asia/Jakarta' // Zona waktu untuk WIB
+                    timeZone: 'Asia/Jakarta' // Zona waktu untuk WIB (Jakarta, Surabaya, dll.)
                 };
                 // Memformat tanggal ke bahasa Indonesia
                 const formattedDate = new Intl.DateTimeFormat('id-ID', options).format(now);
