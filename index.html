@@ -6,12 +6,24 @@
     <title>Mini Soccer Dr Soetomo</title>
     <link rel="stylesheet" href="style.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-</head>
+
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
+    </head>
 <body>
+    <div id="loading-screen">
+        <img src="https://i.postimg.cc/G21LVWjg/Desain-tanpa-judul.png" alt="Mini Soccer Logo" class="loading-logo">
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill">
+                <span class="loading-text">LOADING....</span>
+                <img src="https://i.postimg.cc/CK9nvM53/LOADING.png" alt="Soccer Ball" class="loading-ball">
+            </div>
+        </div>
+    </div>
     <div class="hero-section">
-    <div class="soccer-field-animation"></div>
-    <img src="https://i.postimg.cc/G21LVWjg/Desain-tanpa-judul.png" alt="Mini Soccer Logo" class="logo-mini-soccer">
-</div>
+        <div class="soccer-field-animation"></div>
+        <img src="https://i.postimg.cc/G21LVWjg/Desain-tanpa-judul.png" alt="Mini Soccer Logo" class="logo-mini-soccer">
+    </div>
 
     <div class="container">
         <div class="registration-card">
@@ -19,11 +31,11 @@
             <form id="registrationForm">
                 <div class="input-group">
                     <input type="text" id="namaKetua" name="namaKetua" required placeholder=" ">
-                    <label for="namaKetua">Nama Ketua Tim</label>
+                    <label for="namaKetua">Nama Captain</label>
                 </div>
                 <div class="input-group">
                     <input type="text" id="namaTeam" name="namaTeam" required placeholder=" ">
-                    <label for="namaTeam">Nama Tim</label>
+                    <label for="namaTeam">Nama Team</label>
                 </div>
                 <div class="input-group">
                     <select id="asalRw" name="asalRw" required>
@@ -40,7 +52,7 @@
                 </div>
                 <div class="input-group">
                     <input type="tel" id="noKetua" name="noKetua" required placeholder=" ">
-                    <label for="noKetua">No WhatsApp</label>
+                    <label for="noKetua">Whatsapp Captain</label>
                     <small>Pastikan nomor aktif diawali kode negara (misal: 6281xxxxxx).</small>
                 </div>
                 <button type="submit" class="submit-button">Daftar Sekarang</button>
@@ -54,7 +66,10 @@
 
     <div id="success-popup" class="popup-container">
         <div class="popup-content">
-            <span class="checkmark">&#10004;</span>
+            <div class="verified-animation-wrapper">
+                <div class="verified-circle"></div>
+                <span class="verified-text">Verified</span>
+            </div>
             <h2>Pendaftaran Berhasil!</h2>
             <p>Terima kasih sudah mendaftar! Tim Kartar akan segera menghubungi Anda.</p>
             <button id="close-popup" class="popup-button">Tutup</button>
