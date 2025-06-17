@@ -110,22 +110,30 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
      * @param {object} data - Objek berisi data pendaftaran, sekarang dengan domisiliFormatted.
      * @returns {string} Pesan WhatsApp yang sudah diformat.
      */
-    const buildWhatsAppMessage = (data) => {
+        const buildWhatsAppMessage = (data) => {
         const { namaKetua, noKetua, namaTeam, domisiliFormatted, registDate } = data;
 
-        let message = `*🌟 PENDAFTARAN TIM BARU 🌟*\n\n`;
+        let message = `*🔔 PEMBERITAHUAN PENDAFTARAN TIM 🔔*\n\n`; // Judul yang jelas dan langsung
 
-        message += `\`\`\`📝 Detail Pendaftaran:\`\`\`\n`;
-        message += `\`\`\`├─ Nama Captain      : ${namaKetua}\`\`\`\n`;
-        message += `\`\`\`├─ No. WhatsApp      : ${noKetua}\`\`\`\n`;
-        message += `\`\`\`├─ Nama Tim          : ${namaTeam}\`\`\`\n`;
-        message += `\`\`\`└─ Domisili          : ${domisiliFormatted}\`\`\`\n\n`;
+        message += `_Halo ${namaKetua}, pendaftaran tim Anda telah berhasil diproses! Berikut adalah detail pendaftaran tim Anda:_\n\n`; // Pembuka personal
 
-        message += `\`\`\`📅 Waktu Pendaftaran:\`\`\`\n`;
-        message += `\`\`\`└─ ${registDate}\`\`\`\n\n`;
+        // Menggunakan garis vertikal dan horizontal untuk struktur tabel sederhana yang rapi
+        message += `\`\`\`===============================\`\`\`\n`;
+        message += `\`\`\`| Detail Pendaftaran Tim      |\`\`\`\n`;
+        message += `\`\`\`===============================\`\`\`\n`;
+        message += `\`\`\`| Nama Captain  : ${namaKetua.padEnd(12)} |\`\`\`\n`; // padEnd untuk keselarasan
+        message += `\`\`\`| No. WhatsApp  : ${noKetua.padEnd(12)} |\`\`\`\n`;
+        message += `\`\`\`| Nama Tim      : ${namaTeam.padEnd(12)} |\`\`\`\n`;
+        message += `\`\`\`| Domisili      : ${domisiliFormatted.padEnd(12)} |\`\`\`\n`;
+        message += `\`\`\`===============================\`\`\`\n\n`;
 
-        message += `_Terima kasih atas pendaftaran tim Anda! Kami akan segera menghubungi Anda untuk langkah selanjutnya._\n`;
-        message += `_Mohon menunggu konfirmasi dari Admin Kartar Dr. Soetomo._`;
+        message += `\`\`\`🗓️ Waktu Pendaftaran:\`\`\`\n`; // Bagian waktu
+        message += `\`\`\`└ ${registDate}\`\`\`\n\n`;
+
+        // Pesan penutup yang profesional dan informatif
+        message += `_Terima kasih telah mendaftarkan tim Anda di turnamen Mini Soccer Kartar Dr. Sutomo._\n`;
+        message += `_Tim Admin kami akan segera menghubungi Anda untuk konfirmasi dan informasi lebih lanjut mengenai jadwal pertandingan serta regulasi._\n`;
+        message += `_Mohon kesabarannya dan nantikan update dari kami. Sampai jumpa di lapangan!_`;
 
         return encodeURIComponent(message);
     };
