@@ -118,11 +118,13 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
         message += `Halo *${namaKetua}*,\n`;
         message += `Tim Anda, *${namaTeam}* (${domisiliFormatted}), telah terdaftar!\n\n`; // Informasi inti langsung
 
-        message += `*Detail Singkat:*\n`;
+        message += `*Detail Datamu:*\n`;
+        message += `========================\n`;
         message += `\`\`\`\n`; // Pembuka blok teks
         message += `✨ Captain  : ${namaKetua}\n`;
         message += `📞 WA       : ${noKetetu}\n`; // Terdapat Typo di noKetetu
         message += `📍 Domisili : ${domisiliFormatted}\n`;
+        message += `========================\n`;
         message += `🗓️ Waktu    : ${registDate}\n`;
         message += `\`\`\`\n\n`; // Penutup blok teks
 
