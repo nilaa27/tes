@@ -110,33 +110,30 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
      * @param {object} data - Objek berisi data pendaftaran, sekarang dengan domisiliFormatted.
      * @returns {string} Pesan WhatsApp yang sudah diformat.
      */
-        const buildWhatsAppMessage = (data) => {
+            const buildWhatsAppMessage = (data) => {
         const { namaKetua, noKetua, namaTeam, domisiliFormatted, registDate } = data;
 
-        let message = `*🔔 PEMBERITAHUAN PENDAFTARAN TIM 🔔*\n\n`; // Judul yang jelas dan langsung
+        let message = `*✨ Pendaftaran Tim Berhasil ✨*\n\n`; // Judul simpel & elegan
 
-        message += `_Halo ${namaKetua}, pendaftaran tim Anda telah berhasil diproses! Berikut adalah detail pendaftaran tim Anda:_\n\n`; // Pembuka personal
+        message += `Halo ${namaKetua},\n`;
+        message += `Tim Anda, *${namaTeam}* (${domisiliFormatted}), telah berhasil terdaftar.\n\n`;
 
-        // Menggunakan garis vertikal dan horizontal untuk struktur tabel sederhana yang rapi
-        message += `\`\`\`===============================\`\`\`\n`;
-        message += `\`\`\`| Detail Pendaftaran Tim      |\`\`\`\n`;
-        message += `\`\`\`===============================\`\`\`\n`;
-        message += `\`\`\`| Nama Captain  : ${namaKetua.padEnd(12)} |\`\`\`\n`; // padEnd untuk keselarasan
-        message += `\`\`\`| No. WhatsApp  : ${noKetua.padEnd(12)} |\`\`\`\n`;
-        message += `\`\`\`| Nama Tim      : ${namaTeam.padEnd(12)} |\`\`\`\n`;
-        message += `\`\`\`| Domisili      : ${domisiliFormatted.padEnd(12)} |\`\`\`\n`;
-        message += `\`\`\`===============================\`\`\`\n\n`;
+        // --- Garis pemisah untuk detail ---
+        message += `-----------------------------------\n`; 
+        message += `*Detail Pendaftaran:*\n`;
+        message += `Nama Captain: ${namaKetua}\n`;
+        message += `No. WhatsApp: ${noKetua}\n`;
+        message += `Nama Tim: ${namaTeam}\n`;
+        message += `Domisili: ${domisiliFormatted}\n`;
+        message += `Waktu Daftar: ${registDate}\n`;
+        message += `-----------------------------------\n\n`; // Garis penutup detail
 
-        message += `\`\`\`🗓️ Waktu Pendaftaran:\`\`\`\n`; // Bagian waktu
-        message += `\`\`\`└ ${registDate}\`\`\`\n\n`;
-
-        // Pesan penutup yang profesional dan informatif
-        message += `_Terima kasih telah mendaftarkan tim Anda di turnamen Mini Soccer Kartar Dr. Sutomo._\n`;
-        message += `_Tim Admin kami akan segera menghubungi Anda untuk konfirmasi dan informasi lebih lanjut mengenai jadwal pertandingan serta regulasi._\n`;
-        message += `_Mohon kesabarannya dan nantikan update dari kami. Sampai jumpa di lapangan!_`;
+        message += `Tim Kartar Dr. Sutomo akan segera menghubungi Anda untuk konfirmasi dan info selanjutnya.\n`;
+        message += `Terima kasih atas partisipasinya!`; // Penutup simpel
 
         return encodeURIComponent(message);
     };
+
 
     /**
      * Mengganti teks loading dengan animasi fade-out dan fade-in.
