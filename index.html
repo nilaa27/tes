@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Mini Soccer Dr Soetomo</title>
+    <title>Registrasi Tim Mini Soccer</title>
     <link rel="stylesheet" href="style.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="https://i.postimg.cc/tTtVWr7w/20250617-080821.png" type="image/png">
-    
-    </head>
+</head>
 <body>
     <div id="loading-screen">
         <img src="https://i.postimg.cc/G21LVWjg/Desain-tanpa-judul.png" alt="Mini Soccer Logo" class="loading-logo">
         <div class="progress-bar-container">
             <div class="progress-bar-fill">
-                <span class="loading-text">LOADING....</span>
+                <span class="loading-text">Sedang memuat...</span>
                 <img src="https://i.postimg.cc/CK9nvM53/LOADING.png" alt="Soccer Ball" class="loading-ball">
             </div>
         </div>
     </div>
+
     <div class="hero-section">
         <div class="soccer-field-animation"></div>
         <img src="https://i.postimg.cc/G21LVWjg/Desain-tanpa-judul.png" alt="Mini Soccer Logo" class="logo-mini-soccer">
@@ -35,7 +34,7 @@
                 </div>
                 <div class="input-group">
                     <input type="text" id="namaTeam" name="namaTeam" required placeholder=" ">
-                    <label for="namaTeam">Nama Team</label>
+                    <label for="namaTeam">Nama Tim</label>
                 </div>
                 <div class="input-group">
                     <select id="asalRw" name="asalRw" required>
@@ -51,9 +50,30 @@
                     <label for="asalRw" class="select-label">Asal RW</label>
                 </div>
                 <div class="input-group">
+                    <select id="asalRt" name="asalRt" required>
+                        <option value="">Pilih RT</option>
+                        <option value="RT 1">RT 1</option>
+                        <option value="RT 2">RT 2</option>
+                        <option value="RT 3">RT 3</option>
+                        <option value="RT 4">RT 4</option>
+                        <option value="RT 5">RT 5</option>
+                        <option value="RT 6">RT 6</option>
+                        <option value="RT 7">RT 7</option>
+                        <option value="RT 8">RT 8</option>
+                        <option value="RT 9">RT 9</option>
+                        <option value="RT 10">RT 10</option>
+                        <option value="RT 11">RT 11</option>
+                        <option value="RT 12">RT 12</option>
+                        <option value="RT 13">RT 13</option>
+                        <option value="RT 14">RT 14</option>
+                        <option value="RT 15">RT 15</option>
+                    </select>
+                    <label for="asalRt" class="select-label">Asal RT</label>
+                </div>
+                <div class="input-group">
                     <input type="tel" id="noKetua" name="noKetua" required placeholder=" ">
-                    <label for="noKetua">Whatsapp Captain</label>
-                    <small>Pastikan nomor aktif diawali kode negara (misal: 6281xxxxxx).</small>
+                    <label for="noKetua">Nomor WhatsApp Captain</label>
+                    <small>Pastikan nomor aktif diawali kode negara (contoh: 6281xxxxxx).</small>
                 </div>
                 <button type="submit" class="submit-button">Daftar Sekarang</button>
             </form>
@@ -61,20 +81,20 @@
     </div>
 
     <footer>
-        <p>&copy; 2025 Kartar Dr Sutomo. All Rights Reserved.</p>
+        <p>&copy; 2025 Kartar Dr Sutomo. Semua Hak Cipta Dilindungi.</p>
     </footer>
 
     <div id="success-popup" class="popup-container">
         <div class="popup-content">
-            <div class="verified-animation-wrapper">
-                <div class="verified-circle"></div>
-                <span class="verified-text">Verified</span>
+            <div class="checkmark-animation-wrapper">
+                <span class="checkmark">&#10003;</span>
             </div>
             <h2>Pendaftaran Berhasil!</h2>
-            <p>Terima kasih sudah mendaftar! Tim Kartar akan segera menghubungi Anda.</p>
-            <button id="close-popup" class="popup-button">Tutup</button>
+            <p>Terima kasih sudah mendaftar! Tim Kartar akan segera menghubungi Anda untuk konfirmasi.</p>
+            <button id="close-popup" class="popup-button">Selesai</button>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
