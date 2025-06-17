@@ -110,39 +110,37 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
      * @param {object} data - Objek berisi data pendaftaran, sekarang dengan domisiliFormatted.
      * @returns {string} Pesan WhatsApp yang sudah diformat.
      */
-                const buildWhatsAppMessage = (data) => {
+                    const buildWhatsAppMessage = (data) => {
         const { namaKetua, noKetua, namaTeam, domisiliFormatted, registDate } = data;
 
-        let message = `╔═════ೋೋ═════╗\n`;
-        message += `  *⭐ Selamat! Tim Berhasil Terdaftar! ⭐*\n`;
-        message += `╚═════ೋೋ═════╝\n\n`; // Judul dengan ornamen bingkai & bintang
+        let message = `*✨ Pendaftaran Tim Berhasil ✨*\n\n`; // Judul simpel, elegan
 
-        message += `*✨ Salam Sukses untuk Sang Captain ✨*\n`;
-        message += `Halo ${namaKetua} yang luar biasa!\n`;
-        message += `Kami sangat antusias memberitahukan bahwa tim kebanggaan Anda,\n`;
-        message += `*🏆 ${namaTeam.toUpperCase()} 🏆*,\n`; // Nama tim dibesarkan dan diberi ornamen piala
-        message += `dari wilayah *${domisiliFormatted.toUpperCase()}*,\n`; // Domisili dibesarkan
-        message += `telah resmi terdaftar dalam turnamen Mini Soccer Kartar Dr. Sutomo!\n\n`; // Pesan pembuka meriah
+        message += `Halo *${namaKetua}*,\n`;
+        message += `Tim Anda, *${namaTeam}*, dari *${domisiliFormatted}*,\n`;
+        message += `telah berhasil terdaftar untuk turnamen Mini Soccer Kartar Dr. Sutomo.\n\n`; // Pesan pembuka ringkas
 
-        message += `╭─━━━─「 *DETAIL REGISTRASI* 」─━━━─╮\n`; // Header detail
-        message += `│  Nama Captain   : ${namaKetua}\n`;
-        message += `│  No. WhatsApp   : ${noKetua}\n`;
-        message += `│  Nama Tim       : ${namaTeam}\n`;
-        message += `│  Domisili       : ${domisiliFormatted}\n`;
-        message += `│  Waktu Pendaftaran: ${registDate}\n`;
-        message += `╰─━━━─「 ⚽🔥 」─━━━─╯\n\n`; // Footer detail dengan emoji bola api
+        // Menggunakan garis sederhana untuk struktur, tidak terlalu banyak karakter
+        message += `━─━─━━━─━─━━━─━─━━━─━\ n`;
+        message += `*Detail Pendaftaran:*\ n`;
+        message += `━─━─━━━─━━━─━─━━━─━\n`;
 
-        message += `_Mohon siapkan diri untuk petualangan seru di lapangan hijau!_ 💚\n`;
-        message += `_Tim panitia kami akan segera menghubungi Anda untuk koordinasi lebih lanjut terkait jadwal pertandingan, regulasi turnamen, dan technical meeting._\n`;
-        message += `_Nantikan update spesial dari kami dan mari berjuang meraih kemenangan!_ 🥇🎉\n\n`; // Pesan penutup semangat
+        message += `• Captain  : ${namaKetua}\n`;
+        message += `• WhatsApp : ${noKetua}\n`;
+        message += `• Tim      : ${namaTeam}\n`;
+        message += `• Domisili : ${domisiliFormatted}\n`;
+        message += `• Waktu    : ${registDate}\n`;
+        message += `━─━─━─━─━━━─━─━━━─━\n\n`; // Garis penutup detail
 
-        message += `~ Kartar Dr. Sutomo ~`; // Tanda tangan
+        message += `Tim Admin kami akan segera menghubungi Anda untuk konfirmasi dan info selanjutnya.\n`;
+        message += `Terima kasih atas partisipasinya! Sampai jumpa di lapangan. ⚽\n\n`; // Pesan penutup ringkas & profesional
+
+        message += `_Hormat kami,_\n`;
+        message += `*Kartar Dr. Sutomo*`; // Tanda tangan profesional
 
         return encodeURIComponent(message);
     };
 
-
-
+    
     /**
      * Mengganti teks loading dengan animasi fade-out dan fade-in.
      */
