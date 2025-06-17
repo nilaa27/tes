@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
      * @param {object} data - Objek berisi data pendaftaran, sekarang dengan domisiliFormatted.
      * @returns {string} Pesan WhatsApp yang sudah diformat.
      */
-                        const buildWhatsAppMessage = (data) => {
+                            const buildWhatsAppMessage = (data) => {
         const { namaKetua, noKetua, namaTeam, domisiliFormatted, registDate } = data;
 
         let message = `*🎉 Pendaftaran Tim Berhasil 🎉*\n\n`; // Judul yang menarik & ringkas
@@ -119,18 +119,20 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
         message += `Tim Anda, *${namaTeam}* (${domisiliFormatted}), telah terdaftar!\n\n`; // Informasi inti langsung
 
         message += `*Detail Singkat:*\n`;
-        message += `✨ Captain: ${namaKetua}\n`;
-        message += `📞 WA: ${noKetua}\n`;
-        message += `📍 Domisili: ${domisiliFormatted}\n`;
-        message += `🗓️ Waktu: ${registDate}\n\n`; // Detail dengan emoji, lebih ringkas
+        message += `\`\`\`\n`; // Pembuka blok teks
+        message += `✨ Captain  : ${namaKetua}\n`;
+        message += `📞 WA       : ${noKetetu}\n`; // Terdapat Typo di noKetetu
+        message += `📍 Domisili : ${domisiliFormatted}\n`;
+        message += `🗓️ Waktu    : ${registDate}\n`;
+        message += `\`\`\`\n\n`; // Penutup blok teks
 
-        message += `Admin akan segera menghubungi Anda untuk info turnamen.`;
-        message += `Siapkan tim terbaikmu! 🚀`; // Pesan penutup singkat & semangat
+        message += `Admin akan segera menghubungi Anda untuk info turnamen.\n`;
+        message += `Siapkan tim terbaikmu! 🚀\n\n`; // Pesan penutup singkat & semangat
+
+        message += `*Kartar Dr. Sutomo*`; // Tanda tangan simpel
 
         return encodeURIComponent(message);
     };
-
-
     
     /**
      * Mengganti teks loading dengan animasi fade-out dan fade-in.
