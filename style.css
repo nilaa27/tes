@@ -1,20 +1,37 @@
+/* style.css atau di dalam <style> tag di HTML */
+
+/* Variabel CSS Anda tetap sama */
 :root {
     --primary-color: #4CAF50; /* Hijau Rumput */
     --secondary-color: #2196F3; /* Biru Langit */
     --text-color: #333;
-    --bg-color: #f0f2f5; /* Abu-abu muda */
+    --light-text-color: #555;
+    --bg-color: #f8f9fa;
     --card-bg: #ffffff;
-    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --border-color: #e0e0e0;
+
+    /* Variabel baru untuk efek 3D */
+    --shadow-depth-1: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-depth-2: 0 8px 20px rgba(0, 0, 0, 0.15); /* Lebih dalam untuk hover/focus */
+    --shadow-depth-3: 0 12px 30px rgba(0, 0, 0, 0.2); /* Paling dalam untuk button */
+    --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Shadow ke dalam untuk input */
+    --gradient-light-top: linear-gradient(to bottom, #f9f9f9, #f0f0f0);
+    --gradient-light-bottom: linear-gradient(to top, #f9f9f9, #f0f0f0);
 }
 
+/* --- Global Reset & Base Styles --- */
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
     font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.6;
@@ -22,197 +39,324 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/* --- LOADING SCREEN STYLES (REVISI & GABUNGAN) --- */
+/* --- LOADING SCREEN STYLES --- */
 #loading-screen {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #004d40; /* Hijau gelap, sesuai tema bola */
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%20d%3D%22M8%200H0V8h8V0zM20%200h-8v8h8V0zM8%2012H0v8h8v-8zM20%2012h-8v8h8v-8z%22%2F%3E%3C%2Fsvg%3E'); /* Pola samar lapangan */
-    background-size: 40px 40px;
+    background-color: #004d40;
+    background-image:
+        radial-gradient(circle at 100% 150%, rgba(255,255,255,0.08) 24%, transparent 25%, transparent 100%),
+        radial-gradient(circle at 0% 150%, rgba(255,255,255,0.08) 24%, transparent 25%, transparent 100%),
+        radial-gradient(circle at 50% 100%, rgba(255,255,255,0.08) 24%, transparent 25%, transparent 100%),
+        radial-gradient(circle at 100% 50%, rgba(255,255,255,0.08) 24%, transparent 25%, transparent 100%),
+        radial-gradient(circle at 0% 50%, rgba(255,255,255,0.08) 24%, transparent 25%, transparent 100%),
+        radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08) 24%, transparent 25%, transparent 100%),
+        radial-gradient(circle at 100% 50%, rgba(255,255,255,0.08) 24%, transparent 25%, transparent 100%);
+    background-size: 80px 140px;
+    background-position: 0 0, 40px 70px;
+    background-repeat: repeat;
+    animation: hexMove 30s linear infinite;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 99999; /* Pastikan di atas semua elemen */
+    z-index: 99999;
     color: white;
     font-size: 1.2em;
-    transition: opacity 0.7s ease-out, visibility 0.7s ease-out;
+}
+
+@keyframes hexMove {
+    from {
+        background-position: 0 0, 40px 70px;
+    }
+    to {
+        background-position: 80px 140px, 120px 210px;
+    }
 }
 
 #loading-screen.hidden {
-    opacity: 0;
-    visibility: hidden;
+    animation: fadeOutBlurScale 0.8s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes fadeOutBlurScale {
+    0% {
+        opacity: 1;
+        filter: blur(0px);
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        filter: blur(8px);
+        transform: scale(1.05);
+        visibility: hidden;
+    }
 }
 
 .loading-logo {
-    max-width: 80%; /* Agar tidak terlalu besar di mobile */
+    max-width: 70%;
     height: auto;
-    margin-bottom: 50px; /* Jarak antara logo dan progress bar */
-    animation: pulse 2s infinite alternate; /* Efek berdenyut */
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 0.8; }
-    100% { transform: scale(1.05); opacity: 1; }
+    margin-bottom: 40px;
 }
 
 .progress-bar-container {
-    width: 80%; /* Lebar container progress bar */
-    max-width: 400px; /* Batasan lebar maksimal */
-    height: 35px; /* Tinggi progress bar */
-    background-color: rgba(255, 255, 255, 0.2); /* Latar belakang bar */
+    width: 85%;
+    max-width: 450px;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 20px;
-    overflow: hidden; /* Penting agar fill tidak keluar */
+    overflow: hidden;
     position: relative;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.25);
 }
 
 .progress-bar-fill {
     height: 100%;
-    width: 0%; /* Dimulai dari 0% */
-    background: linear-gradient(to right, var(--secondary-color), #00BCD4); /* Warna gradien biru */
+    width: 0%;
+    background: linear-gradient(to right, var(--secondary-color), #00BCD4, #4CAF50);
     border-radius: 20px;
     display: flex;
     align-items: center;
-    justify-content: flex-end; /* Bola akan di kanan saat mengisi */
-    padding-right: 10px; /* Jarak bola dari ujung */
-    transition: width 2s ease-out; /* Animasi lebar */
+    justify-content: flex-end;
+    padding-right: 12px;
+    transition: width 4s ease-out;
     position: relative;
 }
 
 .loading-text {
     color: white;
-    font-weight: 600;
-    position: absolute; /* Posisi teks di tengah bar */
+    font-weight: 700;
+    position: absolute;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap; /* Mencegah teks patah */
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+    z-index: 10;
+    font-size: 1em;
+
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+
+.loading-text.is-visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.loading-text.is-hidden {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
 }
 
 .loading-ball {
-    height: 45px; /* Ukuran bola */
+    height: 40px;
     width: auto;
-    position: absolute; /* Biarkan bola bergerak bebas di dalam fill */
-    right: -15px; /* Agar sebagian bola terlihat di luar bar */
-    animation: ballRoll 2s linear infinite; /* Animasi bola */
-    transform: scale(0); /* Mulai dari kecil */
-    transition: transform 0.5s ease-out;
+    position: absolute;
+    right: -10px;
+    animation: ballRoll 4s linear infinite;
+    transform: scale(0);
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    z-index: 9;
 }
 
-/* Animasi untuk bola saat progress bar mengisi */
 .progress-bar-container.loaded .progress-bar-fill .loading-ball {
     transform: scale(1);
 }
 
-
 @keyframes ballRoll {
     0% { transform: translateX(0) rotate(0deg); }
-    100% { transform: translateX(calc(100% - 40px)) rotate(360deg); } /* Sesuaikan pergerakan bola */
+    100% { transform: translateX(calc(100% - 30px)) rotate(360deg); }
 }
-/* --- AKHIR LOADING SCREEN STYLES --- */
 
+/* --- MAIN CONTENT - Entry Animation --- */
+.hero-section,
+.container,
+footer {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s ease-out, transform 1s ease-out;
+}
 
-/* --- Hero Section & Animasi Latar Belakang --- */
+body.content-loaded .hero-section,
+body.content-loaded .container,
+body.content-loaded footer {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- Hero Section & Background Animation --- */
 .hero-section {
     position: relative;
     width: 100%;
-    height: 300px;
+    height: 350px;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    background: linear-gradient(to bottom, var(--primary-color), #388E3C);
-    box-shadow: inset 0 -10px 20px rgba(0,0,0,0.2);
+    background: linear-gradient(to bottom, var(--primary-color), #388E3C, #2C6C2F);
+    box-shadow: inset 0 -15px 30px rgba(0,0,0,0.3);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 
 .soccer-field-animation {
     position: absolute;
-    width: 150%;
-    height: 100%;
+    width: 180%;
+    height: 120%;
     background-image:
         repeating-linear-gradient(to right,
-            rgba(0,0,0,0.05) 0, rgba(0,0,0,0.05) 2px, transparent 2px, transparent 20px),
+            rgba(0,0,0,0.06) 0, rgba(0,0,0,0.06) 2px, transparent 2px, transparent 25px),
         repeating-linear-gradient(to bottom,
-            rgba(0,0,0,0.05) 0, rgba(0,0,0,0.05) 2px, transparent 2px, transparent 20px);
-    background-size: 20px 20px;
-    transform: perspective(1000px) rotateX(10deg) translateY(50px);
-    opacity: 0.8;
-    animation: fieldMovement 30s linear infinite alternate;
+            rgba(0,0,0,0.06) 0, rgba(0,0,0,0.06) 2px, transparent 2px, transparent 25px);
+    background-size: 25px 25px;
+    transform: perspective(1200px) rotateX(15deg) translateY(60px);
+    opacity: 0.7;
+    animation: fieldMovement 40s linear infinite alternate;
     z-index: 1;
 }
 
 @keyframes fieldMovement {
-    0% { transform: perspective(1000px) rotateX(10deg) translateY(50px) translateX(0); }
-    100% { transform: perspective(1000px) rotateX(10deg) translateY(50px) translateX(-20%); }
+    0% { transform: perspective(1200px) rotateX(15deg) translateY(60px) translateX(0); }
+    100% { transform: perspective(1200px) rotateX(15deg) translateY(60px) translateX(-25%); }
 }
 
-/* --- Tambahan: Logo Mini Soccer --- */
+/* --- Logo Mini Soccer Animation --- */
 .logo-mini-soccer {
-    max-height: 150px;
+    max-height: 180px;
     width: auto;
     z-index: 2;
     position: relative;
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+    opacity: 0; /* Mulai dengan logo tidak terlihat */
+    transform: scale(0.8); /* Mulai sedikit lebih kecil */
 }
 
-/* --- Konten Utama & Kartu Registrasi --- */
+/* Animasi Fade-in (hanya sekali) */
+@keyframes logoFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Animasi Denyutan (terus menerus) */
+@keyframes logoPulse {
+    0%, 100% {
+        transform: scale(1); /* Ukuran normal */
+    }
+    50% {
+        transform: scale(1.05); /* Membesar sedikit */
+    }
+}
+
+/* Terapkan animasi saat class 'content-loaded' ditambahkan ke <body> */
+body.content-loaded .logo-mini-soccer {
+    /* Animasi fade-in berlangsung 1 detik, lalu berhenti di state akhir */
+    animation: logoFadeIn 1s ease-out forwards,
+               /* Animasi denyut dimulai setelah 1 detik (setelah fade-in selesai) dan berulang terus */
+               logoPulse 2s infinite alternate ease-in-out 1s;
+}
+
+/* --- Main Content & Registration Card --- */
 .container {
     flex-grow: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    min-height: calc(100vh - 300px);
-    margin: 0 auto 50px auto;
-    padding: 20px;
+    min-height: calc(100vh - 350px);
+    margin: -60px auto 80px auto;
+    padding: 0 20px;
     position: relative;
     z-index: 3;
 }
 
 .registration-card {
     background-color: var(--card-bg);
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: var(--shadow-light);
-    transition: transform 0.3s ease-in-out;
+    padding: 45px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 0 0 1px var(--border-color);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     width: 100%;
-    max-width: 500px;
+    max-width: 550px;
+    position: relative;
+    transform: perspective(1000px) rotateX(2deg) translateY(-25px);
+    transform-origin: center top;
 }
 
 .registration-card:hover {
-    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--border-color);
+    transform: perspective(1000px) rotateX(0deg) translateY(-33px);
 }
 
 .registration-card h2 {
     text-align: center;
     color: var(--primary-color);
-    margin-bottom: 30px;
-    font-size: 2em;
+    margin-bottom: 35px;
+    font-size: 2.4em;
+    font-weight: 700;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    animation: subtleFlicker 1.5s infinite alternate ease-in-out;
 }
 
-/* --- Input Group & Label Floating --- */
+/* --- Keyframes untuk efek Flicker Tipis-Tipis pada Tulisan --- */
+@keyframes subtleFlicker {
+    0%, 100% {
+        opacity: 1; /* Sepenuhnya terlihat */
+    }
+    50% {
+        opacity: 0.7; /* Nilai diubah agar lebih terlihat */
+    }
+}
+
+/* --- Input Group & Floating Label --- */
 .input-group {
     position: relative;
-    margin-bottom: 30px;
-    overflow: visible;
-    padding-top: 5px;
+    margin-bottom: 35px;
+    padding-top: 8px;
+    transform: perspective(800px);
 }
+
+/* --- Container for RW and RT inputs (Always horizontal) --- */
+.rw-rt-group {
+    display: flex;
+    /* !important untuk memastikan tidak ditimpa oleh style lain */
+    flex-direction: row !important; 
+    gap: 20px; /* Jarak antara RW dan RT */
+    margin-bottom: 35px; /* Margin bawah untuk grup ini, sama seperti input-group lainnya */
+    /* Tambahkan wrap agar bisa ke baris baru jika terlalu sempit, tapi tetap coba sejajar */
+    flex-wrap: wrap; 
+}
+
+.rw-rt-group .input-group {
+    flex: 1; /* Setiap input-group di dalamnya akan mengambil ruang yang sama */
+    min-width: 120px; /* NEW: Batasi lebar minimum agar tidak terlalu kecil */
+    margin-bottom: 0; /* Hapus margin bawah dari input-group individu di dalam grup ini */
+}
+
 
 .input-group label {
     position: absolute;
-    top: 15px;
-    left: 15px;
+    top: 18px;
+    left: 18px;
     color: #999;
-    font-size: 1em;
-    transition: all 0.3s ease;
+    font-size: 1.05em;
+    transition: all 0.3s ease-out;
     pointer-events: none;
     background-color: var(--card-bg);
-    padding: 0 5px;
+    padding: 0 6px;
     z-index: 2;
     transform-origin: left center;
 }
@@ -220,283 +364,441 @@ body {
 .input-group input,
 .input-group select {
     width: 100%;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1.1em;
+    padding: 18px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 1.15em;
     outline: none;
-    background-color: #f9f9f9;
+    background-color: #fcfcfc;
     transition: all 0.3s ease;
-    appearance: none;
+    appearance: none; /* Penting! Ini menyembunyikan panah bawaan browser */
     position: relative;
     z-index: 1;
+    color: var(--text-color);
+    box-shadow: var(--shadow-inset), var(--shadow-depth-1);
 }
 
 .input-group input:focus,
 .input-group select:focus {
     border-color: var(--secondary-color);
-    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+    box-shadow: var(--shadow-inset), 0 0 0 4px rgba(33, 150, 243, 0.25), var(--shadow-depth-2);
+    background-color: white;
 }
 
+/* Floating Label Logic */
 .input-group input:not(:placeholder-shown) + label,
 .input-group input:focus + label {
-    top: -5px;
-    left: 10px;
-    font-size: 0.85em;
+    top: -8px;
+    left: 15px;
+    font-size: 0.9em;
     color: var(--secondary-color);
     background-color: var(--card-bg);
-    transform: translateY(-50%) scale(0.8);
+    transform: translateY(-50%) scale(0.9);
     padding: 0 5px;
     z-index: 3;
 }
 
 .input-group select:not([value=""]) + .select-label,
 .input-group select:focus + .select-label {
-    top: -5px;
-    left: 10px;
-    font-size: 0.85em;
+    top: -8px;
+    left: 15px;
+    font-size: 0.9em;
     color: var(--secondary-color);
     background-color: var(--card-bg);
-    transform: translateY(-50%) scale(0.8);
+    transform: translateY(-50%) scale(0.9);
     padding: 0 5px;
     z-index: 3;
 }
 
 .input-group select[value=""] + .select-label {
-    top: 15px;
-    left: 15px;
-    font-size: 1em;
+    top: 18px;
+    left: 18px;
+    font-size: 1.05em;
     color: #999;
     background-color: transparent;
     transform: none;
     z-index: 2;
 }
 
-/* Panah kustom dropdown */
+/* --- Kustomisasi Panah Dropdown (menggunakan background-image) --- */
 .input-group select {
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.7L146.2%20202.7%2018.8%2075.1a17.6%2017.6%200%200%200-25.3%2024.7l128%20127.9c7%206.9%2017.2%207%2024.2%200l128-127.9c7.5-7.4%207.5-19.5.2-26.8z%22%2F%3E%3C%2Fsvg%3E');
+    /* Panah default SVG (menunjuk ke bawah), warna #666666 */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.7L146.2%20202.7%2018.8%2075.1a17.6%2017.6%200%200%200-25.3%2024.7l128%20127.9c7%206.9%2017.2%207%2024.2%200l128-127.9c7.5-7.4%207.5-19.5.2-26.8z%22%2F%3E%3C%2Fsvg%3E');
     background-repeat: no-repeat;
-    background-position: right 15px center;
-    background-size: 1em;
-    padding-right: 40px;
+    background-position: right 20px center; /* Posisi panah */
+    background-size: 0.9em; /* Ukuran panah */
+    padding-right: 50px; /* Memberi ruang agar panah tidak menutupi teks */
+
+    /* Tambahkan transisi untuk properti yang akan diubah */
+    transition: background-position 0.3s ease, background-image 0.3s ease;
 }
+
+/* Panah saat select fokus (dropdown terbuka) */
+.input-group select:focus {
+    /* Warna border dan shadow saat fokus sudah diatur di atas, tidak perlu diulang */
+
+    /* Panah bergeser sedikit ke atas (dari tengah vertikal) */
+    background-position: right 20px 45%; /* Sesuaikan nilai 45% untuk posisi yang pas */
+
+    /* Ganti warna panah saat fokus (opsional, ganti nilai fill di SVG data URI) */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%232196F3%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.7L146.2%20202.7%2018.8%2075.1a17.6%2017.6%200%200%200-25.3%2024.7l128%20127.9c7%206.9%2017.2%207%2024.2%200l128-127.9c7.5-7.4%207.5-19.5.2-26.8z%22%2F%3E%3C%2Fsvg%3E');
+}
+
+/* Panah saat select tidak fokus (kembali ke posisi awal) */
+.input-group select:not(:focus) {
+    /* Kembali ke posisi default (tengah vertikal) */
+    background-position: right 20px center;
+
+    /* Mengembalikan warna panah ke default saat tidak fokus (opsional) */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.7L146.2%20202.7%2018.8%2075.1a17.6%2017.6%200%200%200-25.3%2024.7l128%20127.9c7%206.9%2017.2%207%2024.2%200l128-127.9c7.5-7.4%207.5-19.5.2-26.8z%22%2F%3E%3C%2Fsvg%3E');
+}
+
 
 .input-group small {
     display: block;
-    margin-top: 5px;
-    color: #777;
-    font-size: 0.85em;
-    padding-left: 5px;
+    margin-top: 8px;
+    color: var(--light-text-color);
+    font-size: 0.9em;
+    padding-left: 8px;
     position: relative;
     z-index: 0;
 }
 
-/* --- Tombol Submit --- */
+/* --- Submit Button --- */
 .submit-button {
     display: block;
     width: 100%;
-    padding: 18px;
+    padding: 20px;
     background-color: var(--primary-color);
     color: white;
-    font-size: 1.2em;
-    font-weight: 600;
+    font-size: 1.3em;
+    font-weight: 700;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+    box-shadow: var(--shadow-depth-3);
+    transform: translateY(0);
+    position: relative;
+    letter-spacing: 0.5px;
+    background: linear-gradient(to bottom, var(--primary-color) 0%, #388E3C 100%);
 }
 
 .submit-button:hover {
-    background-color: #388E3C;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.5);
+    background: linear-gradient(to bottom, #388E3C 0%, #2C6C2F 100%);
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(76, 175, 80, 0.6);
 }
 
 .submit-button:active {
     transform: translateY(1px);
-    box-shadow: 0 2px 5px rgba(76, 175, 80, 0.3);
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.2), 0 2px 8px rgba(76, 175, 80, 0.3);
 }
 
 /* --- Footer --- */
 footer {
     text-align: center;
-    padding: 30px;
+    padding: 40px;
     color: #777;
-    font-size: 0.9em;
+    font-size: 0.95em;
     margin-top: auto;
+    border-top: 1px solid #eee;
+    background-color: var(--card-bg);
 }
 
-/* --- Responsif --- */
+/* --- Responsive Design --- */
 @media (max-width: 768px) {
     .hero-section {
-        height: 250px;
+        height: 280px;
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+    }
+    .logo-mini-soccer {
+        /* Tidak ada margin-bottom di sini */
     }
     .container {
         min-height: auto;
-        margin: -50px 15px 30px 15px;
-        padding: 0;
+        margin: -40px 15px 50px 15px;
+        padding: 0 15px;
     }
     .registration-card {
-        padding: 25px;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--border-color);
+        transform: perspective(1000px) rotateX(1deg) translateY(-15px);
+    }
+    .registration-card:hover {
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--border-color);
+        transform: perspective(1000px) rotateX(0deg) translateY(-20px);
+    }
+    .registration-card h2 {
+        font-size: 2em;
+        margin-bottom: 25px;
     }
     .input-group input,
     .input-group select {
-        padding: 12px;
-        font-size: 1em;
+        padding: 15px;
+        font-size: 1.05em;
+        border-radius: 8px;
+        box-shadow: var(--shadow-inset), 0 2px 5px rgba(0,0,0,0.08);
+    }
+    .input-group input:focus,
+    .input-group select:focus {
+        box-shadow: var(--shadow-inset), 0 0 0 3px rgba(33, 150, 243, 0.2), 0 4px 10px rgba(0,0,0,0.1);
     }
     .submit-button {
-        padding: 15px;
-        font-size: 1.1em;
+        padding: 16px;
+        font-size: 1.2em;
+        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
     }
-    /* Responsif untuk loading screen */
+    .submit-button:hover {
+        box-shadow: 0 12px 28px rgba(76, 175, 80, 0.5);
+    }
+    /* Loading screen responsive */
     .loading-logo {
-        margin-bottom: 30px;
+        margin-bottom: 25px;
     }
     .progress-bar-container {
         width: 90%;
-    }
-    .progress-bar-fill {
-        padding-right: 8px;
+        max-width: 350px;
+        height: 28px;
     }
     .loading-ball {
         height: 35px;
-        right: -10px;
+        right: -8px;
     }
     .loading-text {
         font-size: 0.9em;
+    }
+
+    /* RW/RT group remains horizontal on smaller screens */
+    .rw-rt-group {
+        gap: 15px; /* Sedikit kurangi jarak untuk mobile agar lebih sempit */
+        margin-bottom: 30px; /* Sesuaikan margin bawah */
+    }
+
+    .rw-rt-group .input-group {
+        margin-bottom: 0; /* Pastikan tidak ada margin bawah tambahan */
     }
 }
 
 @media (max-width: 480px) {
     .hero-section {
-        height: 180px;
-    }
-    .registration-card h2 {
-        font-size: 1.5em;
-    }
-    .registration-card {
-        padding: 20px;
+        height: 200px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
     }
     .logo-mini-soccer {
-        max-height: 100px;
+        max-height: 120px;
     }
-    /* Responsif untuk loading screen */
+    .container {
+        min-height: auto;
+        margin: -20px 15px 50px 15px;
+        padding: 0 15px;
+    }
+    .registration-card {
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18), 0 0 0 1px var(--border-color);
+        transform: perspective(1000px) rotateX(1deg) translateY(-10px);
+    }
+    .registration-card h2 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+    .input-group {
+        margin-bottom: 25px;
+    }
+    .input-group input,
+    .input-group select {
+        padding: 12px;
+        font-size: 1em;
+        border-radius: 8px;
+    }
+    .input-group select {
+        padding-right: 40px;
+        background-position: right 15px center;
+        background-size: 0.8em;
+    }
+    .submit-button {
+        padding: 14px;
+        font-size: 1.1em;
+    }
+    /* Loading screen responsive */
     .loading-logo {
-        max-width: 90%; /* Lebih besar sedikit di mobile kecil */
+        max-width: 85%;
+        margin-bottom: 20px;
     }
     .progress-bar-container {
         width: 95%;
+        height: 25px;
+    }
+    .loading-ball {
+        height: 30px;
+        right: -6px;
+    }
+    .loading-text {
+        font-size: 0.8em;
+    }
+    footer {
+        padding: 25px;
+        font-size: 0.85em;
+    }
+
+    /* RW/RT group remains horizontal even on very small screens */
+    .rw-rt-group {
+        gap: 10px; /* Kurangi jarak lebih jauh untuk layar sangat kecil */
+        margin-bottom: 25px; /* Sesuaikan margin bawah */
+    }
+    .rw-rt-group .input-group {
+        margin-bottom: 0; /* Pastikan tidak ada margin bawah tambahan */
     }
 }
 
-/* --- POP-UP NOTIFIKASI (Gabungan) --- */
+
+/* --- POP-UP NOTIFICATION --- */
 .popup-container {
-    display: none; /* Awalnya tersembunyi */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Lebih gelap untuk fokus */
-    display: flex;
+    background-color: rgba(0, 0, 0, 0.7);
     justify-content: center;
     align-items: center;
-    z-index: 10000; /* Pastikan di atas elemen lain */
+    z-index: 10000;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
 .popup-container.show {
+    display: flex;
     opacity: 1;
     visibility: visible;
 }
 
 .popup-content {
     background-color: var(--card-bg);
-    padding: 40px;
-    border-radius: 15px;
+    padding: 50px;
+    border-radius: 20px;
     text-align: center;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    max-width: 500px;
     width: 90%;
-    transform: scale(0.8); /* Mulai dari lebih kecil */
-    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Efek bounce */
+    transform: scale(0.7);
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    border: 1px solid var(--border-color);
 }
 
 .popup-container.show .popup-content {
     transform: scale(1);
 }
 
-.checkmark {
-    font-size: 70px; /* Lebih besar */
-    color: var(--primary-color); /* Warna hijau utama */
-    display: block;
-    margin-bottom: 20px;
-    animation: checkmarkScale 0.5s ease-out;
+.checkmark-animation-wrapper {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 35px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 50%;
 }
 
-@keyframes checkmarkScale {
+.checkmark-animation-wrapper::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 6px solid rgba(76, 175, 80, 0.3);
+    border-radius: 50%;
+    box-sizing: border-box;
+    border-top-color: var(--primary-color);
+    border-right-color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    border-left-color: transparent;
+    transform: rotate(-45deg);
+    animation: circleFill 1.2s ease-out forwards;
+    opacity: 0;
+    animation-delay: 0.3s;
+    z-index: 1;
+}
+
+@keyframes circleFill {
+    0% {
+        transform: rotate(-45deg) scale(0.7);
+        opacity: 0;
+        border-left-color: transparent;
+    }
+    50% {
+        opacity: 1;
+        border-left-color: var(--primary-color);
+    }
+    100% {
+        transform: rotate(315deg) scale(1);
+        opacity: 1;
+        border-color: var(--primary-color);
+    }
+}
+
+.checkmark {
+    font-size: 80px;
+    color: white;
+    display: block;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    transform: scale(0);
+    animation: checkmarkAppear 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    animation-delay: 1.3s;
+    text-shadow: 3px 3px 8px rgba(0,0,0,0.3);
+}
+
+@keyframes checkmarkAppear {
     0% { transform: scale(0); opacity: 0; }
-    70% { transform: scale(1.2); opacity: 1; }
-    100% { transform: scale(1); }
+    50% { transform: scale(1.3); opacity: 1; color: white; }
+    100% { transform: scale(1); opacity: 1; color: var(--primary-color); }
 }
 
 .popup-content h2 {
     color: var(--primary-color);
-    margin-bottom: 15px;
-    font-size: 2.2em; /* Lebih besar */
+    margin-bottom: 20px;
+    font-size: 2.5em;
     line-height: 1.2;
+    font-weight: 700;
 }
 
 .popup-content p {
     color: var(--text-color);
-    margin-bottom: 30px;
-    font-size: 1.1em;
+    margin-bottom: 40px;
+    font-size: 1.15em;
 }
 
 .popup-button {
-    background-color: var(--secondary-color); /* Warna biru */
+    background-color: var(--secondary-color);
     color: white;
     border: none;
-    padding: 15px 30px;
-    border-radius: 8px;
+    padding: 18px 35px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 1.1em;
-    font-weight: 600;
+    font-size: 1.2em;
+    font-weight: 700;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 10px rgba(33, 150, 243, 0.3);
+    box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+    letter-spacing: 0.5px;
 }
 
 .popup-button:hover {
-    background-color: #1976D2; /* Biru lebih gelap */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(33, 150, 243, 0.4);
+    background-color: #1976D2;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(33, 150, 243, 0.55);
 }
 
 .popup-button:active {
     transform: translateY(0);
-    box-shadow: 0 2px 5px rgba(33, 150, 243, 0.2);
-}
-
-/* Responsif untuk pop-up */
-@media (max-width: 480px) {
-    .popup-content {
-        padding: 25px;
-    }
-    .checkmark {
-        font-size: 55px;
-    }
-    .popup-content h2 {
-        font-size: 1.8em;
-    }
-    .popup-content p {
-        font-size: 1em;
-    }
-    .popup-button {
-        padding: 12px 25px;
-        font-size: 1em;
-    }
+    box-shadow: 0 3px 8px rgba(33, 150, 243, 0.2);
 }
