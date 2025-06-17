@@ -110,35 +110,26 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
      * @param {object} data - Objek berisi data pendaftaran, sekarang dengan domisiliFormatted.
      * @returns {string} Pesan WhatsApp yang sudah diformat.
      */
-                    const buildWhatsAppMessage = (data) => {
+                        const buildWhatsAppMessage = (data) => {
         const { namaKetua, noKetua, namaTeam, domisiliFormatted, registDate } = data;
 
-        let message = `*✨ Pendaftaran Tim Berhasil ✨*\n\n`; // Judul simpel, elegan
+        let message = `*🎉 Pendaftaran Tim Berhasil 🎉*\n\n`; // Judul yang menarik & ringkas
 
         message += `Halo *${namaKetua}*,\n`;
-        message += `Tim Anda, *${namaTeam}*, dari *${domisiliFormatted}*,\n`;
-        message += `telah berhasil terdaftar untuk turnamen Mini Soccer Kartar Dr. Sutomo.\n\n`; // Pesan pembuka ringkas
+        message += `Tim Anda, *${namaTeam}* (${domisiliFormatted}), telah terdaftar!\n\n`; // Informasi inti langsung
 
-        // Menggunakan garis sederhana untuk struktur, tidak terlalu banyak karakter
-        message += `━─━─━━━─━─━━━─━─━━━─━\ n`;
-        message += `*Detail Pendaftaran:*\ n`;
-        message += `━─━─━━━─━━━─━─━━━─━\n`;
+        message += `*Detail Singkat:*\n`;
+        message += `✨ Captain: ${namaKetua}\n`;
+        message += `📞 WA: ${noKetua}\n`;
+        message += `📍 Domisili: ${domisiliFormatted}\n`;
+        message += `🗓️ Waktu: ${registDate}\n\n`; // Detail dengan emoji, lebih ringkas
 
-        message += `• Captain  : ${namaKetua}\n`;
-        message += `• WhatsApp : ${noKetua}\n`;
-        message += `• Tim      : ${namaTeam}\n`;
-        message += `• Domisili : ${domisiliFormatted}\n`;
-        message += `• Waktu    : ${registDate}\n`;
-        message += `━─━─━─━─━━━─━─━━━─━\n\n`; // Garis penutup detail
-
-        message += `Tim Admin kami akan segera menghubungi Anda untuk konfirmasi dan info selanjutnya.\n`;
-        message += `Terima kasih atas partisipasinya! Sampai jumpa di lapangan. ⚽\n\n`; // Pesan penutup ringkas & profesional
-
-        message += `_Hormat kami,_\n`;
-        message += `*Kartar Dr. Sutomo*`; // Tanda tangan profesional
+        message += `Admin akan segera menghubungi Anda untuk info turnamen.`;
+        message += `Siapkan tim terbaikmu! 🚀`; // Pesan penutup singkat & semangat
 
         return encodeURIComponent(message);
     };
+
 
     
     /**
