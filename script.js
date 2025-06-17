@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' bukan 'Document'
+document.addEventListener('DOMContentLoaded', () => {
     // --- Konfigurasi & Elemen DOM ---
     const WA_NUMBER = '62881036683241'; // Nomor WhatsApp tujuan
     const registrationForm = document.getElementById('registrationForm');
@@ -28,11 +28,10 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
      * Fungsi ini sekarang lebih umum untuk semua elemen select (RW dan RT).
      */
     const updateSelectLabel = () => {
-        // Menggunakan querySelectorAll untuk mendapatkan semua elemen select
         const selects = document.querySelectorAll('.input-group select');
         selects.forEach(select => {
             const label = document.querySelector(`label[for="${select.id}"]`);
-            if (label) { // Pastikan label ada
+            if (label) {
                 if (select.value !== "") {
                     label.classList.add('active');
                 } else {
@@ -48,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
      * @param {string} noKetua - Nomor WhatsApp Captain.
      * @param {string} namaTeam - Nama Tim.
      * @param {string} asalRw - Pilihan Asal RW.
-     * @param {string} string} asalRt - Pilihan Asal RT.
+     * @param {string} asalRt - Pilihan Asal RT.
      * @returns {boolean} True jika validasi berhasil, false jika tidak.
      */
     const validateForm = (namaKetua, noKetua, namaTeam, asalRw, asalRt) => {
@@ -62,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
             document.getElementById('namaTeam').focus();
             return false;
         }
-        // Validasi untuk Asal RT dan Asal RW
         if (asalRt === "") {
             alert('Mohon pilih Asal RT!');
             document.getElementById('asalRt').focus();
@@ -78,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
             document.getElementById('noKetua').focus();
             return false;
         }
-        // Validasi format nomor telepon sederhana (hanya angka)
         if (!/^\d+$/.test(noKetua)) {
             alert('Nomor WhatsApp harus berupa angka!');
             document.getElementById('noKetua').focus();
@@ -91,9 +88,8 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
      * Menampilkan pop-up keberhasilan pendaftaran.
      */
     const showSuccessPopup = () => {
-        successPopup.style.display = 'flex'; // Set display ke flex agar bisa transisi
-        // Sedikit delay sebelum menambah kelas 'show' agar transisi CSS terpicu
-        setTimeout(() => successPopup.classList.add('show'), 10); 
+        successPopup.style.display = 'flex';
+        setTimeout(() => successPopup.classList.add('show'), 10);
     };
 
     /**
@@ -101,8 +97,7 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
      */
     const hideSuccessPopup = () => {
         successPopup.classList.remove('show');
-        // Setelah transisi selesai, sembunyikan sepenuhnya
-        setTimeout(() => successPopup.style.display = 'none', 400); 
+        setTimeout(() => successPopup.style.display = 'none', 400);
     };
 
     /**
@@ -110,28 +105,29 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
      * @param {object} data - Objek berisi data pendaftaran, sekarang dengan domisiliFormatted.
      * @returns {string} Pesan WhatsApp yang sudah diformat.
      */
-                            const buildWhatsAppMessage = (data) => {
+    const buildWhatsAppMessage = (data) => {
         const { namaKetua, noKetua, namaTeam, domisiliFormatted, registDate } = data;
+        const formattedRegistDate = registDate.replace('pukul', 'Pk.'); // Mengganti 'pukul' jadi 'Pk.' untuk lebih ringkas
 
-        let message = `*🎉 Pendaftaran Tim Berhasil 🎉*\n\n`; // Judul yang menarik & ringkas
+        let message = `*🎉 Pendaftaran Tim Berhasil 🎉*\n\n`;
 
         message += `Halo *${namaKetua}*,\n`;
-        message += `Tim Anda, *${namaTeam}* (${domisiliFormatted}), telah terdaftar!\n\n`; // Informasi inti langsung
+        message += `Tim Anda, *${namaTeam}* (${domisiliFormatted}), telah terdaftar!\n\n`;
 
         message += `*Detail Datamu:*\n`;
-        message += `========================\n`;
         message += `\`\`\`\n`; // Pembuka blok teks
-        message += `✨ Captain  : ${namaKetua}\n`;
-        message += `📞 WA       : ${noKetetu}\n`; // Terdapat Typo di noKetetu
-        message += `📍 Domisili : ${domisiliFormatted}\n`;
         message += `========================\n`;
-        message += `🗓️ Waktu    : ${registDate}\n`;
+        message += `✨ Captain  : ${namaKetua}\n`;
+        message += `📞 WA       : ${noKetua}\n`; // Diperbaiki dari noKetetu
+        message += `📍 Domisili : ${domisiliFormatted}\n`;
+        message += `🗓️ Waktu    : ${formattedRegistDate}\n`; // Menggunakan formattedRegistDate
+        message += `========================\n`;
         message += `\`\`\`\n\n`; // Penutup blok teks
 
         message += `Admin akan segera menghubungi Anda untuk info turnamen.\n`;
-        message += `Siapkan tim terbaikmu! 🚀\n\n`; // Pesan penutup singkat & semangat
+        message += `Siapkan tim terbaikmu! 🚀\n\n`;
 
-        message += `*Kartar Dr. Sutomo*`; // Tanda tangan simpel
+        message += `*Kartar Dr. Sutomo*`;
 
         return encodeURIComponent(message);
     };
@@ -148,8 +144,8 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
                 currentStatusIndex = loadingStatuses.length - 1;
             } else {
                 currentStatusIndex++;
-                if (currentStatusIndex >= loadingStatuses.length - 1) { // Perbaikan: Batasi hingga indeks sebelum terakhir
-                    currentStatusIndex = 0; // Reset ke awal jika ingin loop terus
+                if (currentStatusIndex >= loadingStatuses.length - 1) {
+                    currentStatusIndex = 0;
                 }
                 loadingTextElement.textContent = loadingStatuses[currentStatusIndex];
             }
@@ -207,14 +203,12 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
         const noKetua = document.getElementById('noKetua').value.trim();
         const namaTeam = document.getElementById('namaTeam').value.trim();
         const asalRw = document.getElementById('asalRw').value;
-        const asalRt = document.getElementById('asalRt').value; // Ambil nilai Asal RT
+        const asalRt = document.getElementById('asalRt').value;
 
-        // Lakukan validasi termasuk Asal RT
         if (!validateForm(namaKetua, noKetua, namaTeam, asalRw, asalRt)) {
             return;
         }
 
-        // Format string domisili menjadi "rt [nomor RT]/rw [nomor RW]"
         const domisiliFormatted = `${asalRt.replace('RT ', 'rt ')}/${asalRw.replace('RW ', 'rw')}`;
 
 
@@ -234,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
             namaKetua,
             noKetua,
             namaTeam,
-            domisiliFormatted, // Gunakan domisili yang sudah diformat
+            domisiliFormatted,
             registDate
         };
 
@@ -246,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => { // Gunakan 'document' buka
         showSuccessPopup();
 
         registrationForm.reset();
-        updateSelectLabel(); // Panggil ulang untuk mereset label setelah reset form
+        updateSelectLabel();
     });
 
     closePopupButton.addEventListener('click', hideSuccessPopup);
