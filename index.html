@@ -1,103 +1,69 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Registrasi Tim Mini Soccer</title>
-    <link rel="stylesheet" href="style.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="https://i.postimg.cc/tTtVWr7w/20250617-080821.png" type="image/png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ucapan Ultah Mayfa</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://unpkg.com/aos @2.3.4/dist/aos.css" rel="stylesheet">
 </head>
 <body>
-    <div id="loading-screen">
-        <img src="https://i.postimg.cc/G21LVWjg/Desain-tanpa-judul.png" alt="Mini Soccer Logo" class="loading-logo">
-        <div class="progress-bar-container">
-            <div class="progress-bar-fill">
-                <span class="loading-text">Sedang memuat...</span>
-                <img src="https://i.postimg.cc/CK9nvM53/LOADING.png" alt="Soccer Ball" class="loading-ball">
-            </div>
-        </div>
+
+<!-- Halaman Login -->
+<div id="loginPage" class="page active">
+  <div class="login-container">
+    <h2>Login Ulang Tahun Mayfa</h2>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Nama" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</div>
+
+<!-- Halaman Ucapan 1 -->
+<div id="birthdayPage" class="page">
+  <div class="birthday-content">
+    <h1 data-aos="fade-up">🎉 Selamat Ulang Tahun Mayfa! 🎉</h1>
+    <p data-aos="fade-up" data-aos-delay="300">
+      Semoga hari ini dan tahun-tahun mendatang penuh kebahagiaan, sukses, dan cinta dari orang-orang terkasih.
+    </p>
+    <img src="https://i.imgur.com/6Zng7D2.png " alt="Mayfa" data-aos="zoom-in" data-aos-delay="500">
+    <button id="giftBtn" data-aos="fade-up" data-aos-delay="700">🎁 Lanjut ke Halaman 2</button>
+  </div>
+</div>
+
+<!-- Halaman Ucapan 2 -->
+<div id="secondPage" class="page">
+  <div class="second-content">
+    <h2 data-aos="fade-up">Hey Mayfaa~</h2>
+    <p data-aos="fade-up" data-aos-delay="200">
+      Hari ini adalah hari spesialmu. Semoga semua impianmu menjadi nyata dan kamu selalu dikelilingi oleh orang-orang yang sayang padamu.
+    </p>
+    <img src="https://i.imgur.com/6Zng7D2.png " alt="Mayfa" data-aos="zoom-in" data-aos-delay="400">
+    <p data-aos="fade-up" data-aos-delay="600">
+      Terima kasih sudah ada di hidup kami. Selamat ulang tahun yang ke-21, semoga jadi awal dari babak terbaik dalam hidupmu 💖
+    </p>
+    <button id="nextToGift" data-aos="fade-up" data-aos-delay="800">🎁 Buka Hadiah</button>
+  </div>
+</div>
+
+<!-- Modal Hadiah -->
+<div id="giftModal" class="modal">
+  <div class="modal-content">
+    <span id="closeModal">&times;</span>
+    <h2>🎁 Ini Hadiahmu!</h2>
+    <p>Klik kotak di bawah untuk melihat hadiahnya:</p>
+    <div id="qrCard" class="card" onclick="showQRCode()">
+      🔍 Klik untuk buka hadiah
     </div>
+    <div id="qrcode"></div>
+  </div>
+</div>
 
-    <div class="hero-section">
-        <div class="soccer-field-animation"></div>
-        <img src="https://i.postimg.cc/G21LVWjg/Desain-tanpa-judul.png" alt="Mini Soccer Logo" class="logo-mini-soccer">
-    </div>
-
-    <div class="container">
-        <div class="registration-card">
-            <h2>Daftarkan Timmu Sekarang!</h2>
-            <form id="registrationForm">
-                <div class="input-group">
-                    <input type="text" id="namaKetua" name="namaKetua" required placeholder=" ">
-                    <label for="namaKetua">Nama Captain</label>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="namaTeam" name="namaTeam" required placeholder=" ">
-                    <label for="namaTeam">Nama Tim</label>
-                </div>
-
-                <div class="rw-rt-group">
-                    <div class="input-group">
-                        <select id="asalRt" name="asalRt" required>
-                            <option value="">Pilih RT</option>
-                            <option value="RT 1">RT 1</option>
-                            <option value="RT 2">RT 2</option>
-                            <option value="RT 3">RT 3</option>
-                            <option value="RT 4">RT 4</option>
-                            <option value="RT 5">RT 5</option>
-                            <option value="RT 6">RT 6</option>
-                            <option value="RT 7">RT 7</option>
-                            <option value="RT 8">RT 8</option>
-                            <option value="RT 9">RT 9</option>
-                            <option value="RT 10">RT 10</option>
-                            <option value="RT 11">RT 11</option>
-                            <option value="RT 12">RT 12</option>
-                            <option value="RT 13">RT 13</option>
-                            <option value="RT 14">RT 14</option>
-                            <option value="RT 15">RT 15</option>
-                        </select>
-                        <label for="asalRt" class="select-label">Asal RT</label>
-                    </div>
-                    <div class="input-group">
-                        <select id="asalRw" name="asalRw" required>
-                            <option value="">Pilih RW</option>
-                            <option value="RW 1">RW 1</option>
-                            <option value="RW 2">RW 2</option>
-                            <option value="RW 3">RW 3</option>
-                            <option value="RW 4">RW 4</option>
-                            <option value="RW 5">RW 5</option>
-                            <option value="RW 6">RW 6</option>
-                            <option value="RW 7">RW 7</option>
-                        </select>
-                        <label for="asalRw" class="select-label">Asal RW</label>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <input type="tel" id="noKetua" name="noKetua" required placeholder=" ">
-                    <label for="noKetua">Nomor WhatsApp Captain</label>
-                    <small>Pastikan nomor aktif diawali kode negara (contoh: 6281xxxxxx).</small>
-                </div>
-                <button type="submit" class="submit-button">Daftar Sekarang</button>
-            </form>
-        </div>
-    </div>
-
-    <footer>
-        <p>&copy; 2025 Kartar Dr Sutomo. Semua Hak Cipta Dilindungi.</p>
-    </footer>
-
-    <div id="success-popup" class="popup-container">
-        <div class="popup-content">
-            <div class="checkmark-animation-wrapper">
-                <span class="checkmark">&#10003;</span>
-            </div>
-            <h2>Pendaftaran Berhasil!</h2>
-            <p>Terima kasih sudah mendaftar! Tim Kartar akan segera menghubungi Anda untuk konfirmasi.</p>
-            <button id="close-popup" class="popup-button">Selesai</button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js "></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti @1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://unpkg.com/aos @2.3.4/dist/aos.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
