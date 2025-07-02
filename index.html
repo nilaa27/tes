@@ -2,12 +2,14 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel Desktop - Happy Birthday</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Panel - Happy Birthday</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
         :root {
             --primary: #4facfe;
@@ -37,12 +39,12 @@
             justify-content: center;
             align-items: center;
             color: #fff;
-            padding: 20px;
             position: relative;
             overflow: hidden;
+            padding: 20px;
         }
         
-        /* --- Main Container --- */
+        /* --- Main Container & 3D Scene --- */
         .container {
             width: 100%;
             max-width: 1100px;
@@ -53,11 +55,13 @@
         #auth-container {
             position: relative;
             width: 100%;
-            height: 650px;
+            height: 600px;
+            max-width: 450px;
+            margin: auto;
             transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             transform-style: preserve-3d;
         }
-        
+
         /* --- Flippable Glass Panels --- */
         .box {
             background: var(--glass);
@@ -65,7 +69,7 @@
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            padding: 40px;
+            padding: 30px;
             width: 100%;
             height: 100%;
             position: absolute;
@@ -108,11 +112,141 @@
         
         .login-content {
             width: 100%;
-            max-width: 400px;
+            max-width: 330px;
             position: relative;
             z-index: 2;
         }
         
+        /* --- Headers --- */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header-icon {
+            width: 75px;
+            height: 75px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            animation: float 4s ease-in-out infinite;
+            position: relative;
+        }
+        
+        .header-icon i {
+            font-size: 36px;
+            color: var(--primary);
+            text-shadow: 0 0 15px var(--primary);
+        }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            color: var(--light-text);
+            font-size: 1rem;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* --- Input Fields & Groups --- */
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--light-text);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            padding-left: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 16px;
+            transition: var(--transition-fast);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 16px 14px 45px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            transition: var(--transition-fast);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(79, 172, 254, 0.3);
+        }
+
+        .input-field:focus + i {
+            color: var(--secondary);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        #togglePassword {
+            right: 16px;
+            left: auto;
+            cursor: pointer;
+        }
+        
+        /* --- Buttons --- */
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            border-radius: 12px;
+            color: var(--dark);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 8px 20px rgba(0, 177, 253, 0.25);
+        }
+        
+        /* --- Background Particles Animation --- */
         .particles {
             position: absolute;
             top: 0;
@@ -146,146 +280,14 @@
         .particles i:nth-child(8) { left: 25%; width: 45px; height: 45px; animation-duration: 14s; }
         .particles i:nth-child(9) { left: 60%; width: 35px; height: 35px; animation-duration: 11s; animation-delay: 2.5s; }
         .particles i:nth-child(10){ left: 75%; width: 50px; height: 50px; animation-duration: 17s; }
-        
-        /* --- Login Header --- */
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .header-icon {
-            width: 90px;
-            height: 90px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            border: 2px solid var(--glass-border);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            animation: float 4s ease-in-out infinite;
-            position: relative;
-        }
-        
-        .header-icon i {
-            font-size: 42px;
-            color: var(--primary);
-            text-shadow: 0 0 15px var(--primary);
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-        }
 
-        .header p {
-            color: var(--light-text);
-            font-size: 1.1rem;
-            max-width: 350px;
-            margin: 0 auto;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
 
-        /* --- Input Fields & Groups --- */
-        .input-group {
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        .input-group label {
-            display: block;
-            color: var(--light-text);
-            font-size: 0.95rem;
-            font-weight: 500;
-            margin-bottom: 10px;
-            padding-left: 8px;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
-            font-size: 18px;
-            transition: var(--transition-fast);
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 16px 18px 16px 50px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            color: #fff;
-            font-size: 1.1rem;
-            transition: var(--transition-fast);
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(79, 172, 254, 0.4);
-        }
-
-        .input-field:focus + i {
-            color: var(--secondary);
-            transform: translateY(-50%) scale(1.1);
-        }
-        
-        #togglePassword {
-            right: 18px;
-            left: auto;
-            cursor: pointer;
-        }
-        
-        /* --- Buttons --- */
-        .btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
-            border: none;
-            border-radius: 14px;
-            color: var(--dark);
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition-fast);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 10px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .btn:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 10px 25px rgba(0, 177, 253, 0.4);
-        }
-        
         /* --- Admin Panel Layout --- */
         .panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             padding-bottom: 20px;
             border-bottom: 1px solid var(--glass-border);
             width: 100%;
@@ -295,18 +297,15 @@
         }
         
         .panel-header h1 {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 1.8rem;
+            text-align: left;
         }
 
         .logout-btn {
             background: var(--glass);
             border: 1px solid var(--glass-border);
             color: var(--light-text);
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             cursor: pointer;
             transition: var(--transition-fast);
@@ -314,7 +313,6 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
         .logout-btn:hover {
@@ -323,26 +321,35 @@
             transform: rotate(15deg);
         }
         
+        /* Mobile First Layout (Default) */
         .panel-main {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 15px;
+            width: 100%;
             position: relative;
             z-index: 2;
-            height: calc(100% - 120px);
         }
 
         .panel-section {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 18px;
             padding: 25px;
+            margin-bottom: 25px;
             border: 1px solid var(--glass-border);
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        
+        /* Remove margin from last section in mobile view */
+        .panel-column:last-child .panel-section:last-child {
+            margin-bottom: 0;
         }
 
-        .panel-section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        .panel-section.in-view {
+            opacity: 1;
+            transform: translateY(0);
         }
         
         .section-title {
@@ -355,28 +362,53 @@
             margin-bottom: 25px;
         }
 
-        .section-title i { 
-            color: var(--primary); 
-            font-size: 1.5rem; 
-            background: rgba(79, 172, 254, 0.1);
-            width: 45px;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
+        .section-title i { color: var(--primary); font-size: 1.5rem; }
+
+        /* Desktop Layout (min-width: 992px) */
+        @media (min-width: 992px) {
+            #adminPanelBox .box {
+                padding: 40px;
+            }
+            #auth-container {
+                max-width: 900px;
+                height: 700px;
+            }
+             /* NEW/MODIFIED: Make .panel-main a grid container */
+            .panel-main {
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Two equal columns */
+                gap: 25px;
+                padding: 20px 15px 120px 0; 
+            }
+             /* NEW: The columns will hold the sections */
+            .panel-column {
+                display: flex;
+                flex-direction: column;
+                gap: 25px; /* Space between sections inside a column */
+            }
+            /* MODIFIED: Sections have no bottom margin in grid view */
+            .panel-section {
+                margin-bottom: 0;
+            }
         }
 
+        /* --- Action Bar (Save/Back) --- */
         .panel-actions {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 30px;
+            background: rgba(15, 18, 26, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
             display: flex;
             justify-content: flex-end;
             align-items: center;
             gap: 20px;
-            margin-top: 30px;
-            position: relative;
             z-index: 3;
-            padding-top: 20px;
-            border-top: 1px solid var(--glass-border);
         }
         
         .back-link {
@@ -384,154 +416,67 @@
             text-decoration: none;
             font-weight: 500;
             transition: var(--transition-fast);
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         
-        .back-link:hover { 
-            color: var(--primary); 
-            transform: translateX(-5px);
-        }
+        .back-link:hover { color: var(--primary); }
 
         .btn-save {
             background: linear-gradient(to right, var(--primary) 0%, var(--secondary) 100%);
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             color: var(--dark);
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
-            padding: 14px 30px;
+            padding: 12px 25px;
             cursor: pointer;
             transition: var(--transition-fast);
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
         }
 
         .btn-save:hover {
              transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.5);
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        @media (max-width: 991px) {
+            .panel-actions {
+                padding: 15px;
+                justify-content: space-between;
+            }
+            .btn-save { width: 60%; }
+            .panel-main {
+                 padding-top: 10px; /* Adjust mobile padding */
+            }
         }
         
-        .qr-preview-container { 
-            display: none; 
-            margin-top: 20px; 
-            text-align: center; 
-            padding: 20px; 
-            background: rgba(0, 0, 0, 0.2); 
-            border-radius: 15px; 
-        }
+        .qr-preview-container { display: none; margin-top: 20px; text-align: center; padding: 20px; background: rgba(0, 0, 0, 0.2); border-radius: 15px; }
+        .qr-preview-image { max-width: 150px; border-radius: 10px; border: 1px solid var(--glass-border); }
+        .url-instructions { background: rgba(0, 0, 0, 0.15); border-radius: 10px; padding: 15px; margin-top: 20px; font-size: 0.85rem; }
+
+        .feedback-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 3000; justify-content: center;
+            align-items: center; }
+        .feedback-content { background: rgba(30, 40, 60, 0.95); border-radius: 20px; padding: 40px; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); border-top: 4px solid var(--primary); }
+        .icon-container { height: 80px; margin-bottom: 20px; }
+        .icon-container .icon { font-size: 60px; }
+        .icon-container .icon.success { color: var(--success); }
+        .icon-container .icon.failure { color: var(--error); }
+        .feedback-content h2 { font-size: 1.8rem; margin-bottom: 15px; }
+        .feedback-content p { font-size: 1.1rem; color: var(--light-text); }
+        .loader { margin: 0 auto; border: 6px solid rgba(255, 255, 255, 0.1); border-top: 6px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        .hidden { display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .qr-preview-image { 
-            max-width: 180px; 
-            border-radius: 10px; 
-            border: 1px solid var(--glass-border); 
-        }
-        
-        .url-instructions { 
-            background: rgba(0, 0, 0, 0.15); 
-            border-radius: 10px; 
-            padding: 15px; 
-            margin-top: 20px; 
-            font-size: 0.9rem; 
-        }
-        
-        .url-instructions a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-        
-        .url-instructions a:hover {
-            text-decoration: underline;
-        }
-        
-        .feedback-modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background-color: rgba(0, 0, 0, 0.7); 
-            backdrop-filter: blur(8px); 
-            z-index: 3000; 
-            justify-content: center;
-            align-items: center; 
-        }
-        
-        .feedback-content { 
-            background: rgba(30, 40, 60, 0.95); 
-            border-radius: 20px; 
-            padding: 40px; 
-            text-align: center; 
-            width: 90%; 
-            max-width: 400px; 
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); 
-            border-top: 4px solid var(--primary); 
-        }
-        
-        .icon-container { 
-            height: 80px; 
-            margin-bottom: 20px; 
-        }
-        
-        .icon-container .icon { 
-            font-size: 60px; 
-        }
-        
-        .icon-container .icon.success { 
-            color: var(--success); 
-        }
-        
-        .icon-container .icon.failure { 
-            color: var(--error); 
-        }
-        
-        .feedback-content h2 { 
-            font-size: 1.8rem; 
-            margin-bottom: 15px; 
-        }
-        
-        .feedback-content p { 
-            font-size: 1.1rem; 
-            color: var(--light-text); 
-        }
-        
-        .loader { 
-            margin: 0 auto; 
-            border: 6px solid rgba(255, 255, 255, 0.1); 
-            border-top: 6px solid var(--primary); 
-            border-radius: 50%; 
-            width: 50px; 
-            height: 50px; 
-            animation: spin 1s linear infinite; 
-        }
-        
-        .hidden { 
-            display: none; 
-        }
-        
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-        
-        .input-field[type="date"] { 
-            color-scheme: dark; 
-        }
-        
-        .input-field[type="date"]::-webkit-calendar-picker-indicator { 
-            filter: invert(0.8); 
-            cursor: pointer; 
-        }
+        .input-field[type="date"] { color-scheme: dark; }
+        .input-field[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; }
     </style>
 </head>
 <body>
+    
     <div class="container">
         <div id="auth-container">
-            <!-- Login Box -->
+            
             <div class="box" id="adminLoginBox">
                 <div class="particles">
                     <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
@@ -540,7 +485,7 @@
                     <div class="header">
                         <div class="header-icon"><i class="fas fa-user-lock"></i></div>
                         <h1>Admin Login</h1>
-                        <p>Masukkan username dan password untuk mengakses panel admin</p>
+                        <p>Masukkan user & pass untuk mengakses panel admin</p>
                     </div>
                     
                     <div class="input-group">
@@ -560,108 +505,112 @@
                         </div>
                     </div>
                     
-                    <button class="btn" id="loginBtn">
+                    <button class="btn" onclick="adminLogin()">
                         <i class="fas fa-sign-in-alt"></i> Masuk
                     </button>
                 </div>
             </div>
             
-            <!-- Admin Panel -->
             <div class="box" id="adminPanelBox">
-                <div class="particles">
+                 <div class="particles">
                     <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
                 </div>
-                
                 <div class="panel-header">
                     <h1><i class="fas fa-cogs"></i> Admin Panel</h1>
-                    <button class="logout-btn" title="Logout">
+                    <button class="logout-btn" onclick="logout()" title="Logout">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
                 
-                <form id="editForm" class="panel-main">
-                    <div class="panel-section">
-                        <div class="section-title">
-                            <i class="fas fa-birthday-cake"></i>
-                            <span>Personal Info</span>
-                        </div>
-                        <div class="input-group">
-                            <label for="birthdayNameInput">Birthday Name</label>
-                            <div class="input-wrapper">
-                                <input type="text" id="birthdayNameInput" class="input-field" placeholder="Name" value="Munir">
-                                <i class="fas fa-user-edit"></i>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label for="birthDateInput">Birth Date</label>
-                            <div class="input-wrapper">
-                                <input type="date" id="birthDateInput" class="input-field" value="2005-07-03">
-                                <i class="fas fa-calendar-alt"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="panel-section">
-                        <div class="section-title">
-                            <i class="fas fa-qrcode"></i>
-                            <span>Gift QR Code</span>
-                        </div>
-                        <div class="input-group">
-                            <label for="qrImageUrlInput">QR Code Image URL</label>
-                            <div class="input-wrapper">
-                                <input type="url" id="qrImageUrlInput" class="input-field" placeholder="https://i.ibb.co/.../qr.png" value="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1200px-QR_code_for_mobile_English_Wikipedia.svg.png">
-                                <i class="fas fa-link"></i>
-                            </div>
-                            <div class="url-instructions">
-                                Upload to a host like <a href="https://postimages.org" target="_blank">postimages.org</a> and paste the direct link.
-                            </div>
-                        </div>
-                        <div class="qr-preview-container" id="qrPreviewContainer">
-                            <img id="qrPreviewImage" class="qr-preview-image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1200px-QR_code_for_mobile_English_Wikipedia.svg.png" alt="QR Preview">
-                        </div>
-                    </div>
-
-                    <div class="panel-section">
-                        <div class="section-title">
-                            <i class="fas fa-users"></i>
-                            <span>Guest Login</span>
-                        </div>
-                        <div class="input-group">
-                            <label for="guestUserInput">Guest Username</label>
-                            <div class="input-wrapper">
-                                <input type="text" id="guestUserInput" class="input-field" placeholder="guest_user" value="guest">
-                                <i class="fas fa-user"></i>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label for="guestPassInput">Guest Password</label>
-                            <div class="input-wrapper">
-                                <input type="text" id="guestPassInput" class="input-field" placeholder="guest_pass" value="12345">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                        </div>
-                    </div>
+                <form id="editForm" onsubmit="event.preventDefault(); saveData();" class="panel-main">
                     
-                    <div class="panel-section">
-                        <div class="section-title">
-                            <i class="fas fa-user-shield"></i>
-                            <span>Admin Login</span>
-                        </div>
-                        <div class="input-group">
-                            <label for="adminUserInput">Admin Username</label>
-                            <div class="input-wrapper">
-                                <input type="text" id="adminUserInput" class="input-field" placeholder="admin_user" value="admin">
-                                <i class="fas fa-user"></i>
+                    <div class="panel-column">
+                        <div class="panel-section">
+                            <div class="section-title">
+                                <i class="fas fa-birthday-cake"></i>
+                                <span>Personal Info</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="birthdayNameInput">Birthday Name</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="birthdayNameInput" class="input-field" placeholder="Name" required>
+                                    <i class="fas fa-user-edit"></i>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="birthDateInput">Birth Date</label>
+                                 <div class="input-wrapper">
+                                    <input type="date" id="birthDateInput" class="input-field" required>
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
                             </div>
                         </div>
-                        <div class="input-group">
-                            <label for="adminPassInput">Admin Password</label>
-                            <div class="input-wrapper">
-                                <input type="text" id="adminPassInput" class="input-field" placeholder="admin_pass" value="admin123">
-                                <i class="fas fa-lock"></i>
+
+                        <div class="panel-section">
+                            <div class="section-title">
+                                <i class="fas fa-users"></i>
+                                <span>Guest Login</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="guestUserInput">Guest Username</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="guestUserInput" class="input-field" placeholder="guest_user" required>
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="guestPassInput">Guest Password</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="guestPassInput" class="input-field" placeholder="guest_pass" required>
+                                    <i class="fas fa-lock"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="panel-column">
+                         <div class="panel-section">
+                            <div class="section-title">
+                                <i class="fas fa-qrcode"></i>
+                                <span>Gift QR Code</span>
+                            </div>
+                            <div class="input-group">
+                                 <label for="qrImageUrlInput">QR Code Image URL</label>
+                                <div class="input-wrapper">
+                                    <input type="url" id="qrImageUrlInput" class="input-field" placeholder="https://i.ibb.co/.../qr.png" required>
+                                     <i class="fas fa-link"></i>
+                                </div>
+                                <div class="url-instructions">
+                                    Upload to a host like <a href="https://postimages.org" target="_blank" style="color: #4facfe;">postimages.org</a> and paste the direct link.
+                                </div>
+                            </div>
+                             <div class="qr-preview-container" id="qrPreviewContainer">
+                                <img id="qrPreviewImage" class="qr-preview-image" src="" alt="QR Preview">
+                            </div>
+                        </div>
+
+                        <div class="panel-section">
+                            <div class="section-title">
+                                <i class="fas fa-user-shield"></i>
+                                <span>Admin Login</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="adminUserInput">Admin Username</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="adminUserInput" class="input-field" placeholder="admin_user" required>
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                 <label for="adminPassInput">Admin Password</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="adminPassInput" class="input-field" placeholder="admin_pass" required>
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </form>
 
                 <div class="panel-actions">
@@ -679,32 +628,49 @@
     <div class="feedback-modal" id="feedbackModal">
         <div class="feedback-content">
             <div class="icon-container">
-                <i class="fas fa-check-circle icon success" id="successIcon"></i>
+                <div class="loader" id="feedbackLoader"></div>
+                <i class="fas fa-check-circle icon success hidden" id="successIcon"></i>
                 <i class="fas fa-times-circle icon failure hidden" id="failureIcon"></i>
-                <div class="loader hidden" id="feedbackLoader"></div>
             </div>
-            <h2 id="feedbackTitle">Changes Saved!</h2>
-            <p id="feedbackMessage">Your settings have been updated successfully</p>
+            <h2 id="feedbackTitle">Checking...</h2>
+            <p id="feedbackMessage"></p>
         </div>
     </div>
 
     <script>
-        // DOM Elements
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWl2CJqIr-u8lSHu8s4tgZ25UQIK2ivt0",
+            authDomain: "mayfa-fa284.firebaseapp.com",
+            databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "mayfa-fa284",
+            storageBucket: "mayfa-fa284.appspot.com",
+            messagingSenderId: "523290705179",
+            appId: "1:523290705179:web:b06ae4d8e6b08cf07b27be"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // --- Global Variables ---
+        const DEFAULT_ADMIN_USER = 'admin';
+        const DEFAULT_ADMIN_PASS = 'admin123';
         const authContainer = document.getElementById('auth-container');
-        const loginBtn = document.getElementById('loginBtn');
+        const feedbackModal = document.getElementById('feedbackModal');
+        const feedbackTitle = document.getElementById('feedbackTitle');
+        const feedbackMessage = document.getElementById('feedbackMessage');
+        const feedbackLoader = document.getElementById('feedbackLoader');
+        const successIcon = document.getElementById('successIcon');
+        const failureIcon = document.getElementById('failureIcon');
         const togglePasswordBtn = document.getElementById('togglePassword');
         const adminPassInput = document.getElementById('adminPass');
         const qrImageUrlInput = document.getElementById('qrImageUrlInput');
         const qrPreviewContainer = document.getElementById('qrPreviewContainer');
         const qrPreviewImage = document.getElementById('qrPreviewImage');
-        const feedbackModal = document.getElementById('feedbackModal');
-        const feedbackTitle = document.getElementById('feedbackTitle');
-        const feedbackMessage = document.getElementById('feedbackMessage');
-        const successIcon = document.getElementById('successIcon');
-        const failureIcon = document.getElementById('failureIcon');
-        const feedbackLoader = document.getElementById('feedbackLoader');
         
-        // Toggle password visibility
+        // --- UI Functions ---
+        
         togglePasswordBtn.addEventListener('click', function() {
             const type = adminPassInput.getAttribute('type') === 'password' ? 'text' : 'password';
             adminPassInput.setAttribute('type', type);
@@ -712,52 +678,24 @@
             this.classList.toggle('fa-eye-slash');
         });
         
-        // Login function
-        loginBtn.addEventListener('click', function() {
-            const user = document.getElementById('adminUser').value;
-            const pass = adminPassInput.value;
+        function showFeedback(state, title, message = '') {
+            feedbackLoader.classList.add('hidden');
+            successIcon.classList.add('hidden');
+            failureIcon.classList.add('hidden');
             
-            if (!user || !pass) {
-                showFeedback('failure', 'Input Required', 'Please enter both username and password.');
-                setTimeout(hideFeedback, 2000);
-                return;
-            }
+            feedbackModal.style.display = 'flex';
+            feedbackTitle.textContent = title;
+            feedbackMessage.textContent = message;
             
-            // Show loading feedback
-            showFeedback('loading', 'Authenticating...');
-            
-            // Simulate authentication
-            setTimeout(() => {
-                if (user === 'admin' && pass === 'admin123') {
-                    showFeedback('success', 'Login Successful!', 'Welcome to Admin Panel');
-                    setTimeout(() => {
-                        hideFeedback();
-                        authContainer.classList.add('is-active');
-                    }, 1500);
-                } else {
-                    showFeedback('failure', 'Login Failed', 'Invalid username or password');
-                    // Shake animation for login failure
-                    authContainer.animate([
-                        { transform: 'translateX(0px)' }, 
-                        { transform: 'translateX(-10px)' },
-                        { transform: 'translateX(10px)' }, 
-                        { transform: 'translateX(0px)' }
-                    ], { duration: 500, easing: 'ease-in-out' });
-                    setTimeout(hideFeedback, 2500);
-                }
-            }, 1500);
-        });
+            if (state === 'loading') feedbackLoader.classList.remove('hidden');
+            else if (state === 'success') successIcon.classList.remove('hidden');
+            else if (state === 'failure') failureIcon.classList.remove('hidden');
+        }
         
-        // Logout function
-        document.querySelector('.logout-btn').addEventListener('click', function() {
-            authContainer.classList.remove('is-active');
-            document.getElementById('adminUser').value = '';
-            adminPassInput.value = '';
-            showFeedback('success', 'Logged Out', 'You have been successfully logged out');
-            setTimeout(hideFeedback, 2000);
-        });
-        
-        // QR preview update
+        function hideFeedback() {
+            feedbackModal.style.display = 'none';
+        }
+
         function updateQrPreview() {
             const qrImageUrl = qrImageUrlInput.value.trim();
             if (qrImageUrl) {
@@ -768,61 +706,138 @@
             }
         }
         
-        // Form submission
-        document.getElementById('editForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // --- Core Logic ---
+
+        function adminLogin() {
+            const user = document.getElementById('adminUser').value;
+            const pass = adminPassInput.value;
+            
+            if (!user || !pass) {
+                 showFeedback('failure', 'Input Required', 'Please enter both username and password.');
+                 setTimeout(hideFeedback, 2000);
+                 return;
+            }
+
+            showFeedback('loading', 'Checking Credentials...');
+            
+            database.ref('settings').once('value').then((snapshot) => {
+                const settings = snapshot.val() || {};
+                const storedAdminUser = settings.adminUser || DEFAULT_ADMIN_USER;
+                const storedAdminPass = settings.adminPass || DEFAULT_ADMIN_PASS;
+                
+                if (user === storedAdminUser && pass === storedAdminPass) {
+                    showFeedback('success', 'Login Successful!', 'Redirecting...');
+                    
+                    setTimeout(() => {
+                        hideFeedback();
+                        authContainer.classList.add('is-active');
+                        loadDataToForm();
+                        setTimeout(initScrollAnimations, 800);
+                    }, 1500);
+                } else {
+                    showFeedback('failure', 'Login Failed!', 'Invalid username or password.');
+                    authContainer.animate([
+                        { transform: 'translateX(0px)' }, 
+                        { transform: 'translateX(-10px)' },
+                        { transform: 'translateX(10px)' }, 
+                        { transform: 'translateX(0px)' }
+                    ], { duration: 500, easing: 'ease-in-out' });
+                    setTimeout(hideFeedback, 2500);
+                }
+            }).catch((error) => {
+                showFeedback('failure', 'Database Error', error.message);
+                setTimeout(hideFeedback, 3000);
+            });
+        }
+        
+        function logout() {
+            authContainer.classList.remove('is-active');
+            document.getElementById('editForm').reset();
+            document.getElementById('adminUser').value = '';
+            adminPassInput.value = '';
+        }
+        
+        function loadDataToForm() {
+            showFeedback('loading', 'Loading Data...');
+            database.ref('settings').once('value').then((snapshot) => {
+                const settings = snapshot.val() || {};
+                
+                document.getElementById('birthdayNameInput').value = settings.birthdayName || 'Mayfa';
+                document.getElementById('birthDateInput').value = settings.birthDate || '2005-09-28';
+                document.getElementById('qrImageUrlInput').value = settings.qrImageUrl || '';
+                document.getElementById('guestUserInput').value = settings.guestUser || 'user';
+                document.getElementById('guestPassInput').value = settings.guestPass || 'user';
+                document.getElementById('adminUserInput').value = settings.adminUser || DEFAULT_ADMIN_USER;
+                document.getElementById('adminPassInput').value = settings.adminPass || DEFAULT_ADMIN_PASS;
+                
+                updateQrPreview();
+                hideFeedback();
+            }).catch((error) => {
+                showFeedback('failure', 'Failed to Load Data', error.message);
+                setTimeout(hideFeedback, 3000);
+            });
+        }
+        
+        function saveData() {
             showFeedback('loading', 'Saving Changes...');
             
-            setTimeout(() => {
-                showFeedback('success', 'Changes Saved!', 'Your settings have been updated successfully');
-                
-                // Update button to show success
-                const saveBtn = document.querySelector('.btn-save');
-                saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
-                saveBtn.style.background = 'linear-gradient(to right, #4ade80 0%, #22d3ee 100%)';
-                
-                setTimeout(() => {
+            const settings = {
+                birthdayName: document.getElementById('birthdayNameInput').value,
+                birthDate: document.getElementById('birthDateInput').value,
+                qrImageUrl: document.getElementById('qrImageUrlInput').value,
+                guestUser: document.getElementById('guestUserInput').value,
+                guestPass: document.getElementById('guestPassInput').value,
+                adminUser: document.getElementById('adminUserInput').value,
+                adminPass: document.getElementById('adminPassInput').value
+            };
+            
+            database.ref('settings').set(settings).then(() => {
+                showFeedback('success', 'Saved!', 'Your changes have been saved successfully.');
+                setTimeout(hideFeedback, 2000);
+                 const saveBtn = document.querySelector('.btn-save');
+                 saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+                 setTimeout(() => {
                     saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
-                    saveBtn.style.background = 'linear-gradient(to right, var(--primary) 0%, var(--secondary) 100%)';
-                    hideFeedback();
-                }, 2000);
-            }, 1500);
-        });
-        
-        // Feedback functions
-        function showFeedback(state, title, message = '') {
-            feedbackLoader.classList.add('hidden');
-            successIcon.classList.add('hidden');
-            failureIcon.classList.add('hidden');
-            
-            feedbackModal.style.display = 'flex';
-            feedbackTitle.textContent = title;
-            feedbackMessage.textContent = message;
-            
-            if (state === 'loading') {
-                feedbackLoader.classList.remove('hidden');
-            } else if (state === 'success') {
-                successIcon.classList.remove('hidden');
-            } else if (state === 'failure') {
-                failureIcon.classList.remove('hidden');
-            }
+                 }, 2500);
+            }).catch((error) => {
+                showFeedback('failure', 'Save Failed', error.message);
+                setTimeout(hideFeedback, 3000);
+            });
         }
         
-        function hideFeedback() {
-            feedbackModal.style.display = 'none';
+        // --- Mobile Scroll Animation ---
+        function initScrollAnimations() {
+            const sections = document.querySelectorAll('.panel-section');
+            const panelMain = document.querySelector('.panel-main');
+
+            if (!panelMain) return;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                    }
+                });
+            }, {
+                root: panelMain,
+                rootMargin: '0px',
+                threshold: 0.2
+            });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
         }
-        
-        // Initialize QR preview
+
+        // --- Event Listeners ---
         document.addEventListener('DOMContentLoaded', () => {
-            updateQrPreview();
             qrImageUrlInput.addEventListener('input', updateQrPreview);
-            
-            // Enter key for login
+
             document.getElementById('adminPass').addEventListener('keypress', (e) => {
-                if(e.key === 'Enter') loginBtn.click();
+                if(e.key === 'Enter') adminLogin();
             });
             document.getElementById('adminUser').addEventListener('keypress', (e) => {
-                if(e.key === 'Enter') loginBtn.click();
+                if(e.key === 'Enter') adminLogin();
             });
         });
     </script>
