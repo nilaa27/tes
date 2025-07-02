@@ -11,6 +11,18 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
+        :root {
+            --primary: #4facfe;
+            --secondary: #00f2fe;
+            --dark: #141E30;
+            --darker: #0e1724;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --success: #4ade80;
+            --error: #f87171;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -18,9 +30,8 @@
             font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
-        /* Modern Glassmorphism Background */
         body {
-            background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -28,6 +39,7 @@
             padding: 20px;
             overflow-x: hidden;
             color: #fff;
+            position: relative;
         }
         
         /* Floating Glass Container */
@@ -35,14 +47,14 @@
             width: 100%;
             max-width: 900px;
             perspective: 1000px;
-            margin: auto; /* Memastikan kontainer selalu di tengah */
+            z-index: 10;
         }
         
         #auth-container {
             position: relative;
-            /* Diubah dari height ke min-height untuk fleksibilitas */
+            /* Adjusted for better flexibility on mobile */
             min-height: 650px; 
-            width: 100%;
+            height: auto;
         }
         
         /* Glass Panel with Depth */
@@ -50,11 +62,10 @@
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid var(--glass-border);
             border-radius: 24px;
             padding: 40px;
             width: 100%;
-            min-height: 100%; /* Memastikan box mengisi auth-container */
             position: absolute;
             top: 0;
             left: 0;
@@ -64,8 +75,21 @@
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4),
                         0 0 0 1px rgba(255, 255, 255, 0.05),
                         inset 0 0 15px rgba(255, 255, 255, 0.1);
-            display: flex; /* Menggunakan flexbox untuk layout internal */
+            overflow: hidden;
+            display: flex; /* Using flexbox for better vertical alignment */
             flex-direction: column;
+        }
+        
+        .box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(79,172,254,0.1) 0%, transparent 70%);
+            z-index: -1;
+            animation: rotate 15s linear infinite;
         }
         
         /* Login Box Styling */
@@ -73,14 +97,15 @@
             transform: rotateY(0deg);
             opacity: 1;
             z-index: 2;
-            justify-content: center; /* Memusatkan konten secara vertikal */
-            overflow-y: auto; /* Menambah scroll jika konten melebihi */
+            justify-content: center; /* Center content vertically */
+            height: 650px; /* Fixed height for login */
         }
         
         #auth-container.is-active #adminLoginBox {
             transform: rotateY(180deg);
             opacity: 0;
             z-index: 1;
+            pointer-events: none;
         }
         
         /* Admin Panel Styling */
@@ -88,13 +113,17 @@
             transform: rotateY(-180deg);
             opacity: 0;
             z-index: 1;
-            overflow-y: auto; /* Mempertahankan scroll untuk panel */
+            height: auto; /* Auto height for content */
+            overflow-y: auto;
+            pointer-events: none;
         }
         
         #auth-container.is-active #adminPanelBox {
             transform: rotateY(0deg);
             opacity: 1;
             z-index: 2;
+            position: relative; /* Changed from absolute to handle dynamic height */
+            pointer-events: auto;
         }
         
         /* Header Styles */
@@ -116,6 +145,19 @@
             border: 2px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             animation: float 4s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-icon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(79,172,254,0.3) 0%, transparent 70%);
+            animation: pulse 2s infinite;
         }
         
         @keyframes float {
@@ -123,16 +165,28 @@
             50% { transform: translateY(-10px); }
         }
         
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 0.3; }
+            100% { transform: scale(0.8); opacity: 0.7; }
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
         .login-icon i {
             font-size: 48px;
-            color: #4facfe;
+            color: var(--primary);
             text-shadow: 0 0 15px rgba(79, 172, 254, 0.5);
+            z-index: 1;
         }
         
         h1 {
             font-size: 2.2rem;
             font-weight: 600;
-            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -157,24 +211,24 @@
             margin-right: 12px;
             width: 20px;
             text-align: center;
-            color: #4facfe;
+            color: var(--primary);
         }
         
         .input-field {
             width: 100%;
-            padding: 16px 20px 16px 50px;
+            padding: 16px 20px; /* Simplified padding */
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid rgba(255, 255, 255, 0.15);
             border-radius: 15px;
             color: #fff;
             font-size: 1.1rem;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             backdrop-filter: blur(5px);
         }
         
         .input-field:focus {
             outline: none;
-            border-color: #4facfe;
+            border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
         }
         
@@ -193,8 +247,9 @@
             transform: translateY(-50%);
             color: rgba(255, 255, 255, 0.7);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             font-size: 18px;
+            z-index: 2;
         }
         
         #togglePassword:hover {
@@ -206,18 +261,22 @@
         .btn {
             width: 100%;
             padding: 18px;
-            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(to right, var(--primary) 0%, var(--secondary) 100%);
             border: none;
             border-radius: 15px;
-            color: #141E30;
+            color: var(--dark);
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: var(--transition);
             letter-spacing: 0.5px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
         .btn::before {
@@ -263,27 +322,63 @@
             height: 45px;
             border-radius: 50%;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logout-btn::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: scale(0);
+            transition: var(--transition);
+        }
+        
+        .logout-btn:hover::before {
+            transform: scale(1);
         }
         
         .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
             color: #fff;
             transform: rotate(10deg);
         }
         
-        .panel-section {
+        .panel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
             margin-bottom: 30px;
         }
         
-        /* Membuat form di panel admin bisa tumbuh mengisi ruang */
-        #editForm {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
+        .panel-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            padding: 20px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .panel-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .panel-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
         }
         
         .section-title {
@@ -292,7 +387,7 @@
             gap: 12px;
             font-size: 1.2rem;
             font-weight: 500;
-            color: #4facfe;
+            color: var(--primary);
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -307,13 +402,14 @@
             margin-bottom: 20px;
         }
         
-        .input-group-panel i {
+        .input-group-panel .input-icon {
             position: absolute;
             left: 18px;
             top: 50%;
             transform: translateY(-50%);
-            color: #4facfe;
+            color: var(--primary);
             font-size: 18px;
+            pointer-events: none; /* Make icon unclickable */
         }
         
         .input-field-panel {
@@ -324,30 +420,32 @@
             border-radius: 15px;
             color: #fff;
             font-size: 1rem;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
         
-        /* Perbaikan khusus untuk input tanggal */
+        .input-field-panel:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
+        }
+        
         .input-field-panel[type="date"] {
             appearance: none;
-            padding-top: 15px;
-            padding-bottom: 15px;
             color-scheme: dark;
+            position: relative;
         }
         
         .input-field-panel[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(0.8);
             cursor: pointer;
             margin-left: 5px;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.7;
         }
         
-        .input-field-panel:focus {
-            outline: none;
-            border-color: #4facfe;
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
-        }
-        
-        /* Gaya khusus untuk QR Code URL */
         .qr-url-container {
             background: rgba(255, 255, 255, 0.08);
             border-radius: 15px;
@@ -362,6 +460,7 @@
             padding: 20px;
             background: rgba(255, 255, 255, 0.08);
             border-radius: 15px;
+            transition: var(--transition);
         }
         
         .qr-preview-title {
@@ -376,6 +475,12 @@
             border-radius: 10px;
             border: 2px solid rgba(255, 255, 255, 0.1);
             margin: 0 auto;
+            transition: var(--transition);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .qr-preview-image:hover {
+            transform: scale(1.05);
         }
         
         .url-instructions {
@@ -396,18 +501,22 @@
         }
         
         .btn-save {
-            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(to right, var(--primary) 0%, var(--secondary) 100%);
             border: none;
             border-radius: 15px;
-            color: #141E30;
+            color: var(--dark);
             font-size: 18px;
             font-weight: 600;
             padding: 16px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             width: 100%;
-            margin-top: auto; /* Mendorong tombol ke bawah */
+            margin-top: 10px;
             box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
         .btn-save:hover {
@@ -424,12 +533,19 @@
             color: rgba(255, 255, 255, 0.7);
             font-size: 1rem;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 20px;
+            border-radius: 12px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .back-link:hover {
-            color: #4facfe;
+            color: var(--primary);
             transform: translateX(-5px);
+            background: rgba(255, 255, 255, 0.1);
         }
         
         /* Feedback Modal */
@@ -445,7 +561,6 @@
             z-index: 3000;
             justify-content: center;
             align-items: center;
-            padding: 20px; /* Menambah padding untuk modal */
         }
         
         .feedback-content {
@@ -453,10 +568,22 @@
             border-radius: 20px;
             padding: 40px;
             text-align: center;
-            width: 100%; /* Lebar modal menyesuaikan padding */
+            width: 90%;
             max-width: 400px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feedback-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
         }
         
         .icon-container {
@@ -473,17 +600,17 @@
         }
         
         .icon-container .icon.success {
-            color: #4ade80;
+            color: var(--success);
         }
         
         .icon-container .icon.failure {
-            color: #f87171;
+            color: var(--error);
         }
         
         .feedback-content h2 {
             font-size: 1.8rem;
             margin-bottom: 15px;
-            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -512,7 +639,7 @@
         
         .loader {
             border: 6px solid rgba(255, 255, 255, 0.1);
-            border-top: 6px solid #4facfe;
+            border-top: 6px solid var(--primary);
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -529,19 +656,60 @@
             border-radius: 50%;
             background: rgba(79, 172, 254, 0.3);
             pointer-events: none;
-            z-index: -1;
+            z-index: 1;
         }
         
-        /* Responsive Design */
+        /* Floating Shapes */
+        .floating-shape {
+            position: absolute;
+            z-index: 0;
+            opacity: 0.1;
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        .shape-circle {
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary), transparent);
+        }
+        
+        .shape-triangle {
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+        }
+        
+        /* Responsive Design Improvements */
+        @media (max-width: 960px) {
+            .panel-grid {
+                /* For tablet size, stack if needed */
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+        }
+        
         @media (max-width: 768px) {
             body {
-                padding: 15px; /* Sedikit mengurangi padding body */
+                padding: 15px; /* Reduce body padding */
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 0;
             }
             
+            #auth-container {
+                min-height: auto;
+            }
+
             .box {
-                padding: 30px;
+                padding: 30px 25px; /* Adjust padding */
+                border-radius: 20px;
+                position: relative; /* Make admin panel relative to flow */
             }
-            
+
+            #adminLoginBox {
+                height: auto;
+                min-height: 600px; /* Ensure enough space */
+            }
+
             .login-icon {
                 width: 80px;
                 height: 80px;
@@ -552,35 +720,37 @@
             }
             
             h1 {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
             
             .input-field, .input-field-panel {
-                padding: 14px 16px 14px 45px;
+                padding-left: 18px; /* Standardize padding */
                 font-size: 1rem;
+            }
+            .input-field-panel {
+                padding-left: 45px; /* Keep padding for icon */
             }
             
             .btn, .btn-save {
                 padding: 16px;
-                font-size: 16px;
+                font-size: 1rem;
+            }
+            
+            .panel-grid {
+                grid-template-columns: 1fr; /* Single column on smaller screens */
+            }
+
+            .floating-shape {
+                opacity: 0.05; /* Make shapes less distracting */
             }
         }
         
         @media (max-width: 480px) {
             body {
-                padding: 10px; /* Mengurangi padding lagi untuk layar sangat kecil */
-                /* Memastikan panel tidak terpotong di layar pendek (misal, landscape) */
-                align-items: flex-start; 
-                padding-top: 20px;
-                padding-bottom: 20px;
+                padding: 10px;
             }
-            
-            #auth-container {
-                 min-height: 580px; /* Mengurangi tinggi minimum di mobile */
-            }
-        
             .box {
-                padding: 25px 20px;
+                padding: 25px 15px;
             }
             
             .login-header {
@@ -593,7 +763,7 @@
             }
             
             h1 {
-                font-size: 1.6rem;
+                font-size: 1.8rem;
             }
             
             .input-group {
@@ -603,11 +773,25 @@
             .section-title {
                 font-size: 1.1rem;
             }
+            
+            .feedback-content {
+                padding: 30px 20px;
+            }
+
+            .back-link {
+                font-size: 0.9rem;
+                padding: 10px 15px;
+            }
         }
     </style>
 </head>
 <body>
     <div id="particles"></div>
+    
+    <div class="floating-shape shape-circle" style="width: 200px; height: 200px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+    <div class="floating-shape shape-triangle" style="width: 150px; height: 150px; top: 70%; left: 80%; animation-delay: 3s;"></div>
+    <div class="floating-shape shape-circle" style="width: 120px; height: 120px; top: 20%; left: 85%; animation-delay: 5s;"></div>
+    <div class="floating-shape shape-triangle" style="width: 180px; height: 180px; top: 80%; left: 10%; animation-delay: 7s;"></div>
     
     <div class="container">
         <div id="auth-container">
@@ -617,7 +801,7 @@
                         <i class="fas fa-user-lock"></i>
                     </div>
                     <h1>Admin Login</h1>
-                    <p style="color: rgba(255, 255, 255, 0.7);">Masukkan kredensial untuk mengakses panel admin</p>
+                    <p style="color: rgba(255, 255, 255, 0.7);">Masukkan user & pass untuk mengakses panel admin</p>
                 </div>
                 
                 <div class="input-group">
@@ -646,89 +830,93 @@
             
             <div class="box" id="adminPanelBox">
                 <div class="box-header">
-                    <h1><i class="fas fa-cogs"></i> panel admin</h1>
+                    <h1><i class="fas fa-cogs"></i> Panel Admin</h1>
                     <button class="logout-btn" onclick="logout()" title="Logout">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
                 
                 <form id="editForm" onsubmit="event.preventDefault(); saveData();">
-                    <div class="panel-section">
-                        <div class="section-title">
-                            <i class="fas fa-birthday-cake"></i>
-                            <span>Info Pribadi</span>
-                        </div>
-                        
-                        <div class="input-group-panel">
-                            <i class="fas fa-user-edit"></i>
-                            <input type="text" id="birthdayNameInput" class="input-field-panel" placeholder="Nama yang berulang tahun" required>
-                        </div>
-                        
-                        <div class="input-group-panel">
-                            <i class="fas fa-calendar-alt"></i>
-                            <input type="date" id="birthDateInput" class="input-field-panel" placeholder="Tanggal Lahir" required>
-                        </div>
-                    </div>
-                    
-                    <div class="panel-section">
-                        <div class="section-title">
-                            <i class="fas fa-qrcode"></i>
-                            <span>QR Code Hadiah</span>
-                        </div>
-                        
-                        <div class="qr-url-container">
-                            <div class="input-group-panel">
-                                <i class="fas fa-link"></i>
-                                <input type="url" id="qrImageUrlInput" class="input-field-panel" placeholder="https://i.ibb.co/.../qr-code.png" required>
+                    <div class="panel-grid">
+                        <div class="panel-section">
+                            <div class="section-title">
+                                <i class="fas fa-birthday-cake"></i>
+                                <span>Info Pribadi</span>
                             </div>
                             
-                            <div class="url-instructions">
-                                <p><strong>Cara mendapatkan URL gambar:</strong></p>
-                                <ol>
-                                    <li>Unggah gambar QR Code ke layanan hosting seperti <a href="https://postimages.org" target="_blank" style="color: #4facfe;">postimages</a></li>
-                                    <li>Salin URL gambar langsung (direct link)</li>
-                                    <li>Tempel URL tersebut di input di atas</li>
-                                </ol>
+                            <div class="input-group-panel">
+                                <i class="fas fa-user-edit input-icon"></i>
+                                <input type="text" id="birthdayNameInput" class="input-field-panel" placeholder="Nama yang berulang tahun" required>
+                            </div>
+                            
+                            <div class="input-group-panel">
+                                <i class="fas fa-calendar-alt input-icon"></i>
+                                <input type="date" id="birthDateInput" class="input-field-panel" required>
                             </div>
                         </div>
                         
-                        <div class="qr-preview-container" id="qrPreviewContainer">
-                            <div class="qr-preview-title">Preview QR Code:</div>
-                            <img id="qrPreviewImage" class="qr-preview-image" src="" alt="Preview QR Code">
+                        <div class="panel-section">
+                            <div class="section-title">
+                                <i class="fas fa-qrcode"></i>
+                                <span>QR Code Hadiah</span>
+                            </div>
+                            
+                            <div class="qr-url-container">
+                                <div class="input-group-panel">
+                                    <i class="fas fa-link input-icon"></i>
+                                    <input type="url" id="qrImageUrlInput" class="input-field-panel" placeholder="https://i.ibb.co/.../qr-code.png" required>
+                                </div>
+                                
+                                <div class="url-instructions">
+                                    <p><strong>Cara mendapatkan URL gambar:</strong></p>
+                                    <ol>
+                                        <li>Unggah gambar QR Code ke layanan seperti <a href="https://postimages.org" target="_blank" style="color: #4facfe;">postimages</a></li>
+                                        <li>Salin "Direct link" (Tautan Langsung)</li>
+                                        <li>Tempel URL tersebut di input di atas</li>
+                                    </ol>
+                                </div>
+                            </div>
+                            
+                            <div class="qr-preview-container" id="qrPreviewContainer">
+                                <div class="qr-preview-title">Preview QR Code:</div>
+                                <img id="qrPreviewImage" class="qr-preview-image" src="" alt="Preview QR Code">
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="panel-section">
-                        <div class="section-title">
-                            <i class="fas fa-users"></i>
-                            <span>Login Tamu</span>
+                    <div class="panel-grid">
+                        <div class="panel-section">
+                            <div class="section-title">
+                                <i class="fas fa-users"></i>
+                                <span>Setting User Login</span>
+                            </div>
+                            
+                            <div class="input-group-panel">
+                                <i class="fas fa-user input-icon"></i>
+                                <input type="text" id="guestUserInput" class="input-field-panel" placeholder="Username tamu" required>
+                            </div>
+                            
+                            <div class="input-group-panel">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="text" id="guestPassInput" class="input-field-panel" placeholder="Password tamu" required>
+                            </div>
                         </div>
                         
-                        <div class="input-group-panel">
-                            <i class="fas fa-user"></i>
-                            <input type="text" id="guestUserInput" class="input-field-panel" placeholder="Username tamu" required>
-                        </div>
-                        
-                        <div class="input-group-panel">
-                            <i class="fas fa-lock"></i>
-                            <input type="text" id="guestPassInput" class="input-field-panel" placeholder="Password tamu" required>
-                        </div>
-                    </div>
-                    
-                    <div class="panel-section">
-                        <div class="section-title">
-                            <i class="fas fa-user-shield"></i>
-                            <span>Login Admin</span>
-                        </div>
-                        
-                        <div class="input-group-panel">
-                            <i class="fas fa-user"></i>
-                            <input type="text" id="adminUserInput" class="input-field-panel" placeholder="Username admin" required>
-                        </div>
-                        
-                        <div class="input-group-panel">
-                            <i class="fas fa-lock"></i>
-                            <input type="text" id="adminPassInput" class="input-field-panel" placeholder="Password admin" required>
+                        <div class="panel-section">
+                            <div class="section-title">
+                                <i class="fas fa-user-shield"></i>
+                                <span>Setting Admin Login</span>
+                            </div>
+                            
+                            <div class="input-group-panel">
+                                <i class="fas fa-user input-icon"></i>
+                                <input type="text" id="adminUserInput" class="input-field-panel" placeholder="Username admin" required>
+                            </div>
+                            
+                            <div class="input-group-panel">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="text" id="adminPassInput" class="input-field-panel" placeholder="Password admin" required>
+                            </div>
                         </div>
                     </div>
                     
@@ -772,7 +960,7 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Variabel global
+        // Global Variables
         const DEFAULT_ADMIN_USER = 'admin';
         const DEFAULT_ADMIN_PASS = 'admin123';
         const authContainer = document.getElementById('auth-container');
@@ -791,17 +979,24 @@
         // Floating particles effect
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
-            const particleCount = 20;
+            if (!particlesContainer) {
+                const newContainer = document.createElement('div');
+                newContainer.id = 'particles';
+                document.body.prepend(newContainer);
+                particlesContainer = newContainer;
+            }
+            const particleCount = 30;
             
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
                 
-                // Random size and position
                 const size = Math.random() * 10 + 5;
                 const posX = Math.random() * 100;
                 const posY = Math.random() * 100;
                 const animationDuration = Math.random() * 20 + 10;
+                const animationDelay = Math.random() * 5;
+                const hue = Math.floor(Math.random() * 40) + 200;
                 
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
@@ -809,39 +1004,51 @@
                 particle.style.top = `${posY}%`;
                 particle.style.opacity = Math.random() * 0.5 + 0.1;
                 particle.style.animation = `floatParticle ${animationDuration}s infinite ease-in-out`;
-                particle.style.animationDelay = `${Math.random() * 5}s`;
+                particle.style.animationDelay = `${animationDelay}s`;
+                particle.style.background = `hsla(${hue}, 90%, 70%, 0.3)`;
                 
                 particlesContainer.appendChild(particle);
             }
         }
         
-        // Toggle password visibility
+        function addParticleAnimation() {
+            const styleSheet = document.styleSheets[0];
+            const keyframes = `
+                @keyframes floatParticle {
+                    0% { transform: translate(0, 0) rotate(0deg); }
+                    25% { transform: translate(20px, -30px) rotate(90deg); }
+                    50% { transform: translate(40px, 10px) rotate(180deg); }
+                    75% { transform: translate(-20px, 30px) rotate(270deg); }
+                    100% { transform: translate(0, 0) rotate(360deg); }
+                }`;
+            try {
+                styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
+            } catch (e) {
+                console.warn("Could not insert CSS rule for particle animation.");
+            }
+        }
+        
         togglePasswordBtn.addEventListener('click', function() {
             const type = adminPassInput.getAttribute('type') === 'password' ? 'text' : 'password';
             adminPassInput.setAttribute('type', type);
             this.classList.toggle('fa-eye');
             this.classList.toggle('fa-eye-slash');
             
-            // Animation effect
             this.style.transform = 'translateY(-50%) scale(1.2)';
             setTimeout(() => {
                 this.style.transform = 'translateY(-50%) scale(1)';
             }, 300);
         });
         
-        // Show feedback modal
         function showFeedback(state, title, message = '') {
-            // Reset icons
             feedbackLoader.classList.add('hidden');
             successIcon.classList.add('hidden');
             failureIcon.classList.add('hidden');
             
-            // Show modal
             feedbackModal.style.display = 'flex';
             feedbackTitle.textContent = title;
             feedbackMessage.textContent = message;
             
-            // Set state
             if (state === 'loading') {
                 feedbackLoader.classList.remove('hidden');
             } else if (state === 'success') {
@@ -851,12 +1058,10 @@
             }
         }
         
-        // Hide feedback modal
         function hideFeedback() {
             feedbackModal.style.display = 'none';
         }
         
-        // Admin login function
         function adminLogin() {
             const user = document.getElementById('adminUser').value;
             const pass = adminPassInput.value;
@@ -880,18 +1085,11 @@
                 } else {
                     showFeedback('failure', 'Login Gagal!', 'Username atau Password salah.');
                     
-                    // Shake animation for login failure
                     authContainer.animate([
-                        { transform: 'translateX(0)' },
-                        { transform: 'translateX(-15px)' },
-                        { transform: 'translateX(15px)' },
-                        { transform: 'translateX(-10px)' },
-                        { transform: 'translateX(10px)' },
-                        { transform: 'translateX(0)' }
-                    ], {
-                        duration: 600,
-                        iterations: 1
-                    });
+                        { transform: 'translateX(0)' }, { transform: 'translateX(-15px)' },
+                        { transform: 'translateX(15px)' }, { transform: 'translateX(-10px)' },
+                        { transform: 'translateX(10px)' }, { transform: 'translateX(0)' }
+                    ], { duration: 600, iterations: 1 });
                     
                     setTimeout(hideFeedback, 2500);
                 }
@@ -901,16 +1099,12 @@
             });
         }
         
-        // Logout function
         function logout() {
             authContainer.classList.remove('is-active');
-            
-            // Reset form
             document.getElementById('adminUser').value = '';
             adminPassInput.value = '';
         }
         
-        // Load data from Firebase to form
         function loadDataToForm() {
             showFeedback('loading', 'Memuat data...');
             
@@ -919,20 +1113,14 @@
                 const settings = snapshot.val();
                 
                 if (settings) {
-                    // Data ulang tahun
                     document.getElementById('birthdayNameInput').value = settings.birthdayName || 'Mayfa';
                     document.getElementById('birthDateInput').value = settings.birthDate || '2005-09-28';
                     document.getElementById('qrImageUrlInput').value = settings.qrImageUrl || '';
-                    
-                    // Data login tamu
                     document.getElementById('guestUserInput').value = settings.guestUser || 'user';
                     document.getElementById('guestPassInput').value = settings.guestPass || 'user';
-                    
-                    // Data login admin
                     document.getElementById('adminUserInput').value = settings.adminUser || DEFAULT_ADMIN_USER;
                     document.getElementById('adminPassInput').value = settings.adminPass || DEFAULT_ADMIN_PASS;
                     
-                    // Load QR preview if URL exists
                     updateQrPreview();
                 }
                 
@@ -943,18 +1131,22 @@
             });
         }
         
-        // Update QR preview image
         function updateQrPreview() {
             const qrImageUrl = qrImageUrlInput.value;
             if (qrImageUrl) {
                 qrPreviewImage.src = qrImageUrl;
                 qrPreviewContainer.style.display = 'block';
+                
+                qrPreviewContainer.style.opacity = '0';
+                setTimeout(() => {
+                    qrPreviewContainer.style.transition = 'opacity 0.5s ease';
+                    qrPreviewContainer.style.opacity = '1';
+                }, 10);
             } else {
                 qrPreviewContainer.style.display = 'none';
             }
         }
         
-        // Save data to Firebase
         function saveData() {
             showFeedback('loading', 'Menyimpan data...');
             
@@ -970,19 +1162,18 @@
             
             database.ref('settings').set(settings)
                 .then(() => {
-                    showFeedback('success', 'Tersimpan!', 'Data telah berhasil disimpan di Firebase.');
+                    showFeedback('success', 'Tersimpan!', 'Data telah berhasil disimpan.');
                     
                     setTimeout(() => {
                         hideFeedback();
                         
-                        // Confirmation animation
                         const saveBtn = document.querySelector('.btn-save');
                         saveBtn.innerHTML = '<i class="fas fa-check"></i> Tersimpan!';
                         saveBtn.style.background = 'linear-gradient(to right, #4ade80, #22d3ee)';
                         
                         setTimeout(() => {
                             saveBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Perubahan';
-                            saveBtn.style.background = 'linear-gradient(to right, #4facfe 0%, #00f2fe 100%)';
+                            saveBtn.style.background = 'linear-gradient(to right, #4facfe, #00f2fe)';
                         }, 2000);
                     }, 1500);
                 })
@@ -992,25 +1183,17 @@
                 });
         }
         
-        // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
             authContainer.classList.remove('is-active');
             createParticles();
+            addParticleAnimation();
             
-            // Add keyframes for particle animation
-            const styleSheet = document.styleSheets[0];
-            styleSheet.insertRule(`
-                @keyframes floatParticle {
-                    0% { transform: translate(0, 0) rotate(0deg); }
-                    25% { transform: translate(20px, -30px) rotate(90deg); }
-                    50% { transform: translate(40px, 10px) rotate(180deg); }
-                    75% { transform: translate(-20px, 30px) rotate(270deg); }
-                    100% { transform: translate(0, 0) rotate(360deg); }
-                }
-            `, styleSheet.cssRules.length);
-            
-            // Update QR preview when URL changes
             qrImageUrlInput.addEventListener('input', updateQrPreview);
+            
+            const shapes = document.querySelectorAll('.floating-shape');
+            shapes.forEach((shape, index) => {
+                shape.style.animationDuration = `${15 + index * 2}s`;
+            });
         });
     </script>
 </body>
