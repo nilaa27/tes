@@ -47,7 +47,7 @@
         /* --- Main Container & 3D Scene --- */
         .container {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1200px; /* Adjusted for 4 columns */
             perspective: 1500px;
             z-index: 10;
         }
@@ -321,7 +321,6 @@
             transform: rotate(15deg);
         }
         
-        /* Mobile First Layout (Default) */
         .panel-main {
             flex-grow: 1;
             overflow-y: auto;
@@ -340,11 +339,8 @@
             opacity: 0;
             transform: translateY(40px);
             transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        
-        /* Remove margin from last section in mobile view */
-        .panel-column:last-child .panel-section:last-child {
-            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         .panel-section.in-view {
@@ -360,36 +356,27 @@
             font-weight: 600;
             color: var(--light-text);
             margin-bottom: 25px;
+            flex-shrink: 0;
         }
-
         .section-title i { color: var(--primary); font-size: 1.5rem; }
 
-        /* Desktop Layout (min-width: 992px) */
+        /* MODIFIED FOR DESKTOP VIEW */
         @media (min-width: 992px) {
-            #adminPanelBox .box {
-                padding: 40px;
-            }
             #auth-container {
-                max-width: 900px;
-                height: 700px;
+                max-width: 1200px; /* Wider container */
+                height: auto;
             }
-             /* NEW/MODIFIED: Make .panel-main a grid container */
+             #adminPanelBox {
+                padding: 40px;
+             }
             .panel-main {
                 display: grid;
-                grid-template-columns: 1fr 1fr; /* Two equal columns */
+                grid-template-columns: repeat(4, 1fr); /* 4-column grid layout */
                 gap: 25px;
-                padding: 20px 15px 120px 0; 
+                padding-top: 20px;
+                padding-bottom: 100px; /* Space for action bar */
             }
-             /* NEW: The columns will hold the sections */
-            .panel-column {
-                display: flex;
-                flex-direction: column;
-                gap: 25px; /* Space between sections inside a column */
-            }
-            /* MODIFIED: Sections have no bottom margin in grid view */
-            .panel-section {
-                margin-bottom: 0;
-            }
+            .panel-section { margin-bottom: 0; }
         }
 
         /* --- Action Bar (Save/Back) --- */
@@ -398,7 +385,7 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            padding: 20px 30px;
+            padding: 20px 40px; /* Adjusted padding */
             background: rgba(15, 18, 26, 0.8);
             backdrop-filter: blur(10px);
             border-top: 1px solid var(--glass-border);
@@ -441,14 +428,14 @@
         }
 
         @media (max-width: 991px) {
+            .panel-main {
+                 padding-top: 20px;
+            }
             .panel-actions {
                 padding: 15px;
                 justify-content: space-between;
             }
             .btn-save { width: 60%; }
-            .panel-main {
-                 padding-top: 10px; /* Adjust mobile padding */
-            }
         }
         
         .qr-preview-container { display: none; margin-top: 20px; text-align: center; padding: 20px; background: rgba(0, 0, 0, 0.2); border-radius: 15px; }
@@ -523,94 +510,88 @@
                 </div>
                 
                 <form id="editForm" onsubmit="event.preventDefault(); saveData();" class="panel-main">
+                    <div class="panel-section">
+                        <div class="section-title">
+                            <i class="fas fa-birthday-cake"></i>
+                            <span>Personal Info</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="birthdayNameInput">Birthday Name</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="birthdayNameInput" class="input-field" placeholder="Name" required>
+                                <i class="fas fa-user-edit"></i>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="birthDateInput">Birth Date</label>
+                             <div class="input-wrapper">
+                                <input type="date" id="birthDateInput" class="input-field" required>
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <div class="section-title">
+                            <i class="fas fa-qrcode"></i>
+                            <span>Gift QR Code</span>
+                        </div>
+                        <div class="input-group">
+                             <label for="qrImageUrlInput">QR Code Image URL</label>
+                            <div class="input-wrapper">
+                                <input type="url" id="qrImageUrlInput" class="input-field" placeholder="https://i.ibb.co/.../qr.png" required>
+                                 <i class="fas fa-link"></i>
+                            </div>
+                            <div class="url-instructions">
+                                Upload to a host like <a href="https://postimages.org" target="_blank" style="color: #4facfe;">postimages.org</a> and paste the direct link.
+                            </div>
+                        </div>
+                         <div class="qr-preview-container" id="qrPreviewContainer">
+                            <img id="qrPreviewImage" class="qr-preview-image" src="" alt="QR Preview">
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <div class="section-title">
+                            <i class="fas fa-users"></i>
+                            <span>Guest Login</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="guestUserInput">Guest Username</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="guestUserInput" class="input-field" placeholder="guest_user" required>
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="guestPassInput">Guest Password</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="guestPassInput" class="input-field" placeholder="guest_pass" required>
+                                <i class="fas fa-lock"></i>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <div class="panel-column">
-                        <div class="panel-section">
-                            <div class="section-title">
-                                <i class="fas fa-birthday-cake"></i>
-                                <span>Personal Info</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="birthdayNameInput">Birthday Name</label>
-                                <div class="input-wrapper">
-                                    <input type="text" id="birthdayNameInput" class="input-field" placeholder="Name" required>
-                                    <i class="fas fa-user-edit"></i>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="birthDateInput">Birth Date</label>
-                                 <div class="input-wrapper">
-                                    <input type="date" id="birthDateInput" class="input-field" required>
-                                    <i class="fas fa-calendar-alt"></i>
-                                </div>
+                    <div class="panel-section">
+                        <div class="section-title">
+                            <i class="fas fa-user-shield"></i>
+                            <span>Admin Login</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="adminUserInput">Admin Username</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="adminUserInput" class="input-field" placeholder="admin_user" required>
+                                <i class="fas fa-user"></i>
                             </div>
                         </div>
-
-                        <div class="panel-section">
-                            <div class="section-title">
-                                <i class="fas fa-users"></i>
-                                <span>Guest Login</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="guestUserInput">Guest Username</label>
-                                <div class="input-wrapper">
-                                    <input type="text" id="guestUserInput" class="input-field" placeholder="guest_user" required>
-                                    <i class="fas fa-user"></i>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="guestPassInput">Guest Password</label>
-                                <div class="input-wrapper">
-                                    <input type="text" id="guestPassInput" class="input-field" placeholder="guest_pass" required>
-                                    <i class="fas fa-lock"></i>
-                                </div>
+                        <div class="input-group">
+                             <label for="adminPassInput">Admin Password</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="adminPassInput" class="input-field" placeholder="admin_pass" required>
+                                <i class="fas fa-lock"></i>
                             </div>
                         </div>
                     </div>
-
-                    <div class="panel-column">
-                         <div class="panel-section">
-                            <div class="section-title">
-                                <i class="fas fa-qrcode"></i>
-                                <span>Gift QR Code</span>
-                            </div>
-                            <div class="input-group">
-                                 <label for="qrImageUrlInput">QR Code Image URL</label>
-                                <div class="input-wrapper">
-                                    <input type="url" id="qrImageUrlInput" class="input-field" placeholder="https://i.ibb.co/.../qr.png" required>
-                                     <i class="fas fa-link"></i>
-                                </div>
-                                <div class="url-instructions">
-                                    Upload to a host like <a href="https://postimages.org" target="_blank" style="color: #4facfe;">postimages.org</a> and paste the direct link.
-                                </div>
-                            </div>
-                             <div class="qr-preview-container" id="qrPreviewContainer">
-                                <img id="qrPreviewImage" class="qr-preview-image" src="" alt="QR Preview">
-                            </div>
-                        </div>
-
-                        <div class="panel-section">
-                            <div class="section-title">
-                                <i class="fas fa-user-shield"></i>
-                                <span>Admin Login</span>
-                            </div>
-                            <div class="input-group">
-                                <label for="adminUserInput">Admin Username</label>
-                                <div class="input-wrapper">
-                                    <input type="text" id="adminUserInput" class="input-field" placeholder="admin_user" required>
-                                    <i class="fas fa-user"></i>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                 <label for="adminPassInput">Admin Password</label>
-                                <div class="input-wrapper">
-                                    <input type="text" id="adminPassInput" class="input-field" placeholder="admin_pass" required>
-                                    <i class="fas fa-lock"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </form>
 
                 <div class="panel-actions">
