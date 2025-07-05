@@ -49,14 +49,17 @@
         
 .container {
      width: 100%;
-     max-width: 1100px;
-     min-height: 95vh; /* Ganti height menjadi min-height */
+     max-width: 1000px;
+     min-height: 90vh; /* Ganti height ke min-height agar fleksibel */
      display: flex;
-     align-items: center;
+     /* align-items: center; */ /* Baris ini sengaja dinonaktifkan */
      justify-content: center;
-     z-index: 10;
-     padding: 20px 10px; /* Tambahkan sedikit padding */
+     padding-top: 3vh;      /* INI KUNCINYA: Memberi jarak 5% dari atas layar */
+     z-index: 5;
+     padding-left: 5px;    /* Sedikit padding tambahan */
+     padding-right: 5px;   /* Sedikit padding tambahan */
 }
+
         #auth-container {
             position: relative;
             width: 100%;
