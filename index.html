@@ -47,15 +47,16 @@
         @keyframes move-aurora { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); } 50% { transform: translate(-45%, -55%) rotate(180deg) scale(1.2); } 100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); } }
         @keyframes move-aurora-2 { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1.1); } 50% { transform: translate(-55%, -45%) rotate(-180deg) scale(0.9); } 100% { transform: translate(-50%, -50%) rotate(-360deg) scale(1.1); } }
         
-        .container {
-             width: 100%;
-             max-width: 1100px;
-             height: 95vh;
-             display: flex;
-             align-items: center;
-             justify-content: center;
-             z-index: 10;
-        }
+.container {
+     width: 100%;
+     max-width: 1100px;
+     min-height: 95vh; /* Ganti height menjadi min-height */
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     z-index: 10;
+     padding: 20px 10px; /* Tambahkan sedikit padding */
+}
         #auth-container {
             position: relative;
             width: 100%;
@@ -104,12 +105,14 @@
             transform: translateY(20px); /* Start from below */
             pointer-events: none;
         }
-        #auth-container.is-active #adminPanelBox {
-            opacity: 1;
-            transform: translateY(0);
-            z-index: 2;
-            pointer-events: auto;
-        }
+#auth-container.is-active #adminPanelBox {
+    opacity: 1;
+    transform: translateY(0);
+    z-index: 2;
+    pointer-events: auto;
+    position: relative; /* Tambahkan ini */
+    top: 20px; /* Sesuaikan nilai ini untuk menurunkan panel (misal: 20px) */
+}
         /* --- END OF ANIMATION LOGIC --- */
 
         .login-content { width: 100%; max-width: 330px; position: relative; z-index: 2; }
@@ -161,7 +164,7 @@
         .logout-btn:hover { background: var(--primary); color: #fff; transform: rotate(15deg); }
         .panel-main { flex-grow: 1; overflow-y: auto; overflow-x: hidden; width: 100%; position: relative; z-index: 2; padding: 5px; }
         .panel-section { background: rgba(255, 255, 255, 0.03); border-radius: 18px; padding: 25px; border: 1px solid var(--glass-border); }
-        .section-title { display: flex; align-items: center; gap: 15px; font-size: 1.3rem; font-weight: 600; color: var(--light-text); margin-bottom: 25px; }
+        .section-title { display: flex; align-items: center; gapy: 15px; font-size: 1.3rem; font-weight: 600; color: var(--light-text); margin-bottom: 25px; }
         .section-title i { color: var(--primary); font-size: 1.5rem; }
         .panel-actions { flex-shrink: 0; width: 100%; padding: 20px 30px; background: rgba(15, 18, 26, 0.8); backdrop-filter: blur(10px); border-top: 1px solid var(--glass-border); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 20px; }
         .back-link { color: var(--light-text); text-decoration: none; font-weight: 500; transition: var(--transition-fast); }
