@@ -15,98 +15,203 @@
             --primary: #ff7e5f; --secondary: #feb47b; --accent1: #ffc371; --accent2: #ff5f6d;
             --dark: #1a1a2e; --darker: #16213e; --glass: rgba(255, 255, 255, 0.08);
             --glass-border: rgba(255, 255, 255, 0.15); --success: #30cfd0; --error: #f87171;
-            --light-text: rgba(255, 255, 255, 0.9); --transition-slow: all 0.5s ease;
+            --light-text: rgba(255, 255, 255, 0.9); --transition-fast: all 0.3s ease;
+            --transition-modern: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body {
-            background: var(--darker); min-height: 100vh; display: flex; justify-content: center;
-            align-items: center; color: #fff; position: relative; overflow: hidden; padding: 10px;
+            background: var(--darker);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            padding: 10px;
+            touch-action: manipulation;
+            -ms-touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
         }
-        body::before, body::after {
-            content: ''; position: absolute; top: 50%; left: 50%; width: 800px; height: 800px;
-            background-image: radial-gradient(circle, var(--primary) 0%, rgba(255,126,95,0) 60%);
-            border-radius: 50%; transform: translate(-50%, -50%);
-            animation: move-aurora 20s linear infinite; filter: blur(100px); opacity: 0.4;
-            z-index: 0;
+        body::before, body::after { 
+            content: ''; position: absolute; top: 50%; left: 50%; width: 800px; height: 800px; 
+            background-image: radial-gradient(circle, var(--primary) 0%, rgba(255,126,95,0) 60%); 
+            border-radius: 50%; transform: translate(-50%, -50%); animation: move-aurora 20s linear infinite; 
+            filter: blur(100px); opacity: 0.4; z-index: 0;
         }
-        body::after {
-            background-image: radial-gradient(circle, var(--accent2) 0%, rgba(255,95,109,0) 60%);
-            animation-name: move-aurora-2; animation-delay: -10s;
+        body::after { 
+            background-image: radial-gradient(circle, var(--accent2) 0%, rgba(255,95,109,0) 60%); 
+            animation-name: move-aurora-2; animation-delay: -10s; 
         }
         @keyframes move-aurora { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); } 50% { transform: translate(-45%, -55%) rotate(180deg) scale(1.2); } 100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); } }
         @keyframes move-aurora-2 { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1.1); } 50% { transform: translate(-55%, -45%) rotate(-180deg) scale(0.9); } 100% { transform: translate(-50%, -50%) rotate(-360deg) scale(1.1); } }
-
+        
         .container {
-             width: 100%; max-width: 1100px; display: flex;
-             align-items: center; justify-content: center; z-index: 10;
+             width: 100%;
+             max-width: 1100px;
+             height: 95vh;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             z-index: 10;
         }
-
         #auth-container {
-            background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border); border-radius: 24px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
             width: 100%;
-            height: auto;
+            height: 520px;
             max-width: 450px;
-            padding: 30px;
-            transition: max-width 0.5s ease, height 0.5s ease, transform 0.4s ease, opacity 0.4s ease;
-            opacity: 1;
-            transform: scale(1);
+            margin: auto;
+            transition: max-width 0.8s ease, height 0.8s ease; /* Transisi ukuran kontainer */
         }
         #auth-container.is-active {
             max-width: 900px;
             height: 90vh;
         }
-
-        #login-wrapper, #panel-wrapper {
-            display: flex; flex-direction: column;
-            width: 100%; height: 100%;
+        .box { 
+            background: var(--glass); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 24px; 
+            padding: 30px; 
+            width: 100%; 
+            height: 100%; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            transition: opacity 0.5s ease-in-out, transform 0.6s ease-in-out; /* Animasi fade & slide */
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1); 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
         }
-        #login-wrapper { justify-content: center; align-items: center; }
+        /* --- MODERN ANIMATION LOGIC --- */
+        #adminLoginBox { 
+            opacity: 1; 
+            transform: translateY(0);
+            z-index: 2; 
+            justify-content: center; 
+            align-items: center;
+        }
+        #auth-container.is-active #adminLoginBox { 
+            opacity: 0;
+            transform: translateY(-20px); /* Slide up and out */
+            pointer-events: none; 
+        }
+        #adminPanelBox { 
+            opacity: 0;
+            transform: translateY(20px); /* Start from below */
+            pointer-events: none;
+        }
+        #auth-container.is-active #adminPanelBox {
+            opacity: 1;
+            transform: translateY(0);
+            z-index: 2;
+            pointer-events: auto;
+        }
+        /* --- END OF ANIMATION LOGIC --- */
 
-        .login-content { width: 100%; max-width: 330px; }
+        .login-content { width: 100%; max-width: 330px; position: relative; z-index: 2; }
         .header { text-align: center; margin-bottom: 30px; }
-        .header-icon { width: 75px; height: 75px; background: linear-gradient(45deg, var(--accent2), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 2px solid var(--glass-border); box-shadow: 0 8px 30px rgba(255, 95, 109, 0.4); animation: float 4s ease-in-out infinite; }
+        .header-icon { 
+            width: 75px; height: 75px; background: linear-gradient(45deg, var(--accent2), var(--primary)); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            margin: 0 auto 15px; border: 2px solid var(--glass-border); 
+            box-shadow: 0 8px 30px rgba(255, 95, 109, 0.4); animation: float 4s ease-in-out infinite; 
+        }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        .header-icon i { font-size: 36px; color: #fff; text-shadow: 0 0 15px rgba(0,0,0,0.3); }
         h1 { font-size: 2rem; font-weight: 700; background: linear-gradient(45deg, var(--primary), var(--accent1)); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 6px; }
         .header p { color: var(--light-text); font-size: 1rem; }
         .input-group { margin-bottom: 20px; position: relative; }
         .input-group label { display: block; color: var(--light-text); font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; padding-left: 8px; }
         .input-wrapper { position: relative; }
-        .input-wrapper .icon-left, .input-wrapper .icon-right { position: absolute; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 16px; transition: var(--transition-slow); z-index: 3; }
+        .input-wrapper .icon-left, .input-wrapper .icon-right {
+            position: absolute; top: 50%; transform: translateY(-50%); color: var(--primary);
+            font-size: 16px; transition: var(--transition-fast); z-index: 3;
+        }
         .input-wrapper .icon-left { left: 16px; }
         .input-wrapper .icon-right { left: auto; right: 16px; cursor: pointer; }
         .input-wrapper .icon-right:hover { color: var(--accent1); transform: translateY(-50%) scale(1.1); }
-        .input-field { width: 100%; padding: 14px 16px 14px 45px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border); border-radius: 10px; color: #fff; font-size: 16px; transition: var(--transition-slow); }
+        .input-field { 
+            width: 100%; padding: 14px 16px 14px 45px; background: rgba(0, 0, 0, 0.2); 
+            border: 1px solid var(--glass-border); border-radius: 10px; color: #fff; 
+            font-size: 1rem; transition: var(--transition-fast); 
+        }
         .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(255, 126, 95, 0.4); }
+        .input-field:focus ~ i { color: var(--accent1); transform: translateY(-50%) scale(1.1); }
         .input-field[type="date"] { -webkit-appearance: none; appearance: none; }
         .input-field[type="date"]::-webkit-inner-spin-button, .input-field[type="date"]::-webkit-calendar-picker-indicator { display: none; -webkit-appearance: none; }
-        .btn { width: 100%; padding: 15px; background: linear-gradient(90deg, var(--accent2) 0%, var(--primary) 100%); border: none; border-radius: 12px; color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition-slow); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        
+        .btn { 
+            width: 100%; padding: 15px; background: linear-gradient(90deg, var(--accent2) 0%, var(--primary) 100%); 
+            border: none; border-radius: 12px; color: #fff; font-size: 1rem; font-weight: 600; 
+            cursor: pointer; transition: var(--transition-fast); display: flex; align-items: center; justify-content: center; gap: 8px; 
+        }
         .btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(255, 95, 109, 0.35); }
         .register-link { text-align: center; margin-top: 20px; font-size: 0.9rem; color: var(--light-text); }
         .register-link a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        .register-link a:hover { text-decoration: underline; color: var(--secondary); }
+        
+        /* -- MODERN PANEL LAYOUT -- */
         .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--glass-border); width: 100%; flex-shrink: 0; }
-        .logout-btn { background: var(--glass); border: 1px solid var(--glass-border); color: var(--light-text); width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: var(--transition-slow); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .panel-header h1 i { color: var(--primary); margin-right: 10px; }
+        .logout-btn { background: var(--glass); border: 1px solid var(--glass-border); color: var(--light-text); width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: var(--transition-fast); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .logout-btn:hover { background: var(--primary); color: #fff; transform: rotate(15deg); }
-        .panel-main { flex-grow: 1; overflow-y: auto; overflow-x: hidden; width: 100%; padding: 5px; }
-        .panel-section { background: rgba(255, 255, 255, 0.03); border-radius: 18px; padding: 25px; margin-bottom: 25px; border: 1px solid var(--glass-border); }
+        .panel-main { flex-grow: 1; overflow-y: auto; overflow-x: hidden; width: 100%; position: relative; z-index: 2; padding: 5px; }
+        .panel-section { background: rgba(255, 255, 255, 0.03); border-radius: 18px; padding: 25px; border: 1px solid var(--glass-border); }
         .section-title { display: flex; align-items: center; gap: 15px; font-size: 1.3rem; font-weight: 600; color: var(--light-text); margin-bottom: 25px; }
-        .panel-actions { flex-shrink: 0; width: 100%; padding: 20px 0; border-top: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
-        .btn-save { background: linear-gradient(to right, var(--primary) 0%, var(--secondary) 100%); border: none; border-radius: 10px; color: var(--darker); font-size: 1rem; font-weight: 600; padding: 12px 25px; cursor: pointer; transition: var(--transition-slow); display: flex; align-items: center; gap: 10px; }
+        .section-title i { color: var(--primary); font-size: 1.5rem; }
+        .panel-actions { flex-shrink: 0; width: 100%; padding: 20px 30px; background: rgba(15, 18, 26, 0.8); backdrop-filter: blur(10px); border-top: 1px solid var(--glass-border); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 20px; }
+        .back-link { color: var(--light-text); text-decoration: none; font-weight: 500; transition: var(--transition-fast); }
+        .back-link:hover { color: var(--primary); }
+        .btn-save { background: linear-gradient(to right, var(--primary) 0%, var(--secondary) 100%); border: none; border-radius: 10px; color: var(--darker); font-size: 1rem; font-weight: 600; padding: 12px 25px; cursor: pointer; transition: var(--transition-fast); display: flex; align-items: center; gap: 10px; }
+        .btn-save:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255, 126, 95, 0.4); }
+
+        .settings-group { display: flex; flex-direction: column; gap: 25px; }
+        .settings-group .panel-section { margin-bottom: 0; }
+
+        @media (min-width: 992px) {
+            #adminPanelBox { padding: 40px; }
+            .panel-main {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 25px;
+                padding-top: 20px;
+            }
+            .panel-section.full-width {
+                grid-column: 1 / -1; /* Span full width */
+            }
+        }
+        @media (max-width: 991px) {
+            #adminPanelBox { padding: 20px 15px; }
+            .panel-main { display: flex; flex-direction: column; gap: 20px; } /* Added gap for mobile */
+            .panel-section { padding: 20px; margin-bottom: 0; }
+            .panel-actions { padding: 20px; flex-direction: column; align-items: stretch; gap: 15px; }
+            .btn-save { width: 100%; }
+        }
+        /* -- END OF LAYOUT -- */
+
         .feedback-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 3000; justify-content: center; align-items: center; }
         .feedback-content { background: rgba(30, 40, 60, 0.95); border-radius: 20px; padding: 40px; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); border-top: 4px solid var(--primary); }
         .icon-container { height: 80px; margin-bottom: 20px; }
+        .icon-container .icon { font-size: 60px; }
+        .icon-container .icon.success { color: var(--success); }
+        .icon-container .icon.failure { color: var(--error); }
         .loader { margin: 0 auto; border: 6px solid rgba(255, 255, 255, 0.1); border-top: 6px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-        .hidden { display: none; } @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .qr-preview-image { max-width: 150px; border-radius: 10px; border: 1px solid var(--glass-border); display: none; margin-top: 15px; }
-        @media (min-width: 992px) { .panel-main { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; padding-top: 20px; } .panel-section { margin-bottom: 0; } .panel-section[data-span="2"] { grid-column: span 2; } }
-        @media (max-width: 991px) { .panel-main { display: flex; flex-direction: column; gap: 0; } .panel-section { padding: 20px; margin-bottom: 20px; } .panel-actions { padding: 15px 0; flex-direction: column; align-items: stretch; gap: 15px; } .btn-save { width: 100%; } }
+        .hidden { display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .qr-preview-container { margin-top: 15px; }
+        .qr-preview-image { max-width: 150px; border-radius: 10px; border: 1px solid var(--glass-border); display: none; }
+        input, textarea { font-size: 16px; }
+        * { touch-action: pan-y; }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="auth-container">
-            <div id="login-wrapper">
+            <div class="box" id="adminLoginBox">
                 <div class="login-content">
                     <div class="header">
                         <div class="header-icon"><i class="fas fa-user-lock"></i></div>
@@ -125,17 +230,16 @@
                     <p class="register-link">Admin baru? <a href="register.html">Buat Akun Disini</a></p>
                 </div>
             </div>
-
-            <div id="panel-wrapper" style="display: none;">
+            <div class="box" id="adminPanelBox">
                 <div class="panel-header">
                     <h1><i class="fas fa-cogs"></i> Admin Panel</h1>
                     <button class="logout-btn" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
                 </div>
                 <form id="editForm" onsubmit="event.preventDefault(); saveData();" class="panel-main">
-                    <div class="panel-section" data-span="2">
+                    <div class="panel-section full-width">
                         <div class="section-title"><i class="fas fa-share-alt"></i><span>Your Unique Page Link</span></div>
                         <div class="input-group">
-                            <label for="shareableLink">Copy and share this link</label>
+                            <label for="shareableLink">Copy and share this link with your guests</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-link icon-left"></i>
                                 <input type="text" id="shareableLink" class="input-field" readonly style="padding-right: 45px;">
@@ -143,20 +247,24 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel-section">
-                        <div class="section-title"><i class="fas fa-birthday-cake"></i><span>Personal Info</span></div>
-                        <div class="input-group"><label>Birthday Name</label><div class="input-wrapper"><input type="text" id="birthdayNameInput" class="input-field" required><i class="fas fa-user-edit icon-left"></i></div></div>
-                        <div class="input-group"><label>Birth Date</label><div class="input-wrapper"><input type="date" id="birthDateInput" class="input-field" required><i class="fas fa-calendar-alt icon-left"></i></div></div>
+                    
+                    <div class="settings-group">
+                        <div class="panel-section">
+                            <div class="section-title"><i class="fas fa-birthday-cake"></i><span>Personal Info</span></div>
+                            <div class="input-group"><label for="birthdayNameInput">Birthday Name</label><div class="input-wrapper"><input type="text" id="birthdayNameInput" class="input-field" required><i class="fas fa-user-edit icon-left"></i></div></div>
+                            <div class="input-group"><label for="birthDateInput">Birth Date</label><div class="input-wrapper"><input type="date" id="birthDateInput" class="input-field" required><i class="fas fa-calendar-alt icon-left"></i></div></div>
+                        </div>
+                        <div class="panel-section">
+                            <div class="section-title"><i class="fas fa-users"></i><span>Guest Login</span></div>
+                            <div class="input-group"><label for="guestUserInput">Guest Username</label><div class="input-wrapper"><input type="text" id="guestUserInput" class="input-field" required><i class="fas fa-user icon-left"></i></div></div>
+                            <div class="input-group"><label for="guestPassInput">Guest Password</label><div class="input-wrapper"><input type="text" id="guestPassInput" class="input-field" required><i class="fas fa-lock icon-left"></i></div></div>
+                        </div>
                     </div>
+
                     <div class="panel-section">
                         <div class="section-title"><i class="fas fa-qrcode"></i><span>Gift QR Code</span></div>
-                        <div class="input-group"><label>QR Code Image URL</label><div class="input-wrapper"><input type="url" id="qrImageUrlInput" class="input-field" placeholder="https://..." required><i class="fas fa-link icon-left"></i></div></div>
+                        <div class="input-group"><label for="qrImageUrlInput">QR Code Image URL</label><div class="input-wrapper"><input type="url" id="qrImageUrlInput" class="input-field" placeholder="https://..." required><i class="fas fa-link icon-left"></i></div></div>
                         <div class="qr-preview-container"><img id="qrPreviewImage" class="qr-preview-image" src="" alt="Pratinjau QR"></div>
-                    </div>
-                    <div class="panel-section" data-span="2">
-                        <div class="section-title"><i class="fas fa-users"></i><span>Guest Login</span></div>
-                        <div class="input-group"><label>Guest Username</label><div class="input-wrapper"><input type="text" id="guestUserInput" class="input-field" required><i class="fas fa-user icon-left"></i></div></div>
-                        <div class="input-group"><label>Guest Password</label><div class="input-wrapper"><input type="text" id="guestPassInput" class="input-field" required><i class="fas fa-lock icon-left"></i></div></div>
                     </div>
                 </form>
                 <div class="panel-actions">
@@ -166,10 +274,20 @@
             </div>
         </div>
     </div>
-    
-    <div class="feedback-modal"><div class="feedback-content"><div class="icon-container"><div class="loader" id="feedbackLoader"></div><i class="fas fa-check-circle icon success hidden" id="successIcon"></i><i class="fas fa-times-circle icon failure hidden" id="failureIcon"></i></div><h2 id="feedbackTitle">Checking...</h2><p id="feedbackMessage"></p></div></div>
-    
+    <div class="feedback-modal" id="feedbackModal">
+        <div class="feedback-content">
+            <div class="icon-container"><div class="loader" id="feedbackLoader"></div><i class="fas fa-check-circle icon success hidden" id="successIcon"></i><i class="fas fa-times-circle icon failure hidden" id="failureIcon"></i></div>
+            <h2 id="feedbackTitle">Checking...</h2>
+            <p id="feedbackMessage"></p>
+        </div>
+    </div>
     <script>
+        // Pencegahan zoom tambahan dengan JavaScript
+        document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+        document.addEventListener('touchmove', function(e) { if (e.scale !== 1) { e.preventDefault(); } }, { passive: false });
+        document.addEventListener('dblclick', function(e) { e.preventDefault(); }, { passive: false });
+        
+        // Inisialisasi Firebase
         const firebaseConfig = { 
             apiKey: "GANTI_DENGAN_API_KEY_ANDA", 
             authDomain: "mayfa-fa284.firebaseapp.com", 
@@ -178,8 +296,6 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const authContainer = document.getElementById('auth-container');
-        const loginWrapper = document.getElementById('login-wrapper');
-        const panelWrapper = document.getElementById('panel-wrapper');
         let currentAdminId = null;
 
         function showFeedback(state, title, message = '') {
@@ -202,71 +318,68 @@
             database.ref('admins').orderByChild('username').equalTo(user).once('value').then((snapshot) => {
                 if (!snapshot.exists()) {
                     showFeedback('failure', 'Login Gagal!', 'Username atau password salah.');
-                    setTimeout(hideFeedback, 2500); return;
+                    setTimeout(hideFeedback, 2500);
+                    return;
                 }
                 let isValidLogin = false;
-                snapshot.forEach((childSnapshot) => { if (childSnapshot.val().password === pass) { isValidLogin = true; currentAdminId = childSnapshot.key; } });
-                
+                snapshot.forEach((childSnapshot) => {
+                    if (childSnapshot.val().password === pass) {
+                        isValidLogin = true;
+                        currentAdminId = childSnapshot.key;
+                    }
+                });
                 if (isValidLogin) {
-                    showFeedback('success', 'Login Berhasil!', 'Mempersiapkan panel...');
-                    // Animasi fade out dan shrink
-                    authContainer.style.transform = 'scale(0.95)';
-                    authContainer.style.opacity = '0';
+                    showFeedback('success', 'Login Berhasil!', 'Mengarahkan...');
                     setTimeout(() => {
-                        // Tukar konten
-                        loginWrapper.style.display = 'none';
-                        panelWrapper.style.display = 'flex';
-                        loadDataToForm();
-                        // Tambah class untuk memicu transisi ukuran
-                        authContainer.classList.add('is-active');
-                        // Animasi fade in dan grow
-                        authContainer.style.transform = 'scale(1)';
-                        authContainer.style.opacity = '1';
                         hideFeedback();
-                    }, 400);
+                        authContainer.classList.add('is-active');
+                        loadDataToForm();
+                    }, 1500);
                 } else {
                     showFeedback('failure', 'Login Gagal!', 'Username atau password salah.');
                     setTimeout(hideFeedback, 2500);
                 }
-            }).catch(error => { showFeedback('failure', 'Error Database', 'Tidak dapat terhubung ke database.'); setTimeout(hideFeedback, 3000); });
+            }).catch(error => {
+                showFeedback('failure', 'Error Database', error.message);
+                setTimeout(hideFeedback, 3000);
+            });
         }
 
         function logout() {
-            // Animasi fade out dan shrink
-            authContainer.style.transform = 'scale(0.95)';
-            authContainer.style.opacity = '0';
-            setTimeout(() => {
-                // Tukar konten
-                panelWrapper.style.display = 'none';
-                loginWrapper.style.display = 'flex';
-                document.getElementById('editForm').reset();
-                document.getElementById('adminUser').value = '';
-                document.getElementById('adminPass').value = '';
-                updateQrPreview();
-                // Hapus class untuk memicu transisi ukuran
-                authContainer.classList.remove('is-active');
-                // Animasi fade in dan grow
-                authContainer.style.transform = 'scale(1)';
-                authContainer.style.opacity = '1';
-            }, 400);
+            currentAdminId = null;
+            authContainer.classList.remove('is-active');
+            document.getElementById('editForm').reset();
+            document.getElementById('adminUser').value = '';
+            document.getElementById('adminPass').value = '';
+            updateQrPreview();
         }
 
         function loadDataToForm() {
             if (!currentAdminId) return;
+            showFeedback('loading', 'Memuat Data...');
             database.ref('birthday_pages/' + currentAdminId).once('value').then((snapshot) => {
-                const s = snapshot.val() || {};
-                document.getElementById('birthdayNameInput').value = s.birthdayName || '';
-                document.getElementById('birthDateInput').value = s.birthDate || '';
-                document.getElementById('qrImageUrlInput').value = s.qrImageUrl || '';
-                document.getElementById('guestUserInput').value = s.guestUser || '';
-                document.getElementById('guestPassInput').value = s.guestPass || '';
-                document.getElementById('shareableLink').value = `${window.location.origin}/index.html?id=${currentAdminId}`;
+                const settings = snapshot.val() || {};
+                document.getElementById('birthdayNameInput').value = settings.birthdayName || '';
+                document.getElementById('birthDateInput').value = settings.birthDate || '';
+                document.getElementById('qrImageUrlInput').value = settings.qrImageUrl || '';
+                document.getElementById('guestUserInput').value = settings.guestUser || '';
+                document.getElementById('guestPassInput').value = settings.guestPass || '';
+                const shareLink = `${window.location.origin}/index.html?id=${currentAdminId}`;
+                document.getElementById('shareableLink').value = shareLink;
                 updateQrPreview();
-            }).catch(error => { showFeedback('failure', 'Gagal Memuat', error.message); setTimeout(hideFeedback, 3000); });
+                hideFeedback();
+            }).catch(error => {
+                showFeedback('failure', 'Gagal Memuat', error.message);
+                setTimeout(hideFeedback, 3000);
+            });
         }
 
         function saveData() {
-            if (!currentAdminId) { showFeedback('failure', 'Error', 'Admin ID tidak ditemukan.'); setTimeout(hideFeedback, 2500); return; }
+            if (!currentAdminId) {
+                showFeedback('failure', 'Error', 'Admin ID tidak ditemukan. Silakan login ulang.');
+                setTimeout(hideFeedback, 2500);
+                return;
+            }
             showFeedback('loading', 'Menyimpan Perubahan...');
             const settings = {
                 birthdayName: document.getElementById('birthdayNameInput').value,
@@ -276,31 +389,54 @@
                 guestPass: document.getElementById('guestPassInput').value
             };
             database.ref('birthday_pages/' + currentAdminId).set(settings).then(() => {
-                showFeedback('success', 'Berhasil Disimpan!'); setTimeout(hideFeedback, 2000);
-            }).catch(error => { showFeedback('failure', 'Gagal Menyimpan', error.message); setTimeout(hideFeedback, 3000); });
+                showFeedback('success', 'Berhasil Disimpan!');
+                setTimeout(hideFeedback, 2000);
+            }).catch(error => {
+                showFeedback('failure', 'Gagal Menyimpan', error.message);
+                setTimeout(hideFeedback, 3000);
+            });
         }
 
         function updateQrPreview() {
-            const qrInput = document.getElementById('qrImageUrlInput'), qrImage = document.getElementById('qrPreviewImage'), url = qrInput.value.trim();
-            qrImage.style.display = url ? 'block' : 'none';
-            if(url) qrImage.src = url;
+            const qrInput = document.getElementById('qrImageUrlInput');
+            const qrImage = document.getElementById('qrPreviewImage');
+            const url = qrInput.value.trim();
+            if (url) {
+                qrImage.src = url;
+                qrImage.style.display = 'block';
+            } else {
+                qrImage.style.display = 'none';
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('togglePassword').addEventListener('click', function() {
+            const togglePassword = document.getElementById('togglePassword');
+            togglePassword.addEventListener('click', function() {
                 const passField = document.getElementById('adminPass');
                 passField.type = passField.type === 'password' ? 'text' : 'password';
                 this.classList.toggle('fa-eye-slash');
             });
             document.getElementById('qrImageUrlInput').addEventListener('input', updateQrPreview);
+
             document.getElementById('copyLinkBtn').addEventListener('click', function() {
                 const linkInput = document.getElementById('shareableLink');
-                navigator.clipboard.writeText(linkInput.value).then(() => {
-                    showFeedback('success', 'Tersalin!', 'Link berhasil disalin.');
-                    setTimeout(hideFeedback, 2000);
-                    this.classList.remove('fa-copy'); this.classList.add('fa-check');
-                    setTimeout(() => { this.classList.remove('fa-check'); this.classList.add('fa-copy'); }, 2000);
-                }).catch(err => { showFeedback('failure', 'Gagal Menyalin', 'Tidak dapat menyalin link.'); setTimeout(hideFeedback, 2500); });
+                const linkToCopy = linkInput.value;
+
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(linkToCopy).then(() => {
+                        showFeedback('success', 'Tersalin!', 'Link berhasil disalin ke clipboard.');
+                        setTimeout(hideFeedback, 2000);
+                        this.classList.remove('fa-copy');
+                        this.classList.add('fa-check');
+                        setTimeout(() => {
+                            this.classList.remove('fa-check');
+                            this.classList.add('fa-copy');
+                        }, 2000);
+                    }).catch(err => {
+                        showFeedback('failure', 'Gagal Menyalin', 'Tidak dapat menyalin link.');
+                        setTimeout(hideFeedback, 2500);
+                    });
+                }
             });
         });
     </script>
