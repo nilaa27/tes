@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin Panel</title>
+    <title>Happy Birthday For You!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css">
@@ -24,583 +24,763 @@
             --success: #28a745;
             --error: #dc3545;
             --transition-smooth: all 0.3s ease-in-out;
+            --border-radius-main: 24px;
+            --border-radius-inner: 15px;
         }
 
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-            -webkit-user-select: none; user-select: none;
-        }
-
-        /* PERBAIKAN 1: Melonggarkan aturan touch-action */
+        /* Base Styles & Utilities */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
         body {
             background: var(--bg-color);
             min-height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-            color: var(--text-color);
-            padding: 15px;
-            /* Memindahkan touch-action ke body agar tidak terlalu global */
-            touch-action: pan-y;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative; /* For particle effects */
+            color: var(--text-color); /* Default text color */
         }
-        
-        /* Memastikan elemen yang bisa di-scroll punya touch-action yang benar */
-        .panel-form, textarea {
-            touch-action: auto;
-        }
+        body.no-scroll { overflow: hidden; }
 
-        .container {
-            width: 100%; max-width: 1200px;
-            height: 95vh;
-            display: flex; justify-content: center; align-items: center;
-        }
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes wobble-gift { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+        @keyframes fadeInCard-anim { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 
-        #auth-container {
-            position: relative; width: 100%;
-            max-width: 440px; height: 620px; /* Adjusted height for register link */
-            transition: max-width 0.8s ease, height 0.8s ease;
-        }
-        #auth-container.is-active {
-            max-width: 1100px; height: 95vh;
-        }
-
-        .box {
-            background: var(--bg-color);
-            border-radius: 30px;
-            /* Main Dark Neumorphic Shadow */
-            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
-            padding: 40px; width: 100%; height: 100%;
-            position: absolute; top: 0; left: 0;
-            transition: opacity 0.5s ease-in-out, transform 0.6s ease-in-out;
-            overflow: hidden;
-            display: flex; flex-direction: column;
-        }
-
-        /* Animation Logic */
-        #adminLoginBox { opacity: 1; transform: translateY(0); z-index: 2; justify-content: center; align-items: center; }
-        #auth-container.is-active #adminLoginBox { opacity: 0; transform: translateY(-20px); pointer-events: none; }
-        #adminPanelBox { opacity: 0; transform: translateY(20px); pointer-events: none; }
-        #auth-container.is-active #adminPanelBox { opacity: 1; transform: translateY(0); z-index: 2; pointer-events: auto; }
-
-        .login-content { width: 100%; max-width: 340px; text-align: center; }
-        .header { margin-bottom: 35px; }
-        .header-icon {
-            width: 85px; height: 85px;
-            background: var(--bg-color);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 25px;
-            box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
-        }
-        .header-icon i { font-size: 40px; color: var(--primary); }
-        h1 { font-size: 2rem; font-weight: 700; color: var(--text-color); margin-bottom: 8px; }
-        .header p { color: var(--text-light); font-size: 1.05rem; }
-
-        .input-group { margin-bottom: 25px; text-align: left; }
-        .input-group label { display: block; color: var(--text-light); font-size: 0.9rem; font-weight: 500; margin-bottom: 12px; padding-left: 10px; }
-        .input-wrapper { position: relative; }
-        .input-field {
-            width: 100%; padding: 18px 22px 18px 55px;
-            background: var(--bg-color); border: none;
-            border-radius: 15px; color: var(--text-color);
-            font-size: 1rem;
-            /* Inset shadow for "pushed-in" look */
-            box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
-            transition: var(--transition-smooth);
-        }
-        .input-field:focus {
-            outline: none;
-            box-shadow: inset 9px 9px 18px var(--shadow-dark), inset -9px -9px 18px var(--shadow-light);
-        }
-        .input-wrapper .icon-left, .input-wrapper .icon-right {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            color: var(--text-light); font-size: 16px; transition: all 0.2s ease-out;
-        }
-        .input-wrapper .icon-left { left: 22px; }
-        .input-wrapper .icon-right { right: 22px; cursor: pointer; }
-        .input-wrapper .icon-right:hover { color: var(--primary); }
-        .input-field:focus ~ .icon-left { color: var(--primary); }
-        
-        /* Textarea specific styles */
-        textarea.input-field {
-            min-height: 100px; /* Adjust as needed */
-            resize: vertical; /* Allow vertical resizing */
-            padding: 18px 22px; /* Adjust padding for textarea without left icon */
-            padding-left: 22px; /* Ensure no icon space if not needed for textarea */
-        }
-        /* For textareas, if an icon-left is present, adjust padding */
-        textarea.input-field + .icon-left {
-            left: 22px; /* Adjust left position for consistency */
-            top: 25px; /* Adjust vertical alignment for textarea */
-            transform: translateY(0); /* Remove translateY for consistent top alignment */
-        }
-
-
+        /* General Button Style */
         .btn {
-            width: 100%; padding: 18px;
-            background: var(--bg-color); border: none; border-radius: 15px;
+            padding: 16px;
+            background: var(--bg-color); border: none; border-radius: var(--border-radius-inner);
             color: var(--primary); font-size: 1.05rem; font-weight: 600;
             cursor: pointer;
+            width: 100%;
             transition: var(--transition-smooth);
             box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
             display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        .btn:hover {
-            transform: translateY(-2px);
-            color: var(--primary-dark);
-        }
-        .btn:active {
-            /* "Pressed" effect with inset shadow */
+        .btn:hover:not(:disabled) { transform: translateY(-2px); color: var(--primary-dark); }
+        .btn:active:not(:disabled) {
             transform: translateY(0px);
             box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
-            color: var(--primary);
         }
+        .btn:disabled { cursor: not-allowed; opacity: 0.7; }
         
-        .register-link {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 0.95rem;
-            color: var(--text-light);
-        }
-        .register-link a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s ease-out;
-        }
-        .register-link a:hover {
-            text-decoration: underline;
-            color: var(--primary-dark);
-        }
+        /* --- Error Page --- */
+        .error-page { display: none; text-align: center; color: var(--text-light); animation: fadeIn 0.5s ease-out; z-index: 20; }
+        .error-page .error-icon { font-size: 5rem; color: var(--primary); margin-bottom: 20px; }
+        .error-page h1 { font-size: 2.2rem; color: var(--text-color); margin-bottom: 10px; }
+        .error-page p { font-size: 1.1rem; }
 
-        /* --- PROFESSIONAL PANEL LAYOUT --- */
-        .panel-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 25px; padding-bottom: 25px;
-            border-bottom: 1px solid var(--shadow-light);
-            flex-shrink: 0;
-        }
-        .panel-header h1 i { color: var(--primary); margin-right: 15px; }
-
-        .panel-form { flex-grow: 1; overflow-y: auto; overflow-x: hidden; width: 100%; padding: 10px 5px; }
-
-        /* Professional Two-Column Layout for Desktop */
-        .panel-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-        .layout-column {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        .panel-section {
+        /* --- Login Container --- */
+        .login-container { width: 100%; max-width: 400px; display: none; /* Controlled by JS */ }
+        .login-box {
             background: var(--bg-color);
-            border-radius: 20px; padding: 30px;
-            /* Raised panel effect */
+            border-radius: var(--border-radius-main);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+            padding: 40px; text-align: center;
+            animation: fadeIn 0.8s ease forwards;
+        }
+        .login-header { margin-bottom: 35px; }
+        .login-icon {
+            width: 85px; height: 85px;
+            background: var(--bg-color); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 25px;
             box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
         }
-
-        .section-title {
-            display: flex; align-items: center; gap: 15px;
-            font-size: 1.3rem; font-weight: 600; color: var(--text-color);
-            margin-bottom: 30px; padding-bottom: 15px;
-            border-bottom: 1px solid var(--shadow-light);
-        }
-        .section-title i { color: var(--primary); font-size: 1.6rem; width: 35px; text-align: center; }
-
-        .qr-preview-image {
-            max-width: 150px; border-radius: 15px; display: none; margin-top: 15px;
-            background: var(--bg-color); padding: 8px;
-            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light);
-        }
-
-        .panel-actions {
-            display: flex; justify-content: space-between; align-items: center;
-            padding-top: 30px; margin-top: auto;
-        }
-        .back-link { color: var(--text-light); text-decoration: none; font-weight: 500; }
-        .back-link:hover { color: var(--primary); }
-        .btn-save { color: var(--success); }
-        .btn-save:hover { color: #32c256; }
+        .login-icon i { font-size: 40px; color: var(--primary); }
+        .login-box h1 { font-size: 2rem; color: var(--text-color); margin-bottom: 8px; }
+        .login-box p { color: var(--text-light); font-size: 1rem; }
         
-        /* Mobile Layout: Stack columns and sections */
-        @media (max-width: 991px) {
-            .panel-layout {
-                display: flex;
-                flex-direction: column;
-                gap: 25px;
-            }
-            .layout-column { gap: 25px; }
-            .panel-actions { flex-direction: column-reverse; align-items: stretch; gap: 20px; }
-            .btn-save { width: 100%; }
+        .input-group { position: relative; margin-bottom: 25px; }
+        .input-group .icon { 
+            position: absolute; left: 22px; top: 50%; transform: translateY(-50%); 
+            color: var(--text-light); font-size: 16px; transition: all 0.3s ease; 
+            pointer-events: none; /* Make icon not interfere with input focus */
+        }
+        .input-group input {
+            width: 100%; padding: 18px 22px 18px 55px; /* Padding for icon */
+            background: var(--bg-color); border: none;
+            border-radius: var(--border-radius-inner); color: var(--text-color);
+            font-size: 1rem;
+            box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
+            transition: var(--transition-smooth);
+            -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; /* Allow text selection in input */
+        }
+        .input-group input:focus { 
+            outline: none; 
+            box-shadow: inset 9px 9px 18px var(--shadow-dark), inset -9px -9px 18px var(--shadow-light), 0 0 0 2px var(--primary); /* Added focus ring */
+        }
+        .input-group input::placeholder { color: var(--text-light); }
+        
+        /* Icon changes on focus within group */
+        .input-group:focus-within .icon { color: var(--primary); }
+        
+        #togglePassword { 
+            position: absolute; right: 22px; top: 50%; transform: translateY(-50%); 
+            cursor: pointer; color: var(--text-light); 
+            pointer-events: auto; /* Make it clickable */
+            z-index: 5; /* Ensure it's above input */
+        }
+        #togglePassword:hover { color: var(--primary); }
+
+        .login-box .btn { margin-top: 10px; }
+
+        /* --- Birthday Page --- */
+        .birthday-page-container { 
+            display: none; /* Controlled by JS */
+            flex-direction: column; 
+            align-items: center; 
+            padding-top: 8vh; 
+            padding-bottom: 8vh; 
+            width: 100%; 
+            max-width: 1000px; 
+            animation: fadeIn 1s ease-out forwards;
+            overflow-y: auto; /* Enable scrolling for birthday content */
+            height: 95vh; /* Set height to enable internal scrolling */
+        }
+        .birthday-content { width: 100%; text-align: center; z-index: 10; padding: 0 15px; } /* Added horizontal padding */
+        
+        .main-title { 
+            font-family: 'Pacifico', cursive; 
+            font-size: clamp(3rem, 10vw, 6rem); 
+            line-height: 1.2; 
+            color: var(--text-color); 
+            text-shadow: 0 0 20px rgba(255,255,255,0.1); 
+            animation: fadeInDown 1s ease-out forwards; 
+            margin-bottom: 40px; /* Added spacing */
+        }
+        .main-title span { color: var(--primary); }
+
+        .card-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 30px; 
+            margin-top: 0; /* Adjusted from 40px as main-title has bottom-margin */
+            padding-bottom: 30px; /* Space before gift card */
+        }
+        
+        .message-card {
+            background: var(--bg-color);
+            border-radius: var(--border-radius-main);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 30px;
+            color: var(--text-color);
+            opacity: 0;
+            filter: blur(5px);
+            transform: perspective(800px) rotateY(var(--initial-rotation, -20deg)) scale(0.9);
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.8s ease-out, opacity 0.6s ease-out;
+        }
+        .message-card.is-visible {
+            opacity: 1;
+            filter: blur(0);
+            transform: perspective(800px) rotateY(0) scale(1);
         }
 
-        /* --- Feedback Modal --- */
-        .feedback-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); z-index: 3000; justify-content: center; align-items: center; }
-        .feedback-content { background: var(--bg-color); border-radius: 20px; padding: 40px; text-align: center; width: 90%; max-width: 400px; box-shadow: 15px 15px 30px var(--shadow-dark), -15px -15px 30px var(--shadow-light); border-top: 4px solid var(--primary); }
-        .icon-container { height: 80px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; }
-        .icon-container .icon { font-size: 60px; }
-        .icon-container .icon.success { color: var(--success); }
-        .icon-container .icon.failure { color: var(--error); }
-        .loader { border: 6px solid var(--shadow-light); border-top: 6px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .hidden { display: none; }
-
-        /* ===== PERBAIKAN UNTUK INPUT TANGGAL LAHIR (EFEK CEKUNGAN YANG LEBIH KUAT) ===== */
-        input[type="date"].input-field {
-            /* Memastikan padding kiri sama seperti input lain dengan ikon */
-            padding-left: 55px; 
-            /* Menerapkan efek cekungan yang sama */
-            box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light) !important; /* Tambahkan !important */
-            /* Mengatur ulang border bawaan yang mungkin menghalangi shadow */
-            border: none !important;
-            /* Memastikan background transparan agar shadow terlihat */
-            background-color: var(--bg-color) !important;
-            /* Memastikan tampilan diatur ulang */
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
+        .card-icon { font-size: 2.5rem; margin-bottom: 15px; color: var(--primary); }
+        .card-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 10px; }
+        .card-text { 
+            font-size: 1rem; line-height: 1.6; font-weight: 300; 
+            color: var(--text-light); white-space: pre-wrap; /* Preserve line breaks */ 
+        }
+        
+        /* Gift Section Card */
+        .gift-section-card { /* New class for the "Ada Sesuatu Untukmu" card */
+            margin-top: 30px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            background: var(--bg-color);
+            border-radius: var(--border-radius-main);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 30px;
+            color: var(--text-color);
+            opacity: 0; /* Initial state for animation */
+            filter: blur(5px);
+            transform: perspective(800px) rotateY(var(--initial-rotation, 0deg)) scale(0.9);
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.8s ease-out, opacity 0.6s ease-out;
+        }
+        .gift-section-card.is-visible { /* Animation trigger */
+            opacity: 1;
+            filter: blur(0);
+            transform: perspective(800px) rotateY(0) scale(1);
         }
 
-        /* Styling saat input tanggal difokuskan */
-        input[type="date"].input-field:focus {
-            outline: none;
-            box-shadow: inset 9px 9px 18px var(--shadow-dark), inset -9px -9px 18px var(--shadow-light) !important; /* Tambahkan !important */
+        .gift-btn { 
+            margin-top: 20px; 
+            color: var(--success); 
+            width: auto; 
+            padding: 15px 40px; 
+            font-size: 1.2rem;
+            min-width: 200px; /* Ensure a decent size */
+        }
+        .gift-btn:hover { color: #32c256; } /* Success dark on hover */
+
+
+        /* --- Modals --- */
+        .feedback-modal, .gift-modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background-color: rgba(0, 0, 0, 0.7); 
+            backdrop-filter: blur(8px); 
+            z-index: 2000; 
+            justify-content: center; align-items: center; 
+            padding: 15px; 
+            animation: fadeIn 0.3s ease-out forwards; /* Smoother modal entry */
+        }
+        .feedback-content {
+            background: var(--bg-color);
+            border-radius: var(--border-radius-main);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+            padding: 40px; text-align: center; width: 90%; max-width: 400px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .feedback-content h2 { font-size: 24px; color: var(--text-color); margin-bottom: 10px; }
+        .feedback-content p { color: var(--text-light); }
+        .loader { margin: 0 auto; border: 6px solid var(--shadow-light); border-top: 6px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        
+        .gift-box { width: 250px; height: 250px; cursor: pointer; animation: wobble-gift 2s ease-in-out infinite alternate; }
+        .gift-box img { width: 100%; height: 100%; object-fit: contain; }
+
+        .gift-card {
+            display: none; 
+            background: var(--bg-color); /* Neumorphic background for gift card */
+            border-radius: var(--border-radius-main); 
+            padding: 30px; text-align: center;
+            width: 100%; max-width: 320px;
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light); /* Neumorphic shadow */
+            animation: fadeInCard-anim 0.5s ease-out forwards;
+            color: var(--text-color); /* Inherit text color */
+        }
+        .gift-card h2 { color: var(--text-color); }
+        .gift-card p { margin-top: 10px; color: var(--text-light); white-space: pre-wrap; /* Preserve line breaks */ }
+        #qrCodeImg {
+            width: 180px; height: 180px; margin: 15px auto;
+            border-radius: var(--border-radius-inner); 
+            background: var(--bg-color); /* QR code background */
+            padding: 8px; /* Padding inside QR code image */
+            box-shadow: inset 5px 5px 15px var(--shadow-dark), inset -5px -5px 15px var(--shadow-light); /* Inset neumorphic shadow for QR */
+            object-fit: contain; /* Ensure QR code fits without distortion */
         }
 
-        /* Memastikan ikon kalender berada di posisi yang benar */
-        .input-group .input-wrapper .icon-left {
+        /* Particle Effects */
+        .particle-fall, .falling-confetti, .confetti-piece { position: fixed; pointer-events: none; border-radius: 50%; z-index: 100; }
+        .falling-confetti { /* Fullscreen falling */
+            width: 8px; height: 8px;
+            animation: fall-loop linear infinite;
+        }
+        @keyframes fall-loop {
+            0% { transform: translateY(-10vh); opacity: 0.8; }
+            100% { transform: translateY(110vh); opacity: 0; }
+        }
+        .confetti-piece { /* Explosion */
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            left: 22px;
-            color: var(--text-light);
-            font-size: 16px;
-            transition: all 0.2s ease-out;
+            animation: explode 1.5s ease-out forwards;
+        }
+        @keyframes explode {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(var(--end-x), var(--end-y)) scale(0) rotate(720deg); opacity: 0; }
+        }
+        .particle-fall { /* Continual fall after opening gift */
+             width: 5px; height: 5px;
+             animation: fall-continuous linear infinite;
+        }
+        @keyframes fall-continuous {
+            0% { transform: translateY(-10vh); opacity: 0.7; }
+            100% { transform: translateY(110vh); opacity: 0; }
         }
 
-        /* Menyembunyikan ikon kalender default dari browser Chrome/Edge */
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            display: none !important; /* Pastikan benar-benar hilang */
-            -webkit-appearance: none !important;
+        /* Music Toggle Button */
+        .music-toggle {
+            position: fixed; top: 20px; right: 20px;
+            width: 50px; height: 50px; z-index: 1000;
+            padding: 0; /* Remove btn padding */
+            border-radius: 50%; /* Make it round */
+            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            background: var(--bg-color);
+            color: var(--text-light); /* Default color */
         }
-
-        /* Memberi jarak antara ikon kustom kita dan teks tanggal (dd/mm/yyyy) */
-        input[type="date"]::-webkit-datetime-edit {
-            padding-left: 5px; 
-        }
-
-        /* Menyesuaikan posisi ikon kiri pada textarea (jika ada) */
-        textarea.input-field + .icon-left {
-            left: 22px; /* Sesuaikan posisi kiri */
-            top: 25px; /* Sesuaikan posisi vertikal untuk textarea */
-            transform: translateY(0); /* Hapus translateY untuk konsistensi */
-        }
+        .music-toggle:hover { color: var(--primary); transform: translateY(0); } /* No transform on hover for round button */
+        .music-toggle:active { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
+        .music-toggle i { font-size: 18px; }
 
         /* Kustomisasi SweetAlert2 */
         .swal2-popup {
             background-color: var(--bg-color) !important;
-            border-radius: 20px !important;
+            border-radius: var(--border-radius-main) !important;
             color: var(--text-color) !important;
             box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light) !important;
         }
         .swal2-title { color: var(--text-color) !important; }
         .swal2-html-container { color: var(--text-light) !important; }
-        .swal2-confirm, .swal2-cancel, .swal2-deny {
-             box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light) !important;
-             border: none !important;
-             display: inline-flex;
-             align-items: center;
-             justify-content: center;
-             gap: 8px;
-        }
-        .swal2-confirm { background-color: var(--bg-color) !important; color: var(--primary) !important; }
-        .swal2-cancel { background-color: var(--bg-color) !important; color: var(--text-light) !important;}
-        .swal2-deny { background-color: var(--bg-color) !important; color: var(--warning) !important;}
+        .swal2-confirm { background-color: var(--primary) !important; color: white !important; }
+        .swal2-confirm:hover { background-color: var(--primary-dark) !important; }
         .swal2-icon.swal2-success .swal2-success-ring { border-color: var(--success) !important; }
         .swal2-icon.swal2-error { border-color: var(--error) !important; }
-        .swal2-icon.swal2-warning { border-color: #ffc107 !important; color: #ffc107 !important; } /* Sesuaikan dengan warna warning */
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .birthday-page-container { padding-top: 5vh; padding-bottom: 5vh; height: auto; min-height: 100vh; }
+            .main-title { font-size: clamp(2.5rem, 8vw, 5rem); margin-bottom: 30px; }
+            .card-grid { gap: 20px; }
+            .message-card, .gift-section-card { padding: 25px; }
+            .card-title { font-size: 1.3rem; }
+            .card-text { font-size: 0.9rem; }
+            .gift-btn { padding: 12px 30px; font-size: 1rem; min-width: 180px; }
+            .login-box { padding: 30px; }
+            .login-box h1 { font-size: 1.8rem; }
+            .login-icon { width: 70px; height: 70px; margin-bottom: 20px; }
+            .login-icon i { font-size: 35px; }
+            .input-group input { padding: 15px 20px 15px 50px; }
+            .input-group .icon, #togglePassword { left: 18px; font-size: 14px; }
+            #togglePassword { right: 18px; left: auto; }
+            .music-toggle { top: 10px; right: 10px; width: 40px; height: 40px; }
+            .music-toggle i { font-size: 16px; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .login-container { max-width: 95%; }
+            .login-box { padding: 25px; }
+            .birthday-page-container { padding-left: 10px; padding-right: 10px; }
+            .main-title { font-size: clamp(2rem, 7vw, 4rem); }
+            .card-grid { grid-template-columns: 1fr; gap: 15px; }
+            .message-card, .gift-section-card { padding: 20px; }
+            .card-title { font-size: 1.2rem; }
+            .card-text { font-size: 0.85rem; }
+            .gift-btn { font-size: 0.9rem; min-width: unset; }
+            .gift-box { width: 200px; height: 200px; }
+            .gift-card { padding: 20px; max-width: 280px; }
+            #qrCodeImg { width: 150px; height: 150px; }
+            .feedback-content { padding: 30px; }
+            .feedback-content h2 { font-size: 1.5rem; }
+            .feedback-content p { font-size: 0.9rem; }
+        }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="auth-container">
-            <div class="box" id="adminLoginBox">
-                <div class="login-content">
-                    <div class="header">
-                        <div class="header-icon"><i class="fas fa-user-shield"></i></div>
-                        <h1>Admin panel</h1>
-                        <p>Login for using panel</p>
-                    </div>
-                    <div class="input-group">
-                        <label>Username</label>
-                        <div class="input-wrapper"><i class="fas fa-user icon-left"></i><input type="text" id="adminUser" class="input-field" placeholder="username "></div>
-                    </div>
-                    <div class="input-group">
-                        <label>Password</label>
-                        <div class="input-wrapper"><i class="fas fa-key icon-left"></i><input type="password" id="adminPass" class="input-field" placeholder="••••••••"><i class="fas fa-eye-slash icon-right" id="togglePassword"></i></div>
-                    </div>
-                    <button class="btn" onclick="adminLogin()"><i class="fas fa-sign-in-alt"></i> Masuk</button>
-                    
-                    <p class="register-link">Don't have an account? <a href="register.html">Sign up</a></p>
-                </div>
+    <audio id="background-music" loop><source src="mayfa.mp3"></source></audio>
+    <button id="musicToggleBtn" class="btn music-toggle"><i class="fas fa-volume-off"></i></button>
+
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="login-icon"><i class="fas fa-birthday-cake"></i></div>
+                <h1>Hai, Kamu! ✨</h1>
+                <p>Silakan login untuk melihat kejutan spesialmu.</p>
             </div>
-
-            <div class="box" id="adminPanelBox">
-                <div class="panel-header"><h1><i class="fas fa-cogs"></i> Panel Kontrol</h1><button class="btn logout-btn" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button></div>
-                
-                <form id="editForm" onsubmit="event.preventDefault(); saveData();" class="panel-form">
-                    <div class="panel-layout">
-                        <div class="layout-column">
-                            <div class="panel-section">
-                                <div class="section-title"><i class="fas fa-birthday-cake"></i><span>Info Utama</span></div>
-                                <div class="input-group"><label for="birthdayNameInput">Nama</label><div class="input-wrapper"><i class="fas fa-user-edit icon-left"></i><input type="text" id="birthdayNameInput" class="input-field" required></div></div>
-                                <div class="input-group"><label for="birthDateInput">Tanggal Lahir</label><div class="input-wrapper"><i class="fas fa-calendar-alt icon-left"></i><input type="date" id="birthDateInput" class="input-field" required></div></div>
-                                <div class="input-group">
-                                    <label for="bestWishesInput">Harapan Terbaik</label>
-                                    <div class="input-wrapper"><textarea id="bestWishesInput" class="input-field" rows="4" placeholder="Masukkan harapan terbaik..."></textarea></div>
-                                </div>
-                                <div class="input-group">
-                                    <label for="stayStrongQuoteInput">Jadilah Kuat (Quote)</label>
-                                    <div class="input-wrapper"><textarea id="stayStrongQuoteInput" class="input-field" rows="3" placeholder="Masukkan quote jadilah kuat..."></textarea></div>
-                                </div>
-                            </div>
-                            <div class="panel-section">
-                                 <div class="section-title"><i class="fas fa-users"></i><span>Akses Tamu</span></div>
-                                 <div class="input-group"><label for="guestUserInput">Username Tamu</label><div class="input-wrapper"><i class="fas fa-user icon-left"></i><input type="text" id="guestUserInput" class="input-field" required></div></div>
-                                 <div class="input-group"><label for="guestPassInput">Password Tamu</label><div class="input-wrapper"><i class="fas fa-lock icon-left"></i><input type="text" id="guestPassInput" class="input-field" required></div></div>
-                                 <div class="input-group">
-                                     <label for="targetWhatsappNumber">Nomor WhatsApp Target (opsional)</label>
-                                     <div class="input-wrapper">
-                                         <i class="fab fa-whatsapp icon-left"></i>
-                                         <input type="tel" id="targetWhatsappNumber" class="input-field" placeholder="6281xxxxxxxx" pattern="[0-9]{10,15}">
-                                     </div>
-                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="layout-column">
-                            <div class="panel-section">
-                                <div class="section-title"><i class="fas fa-share-alt"></i><span>Link Publik</span></div>
-                                <div class="input-group"><label for="shareableLink">Bagikan link ini</label><div class="input-wrapper"><i class="fas fa-link icon-left"></i><input type="text" id="shareableLink" class="input-field" readonly style="padding-right: 50px;"><i class="fas fa-copy icon-right" id="copyLinkBtn" title="Salin Link"></i></div></div>
-                            </div>
-                            <div class="panel-section">
-                                <div class="section-title"><i class="fas fa-qrcode"></i><span>Kode QR</span></div>
-                                <div class="input-group"><label for="qrImageUrlInput">URL Gambar QR</label><div class="input-wrapper"><i class="fas fa-image icon-left"></i><input type="url" id="qrImageUrlInput" class="input-field" placeholder="https://..." required></div></div>
-                                <img id="qrPreviewImage" class="qr-preview-image" src="" alt="Pratinjau QR">
-                                <div class="input-group" style="margin-top: 20px;">
-                                    <label for="qrMessageInput">Pesan di bawah QR</label>
-                                    <div class="input-wrapper"><textarea id="qrMessageInput" class="input-field" rows="3" placeholder="Masukkan pesan di bawah QR code..."></textarea></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-                <div class="panel-actions">
-                    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Halaman Utama</a>
-                    <button type="submit" form="editForm" class="btn btn-save"><i class="fas fa-save"></i> Simpan Perubahan</button>
-                </div>
+            <div class="input-group">
+                <i class="fas fa-user icon"></i>
+                <input type="text" id="username" placeholder="Username Kamu">
             </div>
+            <div class="input-group">
+                <i class="fas fa-lock icon"></i>
+                <input type="password" id="password" placeholder="••••••••">
+                <i class="fas fa-eye-slash" id="togglePassword"></i>
+            </div>
+            <button class="btn" onclick="login()"><i class="fas fa-right-to-bracket"></i> Masuk</button>
         </div>
     </div>
     
-    <div class="feedback-modal" id="feedbackModal"><div class="feedback-content"><div class="icon-container"><div class="loader" id="feedbackLoader"></div><i class="fas fa-check-circle icon success hidden" id="successIcon"></i><i class="fas fa-times-circle icon failure hidden" id="failureIcon"></i></div><h2 id="feedbackTitle">Mengecek...</h2><p id="feedbackMessage"></p></div></div>
+    <div class="birthday-page-container" id="birthdayPage">
+        <div class="birthday-content">
+            <h1 class="main-title">Selamat Ulang Tahun, <span></span>!</h1>
+            <div class="card-grid">
+                <div class="message-card"><i class="fas fa-calendar-check card-icon"></i><h2 class="card-title">Level Baru Terbuka!</h2><p class="card-text" id="ageDisplay"></p></div>
+                <div class="message-card"><i class="fas fa-star card-icon"></i><h2 class="card-title">Harapan Terbaik</h2><p class="card-text" id="bestWishesText"></p></div>
+                <div class="message-card"><i class="fas fa-heart card-icon"></i><h2 class="card-title">Teruntuk kamu di hari yang istimewah</h2><p class="card-text" id="stayStrongQuoteText"></p></div>
+            </div>
+            <div class="gift-section-card message-card" id="giftSectionCard">
+                <h2 class="card-title">waitt, there's a gift for you...</h2>
+                <button class="btn gift-btn" onclick="openGift()"><i class="fas fa-gift"></i> Accept your gift!</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="error-page" id="errorPage">
+        <div class="error-icon"><i class="fas fa-link-slash"></i></div>
+        <h1 id="errorTitle">Halaman Tidak Ditemukan</h1>
+        <p id="errorMessage">Pastikan link yang Anda masukkan sudah benar dan lengkap.</p>
+    </div>
+
+    <div class="gift-modal" id="giftModal">
+        <div class="gift-box" onclick="openCard()"><img src="IMG_1316.png" alt="Gift Box" style="width: 100%; height: 100%; object-fit: contain;"></div>
+        <div class="gift-card" id="giftCard">
+            <h2 style="font-weight: 600;">Hai, <span id="giftCardName"></span>!</h2>
+            <p>Scan QR ini untuk klaim hadiahmu!</p>
+            <img id="qrCodeImg" alt="QR Code Hadiah">
+            <p id="qrMessageText"></p>
+        </div>
+    </div>
+    
+    <div class="feedback-modal" id="feedbackModal">
+        <div class="feedback-content">
+            <div class="loader" id="feedbackLoader"></div>
+            <h2 id="feedbackTitle"></h2><p id="feedbackMessage"></p>
+        </div>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
     <script>
-        document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
-
-        const firebaseConfig = {
-            apiKey: "GANTI_DENGAN_API_KEY_ANDA",
-            authDomain: "mayfa-fa284.firebaseapp.com",
-            databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app"
-        };
+        const firebaseConfig = { apiKey: "GANTI_DENGAN_API_KEY_ANDA", authDomain: "mayfa-fa284.firebaseapp.com", databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const authContainer = document.getElementById('auth-container');
-        let currentAdminId = null;
+        let pageData = {};
+        let particleInterval;
 
+        const loginContainer = document.getElementById("loginContainer"), 
+              birthdayPage = document.getElementById("birthdayPage"), 
+              errorPage = document.getElementById("errorPage"), 
+              giftModal = document.getElementById("giftModal"), 
+              giftBox = document.querySelector(".gift-box"), 
+              giftCard = document.getElementById("giftCard"), 
+              backgroundMusic = document.getElementById("background-music"), 
+              togglePassword = document.getElementById("togglePassword"), 
+              passwordInput = document.getElementById("password"),
+              musicToggleBtn = document.getElementById('musicToggleBtn');
+        
+        // Elements for text content
+        const bestWishesText = document.getElementById('bestWishesText');
+        const stayStrongQuoteText = document.getElementById('stayStrongQuoteText');
+        const qrMessageText = document.getElementById('qrMessageText');
+        const giftSectionCard = document.getElementById('giftSectionCard'); // Get the gift section card
+
+        // --- Utility function to get URL parameters ---
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        function showErrorPage(title, message) {
+            loginContainer.style.display = 'none';
+            birthdayPage.style.display = 'none';
+            document.getElementById('errorTitle').textContent = title;
+            document.getElementById('errorMessage').textContent = message;
+            errorPage.style.display = 'block';
+            document.body.classList.remove("no-scroll"); // Allow scrolling on error page
+        }
+
+        // --- Perbaikan fungsi login utama ---
+        async function login() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const pageId = getUrlParameter('id'); // Dapatkan pageId dari URL
+
+            if (!username || !password) {
+                Swal.fire({ icon: 'warning', title: 'Input Tidak Lengkap', text: 'Mohon isi Username dan Password.' });
+                return;
+            }
+
+            if (!pageId) {
+                showErrorPage("Link Tidak Valid", "ID halaman tidak ditemukan di URL.");
+                return;
+            }
+
+            // Panggil fungsi performGuestLogin yang terpusat
+            await performGuestLogin(username, password, pageId);
+        }
+
+        // --- Fungsi inti untuk memverifikasi dan menampilkan halaman ---
+        async function performGuestLogin(username, password, pageId) {
+            showFeedback('loading', 'Memverifikasi Data...', 'Mohon tunggu sebentar ya.');
+
+            try {
+                const snapshot = await database.ref(`birthday_pages/${pageId}`).once('value');
+                const data = snapshot.val();
+
+                if (data && data.guestUser === username && data.guestPass === password) {
+                    pageData = data; // Simpan data yang dimuat ke variabel global pageData
+                    
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Login Berhasil!',
+                        text: 'Selamat datang di halaman kejutanmu!',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2000, 
+                        timerProgressBar: true,
+                    });
+
+                    loginContainer.style.display = "none";
+                    birthdayPage.style.display = "flex";
+                    document.body.classList.remove("no-scroll"); // Allow scrolling for birthday page content
+
+                    document.querySelector(".main-title span").textContent = pageData.birthdayName || 'Kamu';
+                    
+                    if (pageData.birthDate) {
+                        calculateAndDisplayAge(pageData.birthDate);
+                    } else {
+                        document.getElementById("ageDisplay").innerText = "Ups! Tanggal lahir belum diatur oleh pembuat halaman. Nikmati kejutan lainnya!";
+                    }
+
+                    // Populate text content with defaults if empty
+                    bestWishesText.textContent = pageData.bestWishes || 'Semoga setiap langkahmu dipenuhi kebahagiaan dan kesuksesan. Teruslah bersinar, dan raih semua impianmu. Selamat menikmati hari spesial ini!';
+                    stayStrongQuoteText.textContent = pageData.stayStrongQuote || '"Untuk segala hal yang membuatmu patah, ingatlah bahwa Allah itu baik. Teruslah kuat dan berjuang, kamu lebih hebat dari yang kamu kira."';
+                    
+                    initScrollAnimations(); // Initialize scroll animations for cards
+                    startFullScreenConfetti(); // Start full screen confetti effect
+                    
+                    hideFeedback();
+                    return true; // Login successful
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Login Gagal', text: 'Username atau password salah. Coba lagi ya!' });
+                    hideFeedback();
+                    return false; // Login failed
+                }
+            } catch (error) {
+                console.error("Error during guest login:", error);
+                Swal.fire({ icon: 'error', title: 'Terjadi Kesalahan', text: 'Gagal login. Silakan coba lagi nanti.' });
+                hideFeedback();
+                return false; // Error during login
+            }
+        }
+        
         function showFeedback(state, title, message = '') {
-            const modal = document.getElementById('feedbackModal'), titleEl = document.getElementById('feedbackTitle'), msgEl = document.getElementById('feedbackMessage'), loader = document.getElementById('feedbackLoader'), successIcon = document.getElementById('successIcon'), failureIcon = document.getElementById('failureIcon');
-            loader.classList.add('hidden'); successIcon.classList.add('hidden'); failureIcon.classList.add('hidden');
-            modal.style.display = 'flex';
-            titleEl.textContent = title; msgEl.textContent = message;
-            const content = modal.querySelector('.feedback-content');
-            if (state === 'loading') { loader.classList.remove('hidden'); content.style.borderColor = 'var(--primary)'; }
-            else if (state === 'success') { successIcon.classList.remove('hidden'); content.style.borderColor = 'var(--success)'; }
-            else if (state === 'failure') { failureIcon.classList.remove('hidden'); content.style.borderColor = 'var(--error)'; }
+            const feedbackModal = document.getElementById('feedbackModal');
+            document.getElementById('feedbackLoader').style.display = (state === 'loading' ? 'block' : 'none');
+            document.getElementById('feedbackTitle').textContent = title;
+            document.getElementById('feedbackMessage').textContent = message;
+            feedbackModal.style.display = 'flex';
         }
         function hideFeedback() { document.getElementById('feedbackModal').style.display = 'none'; }
+        
+        togglePassword.addEventListener("click", function() {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            this.classList.toggle("fa-eye"); 
+            this.classList.toggle("fa-eye-slash");
+        });
 
-        function adminLogin() {
-            const user = document.getElementById('adminUser').value.trim();
-            const pass = document.getElementById('adminPass').value;
-            if (!user || !pass) { showFeedback('failure', 'Input Diperlukan', 'Mohon masukkan username dan password.'); setTimeout(hideFeedback, 2000); return; }
-            showFeedback('loading', 'Mengecek Kredensial...');
-            database.ref('admins').orderByChild('username').equalTo(user).once('value').then(s => {
-                if (!s.exists()) { showFeedback('failure', 'Login Gagal', 'Username atau password salah.'); setTimeout(hideFeedback, 2500); return; }
-                let isValid = false;
-                s.forEach(cs => { if (cs.val().password === pass) { isValid = true; currentAdminId = cs.key; } });
-                if (isValid) {
-                    showFeedback('success', 'Login Berhasil', 'Mengarahkan ke panel kontrol...');
-                    setTimeout(() => { hideFeedback(); authContainer.classList.add('is-active'); loadDataToForm(); }, 1500);
-                } else { showFeedback('failure', 'Login Gagal', 'Username atau password salah.'); setTimeout(hideFeedback, 2500); }
-            }).catch(e => { showFeedback('failure', 'Error Database', e.message); setTimeout(hideFeedback, 3000); });
+        musicToggleBtn.addEventListener('click', () => {
+            const icon = musicToggleBtn.querySelector('i');
+            if (backgroundMusic.paused) {
+                backgroundMusic.play().catch(e => console.error("Music play failed:", e));
+                icon.classList.remove('fa-volume-off');
+                icon.classList.add('fa-volume-high');
+            } else {
+                backgroundMusic.pause();
+                icon.classList.remove('fa-volume-high');
+                icon.classList.add('fa-volume-off');
+            }
+        });
+
+        // --- FUNGSI calculateAndDisplayAge YANG SUDAH DIPERBAIKI ---
+        function calculateAndDisplayAge(birthDate) {
+            const birthDateObj = new Date(birthDate + 'T00:00:00'); // Add time to avoid timezone issues
+            const today = new Date();
+            
+            let years = today.getFullYear() - birthDateObj.getFullYear();
+            let months = today.getMonth() - birthDateObj.getMonth();
+            let days = today.getDate() - birthDateObj.getDate();
+
+            if (days < 0) {
+                months--;
+                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); // Days in previous month
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            document.getElementById("ageDisplay").innerText = `Selamat! Kamu berhasil menyelesaikan misi selama ${years} tahun, ${months} bulan, dan ${days} hari untuk sampai di level ini. Semoga chapter barumu makin seru dan penuh kebahagiaan!`;
+        }
+        // --- AKHIR FUNGSI calculateAndDisplayAge YANG SUDAH DIPERBAIKI ---
+        
+        // ==========================================================
+        // === BAGIAN YANG DIPERBAIKI ADA DI FUNGSI DI BAWAH INI ===
+        // ==========================================================
+        function initScrollAnimations() {
+            const cards = document.querySelectorAll('.message-card, .gift-section-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    } else {
+                        // KODE INI DIAKTIFKAN AGAR ANIMASI DAPAT BERULANG
+                        entry.target.classList.remove('is-visible'); 
+                    }
+                });
+            }, { root: null, rootMargin: '0px', threshold: 0.1 });
+
+            cards.forEach((card, index) => {
+                card.style.setProperty('--initial-rotation', index % 2 === 0 ? '-15deg' : '15deg');
+                card.style.transitionDelay = `${index * 150}ms`;
+                observer.observe(card);
+            });
         }
 
-        function logout() {
-            currentAdminId = null;
-            authContainer.classList.remove('is-active');
-            document.getElementById('editForm').reset();
-            document.getElementById('adminUser').value = '';
-            document.getElementById('adminPass').value = '';
-            updateQrPreview();
+        function openGift() { 
+            giftModal.style.display = "flex"; 
+            document.body.classList.add("no-scroll"); // Prevent scrolling when gift modal is open
+        }
+        
+        function openCard() {
+            giftBox.style.display = "none";
+            giftCard.style.display = "block";
+            document.getElementById("giftCardName").textContent = pageData.birthdayName || 'Teman'; // Default name for gift card
+            const qrImg = document.getElementById("qrCodeImg");
+            qrImg.src = pageData.qrImageUrl || `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`Selamat Ulang Tahun ${pageData.birthdayName || 'Kamu'}!`)}`;
+            qrMessageText.textContent = pageData.qrMessage || '"Mungkin hadiahku ga seberapa, semoga bermanfaat. Selamat bertambah usia, dilancarkan di semua hal, dan menjadi pribadi yang lebih baik dari sebelumnya. ✨"';
+            
+            createConfettiExplosion(150); // Small burst
+            setTimeout(() => {
+                startParticleFall(); // Continuous fall
+            }, 500);
         }
 
-        function loadDataToForm() {
-            if (!currentAdminId) return;
-            showFeedback('loading', 'Memuat Data...');
-            database.ref('birthday_pages/' + currentAdminId).once('value').then(s => {
-                const data = s.val() || {};
-                document.getElementById('birthdayNameInput').value = data.birthdayName || '';
-                document.getElementById('birthDateInput').value = data.birthDate || '';
-                document.getElementById('qrImageUrlInput').value = data.qrImageUrl || '';
-                document.getElementById('guestUserInput').value = data.guestUser || '';
-                document.getElementById('guestPassInput').value = data.guestPass || '';
-                document.getElementById('bestWishesInput').value = data.bestWishes || '';
-                document.getElementById('stayStrongQuoteInput').value = data.stayStrongQuote || '';
-                document.getElementById('qrMessageInput').value = data.qrMessage || '';
-                // Memuat nomor WhatsApp target jika ada
-                document.getElementById('targetWhatsappNumber').value = data.targetWhatsappNumber || '';
+        function closeGiftModal() { 
+            giftModal.style.display = "none"; 
+            document.body.classList.remove("no-scroll"); // Re-enable scrolling
+            clearInterval(particleInterval); // Stop continuous particle fall
+            // Remove all falling particles and confetti pieces
+            document.querySelectorAll('.particle-fall, .confetti-piece, .falling-confetti').forEach(el => el.remove());
+            setTimeout(() => { 
+                giftCard.style.display = "none"; 
+                giftBox.style.display = "block"; 
+            }, 500); // Allow some time for transition
+        }
+        giftModal.addEventListener("click", e => { if (e.target === giftModal) closeGiftModal(); });
 
-                // Link yang dibagikan akan mengarah ke halaman utama dengan ID admin sebagai parameter
-                document.getElementById('shareableLink').value = `${window.location.origin}/index.html?id=${currentAdminId}`;
-                updateQrPreview();
-                hideFeedback();
-            }).catch(e => { showFeedback('failure', 'Gagal Memuat', e.message); setTimeout(hideFeedback, 3000); });
+        function startFullScreenConfetti() {
+            const colors = [ 'var(--primary)', 'var(--success)', 'var(--text-color)', '#FFD700', '#FF69B4', '#ADFF2F']; // More vibrant colors
+            // Clear existing continuous confetti before starting new one
+            document.querySelectorAll('.falling-confetti').forEach(el => el.remove());
+
+            setInterval(() => {
+                const confettiEl = document.createElement('div');
+                confettiEl.classList.add('falling-confetti');
+                confettiEl.style.left = Math.random() * 100 + 'vw';
+                confettiEl.style.width = `${Math.random() * 8 + 6}px`;
+                confettiEl.style.height = confettiEl.style.width;
+                confettiEl.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confettiEl.style.opacity = Math.random() * 0.7 + 0.3;
+                document.body.appendChild(confettiEl);
+                confettiEl.animate([
+                    { transform: 'translateY(0px) rotate(0deg)' },
+                    { transform: `translateY(110vh) rotate(${Math.random() * 360}deg)` }
+                ], { duration: 4000 + Math.random() * 3000, easing: 'linear' })
+                .onfinish = () => confettiEl.remove();
+            }, 100); // More frequent confetti
         }
 
-        function saveData() {
-            if (!currentAdminId) { showFeedback('failure', 'Error', 'Admin ID tidak ditemukan.'); setTimeout(hideFeedback, 2500); return; }
-            showFeedback('loading', 'Menyimpan Perubahan...');
-            const birthdayName = document.getElementById('birthdayNameInput').value;
-            const guestUser = document.getElementById('guestUserInput').value;
-            const guestPass = document.getElementById('guestPassInput').value;
-            const targetWhatsappNumber = document.getElementById('targetWhatsappNumber').value.trim();
+        function createConfettiExplosion(numberOfPieces) {
+            const colors = ['var(--primary)', 'var(--success)', 'var(--text-color)', '#FFD700', '#FF69B4', '#ADFF2F']; // More vibrant colors
+            for (let i = 0; i < numberOfPieces; i++) {
+                const piece = document.createElement('div');
+                piece.classList.add('confetti-piece');
+                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.width = `${Math.random() * 12 + 5}px`;
+                piece.style.height = `${piece.style.width * 0.6}px`; // Rectangular pieces
+                
+                // Position explosion near the gift box (center of screen initially)
+                const startX = window.innerWidth / 2;
+                const startY = window.innerHeight / 2;
 
-            const settings = {
-                birthdayName: birthdayName,
-                birthDate: document.getElementById('birthDateInput').value,
-                qrImageUrl: document.getElementById('qrImageUrlInput').value,
-                guestUser: guestUser,
-                guestPass: guestPass,
-                bestWishes: document.getElementById('bestWishesInput').value,
-                stayStrongQuote: document.getElementById('stayStrongQuoteInput').value,
-                qrMessage: document.getElementById('qrMessageInput').value,
-                targetWhatsappNumber: targetWhatsappNumber
-            };
+                // Random direction and distance for explosion
+                const angle = Math.random() * 360;
+                const distance = Math.random() * 200 + 50; // Distance from center
+                const endX = startX + Math.cos(angle * Math.PI / 180) * distance;
+                const endY = startY + Math.sin(angle * Math.PI / 180) * distance;
 
-            database.ref('birthday_pages/' + currentAdminId).set(settings).then(() => {
-                showFeedback('success', 'Berhasil Disimpan!', 'Semua perubahan telah disimpan.');
-                setTimeout(() => {
-                    hideFeedback();
-                    const shareableLink = document.getElementById('shareableLink').value;
-                    
-                    // --- PERUBAHAN DI SINI: Pesan WhatsApp yang lebih menarik ---
-                    const messageText = `
-Halo ${birthdayName}! 👋
+                piece.style.left = `${startX}px`;
+                piece.style.top = `${startY}px`;
+                piece.style.setProperty('--end-x', `${endX - startX}px`);
+                piece.style.setProperty('--end-y', `${endY - startY}px`);
 
-Kami punya kejutan spesial untukmu! 🎉 Sekarang kamu bisa mengakses halaman ulang tahunmu di link ini:
+                document.body.appendChild(piece);
+                piece.animate([
+                    { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+                    { transform: `translate(${endX - startX}px, ${endY - startY}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], { duration: 1500 + Math.random() * 1000, easing: 'cubic-bezier(0.1, 0.9, 0.2, 1)', fill: 'forwards' })
+                .onfinish = () => piece.remove();
+            }
+        }
+        
+        function startParticleFall() {
+            const colors = ['var(--primary)', 'var(--success)', 'var(--text-color)', '#FFD700', '#FF69B4', '#ADFF2F']; // More vibrant colors
+            // Clear existing continuous particles before starting new one
+            document.querySelectorAll('.particle-fall').forEach(el => el.remove());
 
-🔗 *Link Login:*
-${shareableLink}
+            particleInterval = setInterval(() => {
+                const particle = document.createElement('div');
+                particle.classList.add('particle-fall');
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.width = `${Math.random() * 6 + 4}px`;
+                particle.style.height = particle.style.width;
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                document.body.appendChild(particle);
+                particle.animate([
+                    { transform: 'translateY(0px) translateX(0px)' },
+                    { transform: `translateY(110vh) translateX(${Math.random() * 40 - 20}px)` }
+                ], { duration: 5000 + Math.random() * 5000, easing: 'linear' })
+                .onfinish = () => particle.remove();
+            }, 150); // More frequent particles
+        }
 
-Untuk masuk, gunakan detail berikut ya:
-👤 *Username:* ${guestUser}
-🔑 *Password:* ${guestPass}
+        // --- Initial Load Logic on DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.body.classList.add("no-scroll"); // Prevent scrolling until login or error
+            const urlParams = new URLSearchParams(window.location.search);
+            const pageId = urlParams.get('id');
+            const authParam = urlParams.get('auth'); // Authentication parameter from super admin
 
-Jangan lupa, kamu bisa login untuk melihat ucapan dan kado dari teman-temanmu! ✨
+            if (!pageId) {
+                showErrorPage("Halaman Tidak Ditemukan", "Ups! Sepertinya ada yang salah dengan linknya. Pastikan sudah benar ya.");
+                return;
+            }
 
-Sudah berapa lama kamu bertahan? Mari kita rayakan setiap momen indah yang telah kamu lewati sejak ${new Date('2005-09-28').toLocaleDateString('id-ID', {day: '2-digit', month: 'long', year: 'numeric'})}! 🥳
-`.trim(); // .trim() untuk menghapus spasi/baris kosong di awal/akhir
+            // Muat data halaman terlebih dahulu untuk memastikan data tersedia
+            const snapshot = await database.ref('birthday_pages/' + pageId).once('value');
+            if (!snapshot.exists() || !snapshot.val().birthdayName) { // Check if birthdayName exists as a basic content indicator
+                showErrorPage("Konten Belum Tersedia", "Halaman ini sedang disiapkan atau belum diisi kontennya oleh pemilik. Coba lagi nanti ya!");
+                return;
+            }
+            pageData = snapshot.val(); // Save loaded data to pageData
 
-                    Swal.fire({
-                        title: 'Data Berhasil Disimpan!',
-                        html: 'Pilih tindakan selanjutnya:',
-                        icon: 'success',
-                        showCancelButton: true,
-                        showDenyButton: true,
-                        confirmButtonText: '<i class="fab fa-whatsapp"></i> Kirim via WhatsApp',
-                        denyButtonText: '<i class="fas fa-copy"></i> Salin Info & Link',
-                        cancelButtonText: 'Selesai',
-                        reverseButtons: true,
-                        customClass: {
-                            confirmButton: 'swal2-confirm-whatsapp',
-                            denyButton: 'swal2-deny-copy',
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) { // Kirim via WhatsApp
-                            if (targetWhatsappNumber) {
-                                const whatsappUrl = `https://wa.me/${targetWhatsappNumber}?text=${encodeURIComponent(messageText)}`;
-                                window.open(whatsappUrl, '_blank');
-                            } else {
-                                Swal.fire({
-                                    icon: 'info',
-                                    title: 'Nomor WhatsApp Kosong',
-                                    text: 'Nomor WhatsApp target tidak diisi. Silakan salin pesan secara manual atau tambahkan nomor WA.',
-                                    confirmButtonText: 'Oke'
-                                });
-                            }
-                        } else if (result.isDenied) { // Salin Link & Info
-                            navigator.clipboard.writeText(messageText)
-                                .then(() => {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Disalin!',
-                                        text: 'Informasi login dan link telah disalin ke clipboard.',
-                                        toast: true, position: 'top-end', showConfirmButton: false, timer: 3000
-                                    });
-                                })
-                                .catch(err => {
-                                    Swal.fire({ icon: 'error', title: 'Gagal Menyalin', text: 'Gagal menyalin ke clipboard. Silakan salin manual.' });
-                                });
-                        }
+            // If there's an 'auth' parameter, try auto-login
+            if (authParam) {
+                try {
+                    const decoded = JSON.parse(atob(authParam)); // Decode Base64
+                    const username = decoded.user;
+                    const password = decoded.pass;
+
+                    // Attempt auto-login
+                    const loginSuccess = await performGuestLogin(username, password, pageId);
+                    if (!loginSuccess) {
+                        // If auto-login fails, show manual login form
+                        Swal.fire({ 
+                            icon: 'info', 
+                            title: 'Akses Otomatis Gagal', 
+                            text: 'Kredensial otomatis tidak valid. Silakan login manual.' 
+                        });
+                        loginContainer.style.display = 'block';
+                        document.body.classList.remove("no-scroll"); // Allow scrolling on login page
+                    }
+                    // If loginSuccess is true, performGuestLogin already set up the display
+                } catch (e) {
+                    console.error("Error decoding or parsing auth parameter:", e);
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'Link Tidak Valid', 
+                        text: 'Terjadi kesalahan pada link akses otomatis. Coba lagi ya.' 
                     });
-                }, 2000); // Tunggu sebentar setelah feedback "Berhasil Disimpan!"
-            }).catch(e => { showFeedback('failure', 'Gagal Menyimpan', e.message); setTimeout(hideFeedback, 3000); });
-        }
-
-        function updateQrPreview() {
-            const qrInput = document.getElementById('qrImageUrlInput');
-            const qrImage = document.getElementById('qrPreviewImage');
-            try {
-                const url = new URL(qrInput.value.trim());
-                qrImage.src = url.href; qrImage.style.display = 'block';
-            } catch (e) { qrImage.style.display = 'none'; qrImage.src = ""; }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const togglePassword = document.getElementById('togglePassword');
-            togglePassword.addEventListener('click', function() {
-                const passField = document.getElementById('adminPass');
-                const isPassword = passField.type === 'password';
-                passField.type = isPassword ? 'text' : 'password';
-                this.classList.toggle('fa-eye-slash', !isPassword);
-                this.classList.toggle('fa-eye', isPassword);
-            });
-            document.getElementById('qrImageUrlInput').addEventListener('input', updateQrPreview);
-            document.getElementById('copyLinkBtn').addEventListener('click', function() {
-                const linkInput = document.getElementById('shareableLink');
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(linkInput.value).then(() => {
-                        showFeedback('success', 'Tersalin!', 'Link berhasil disalin.');
-                        setTimeout(hideFeedback, 2000);
-                        this.classList.remove('fa-copy'); this.classList.add('fa-check');
-                        setTimeout(() => { this.classList.remove('fa-check'); this.classList.add('fa-copy'); }, 2000);
-                    }).catch(err => { showFeedback('failure', 'Gagal Menyalin', 'Clipboard tidak dapat diakses.'); setTimeout(hideFeedback, 2500); });
+                    loginContainer.style.display = 'block'; // Show manual login form
+                    document.body.classList.remove("no-scroll"); // Allow scrolling on login page
                 }
-            });
+            } else {
+                // If no 'auth' parameter, show manual login form
+                loginContainer.style.display = 'block';
+                document.body.classList.remove("no-scroll"); // Allow scrolling on login page
+            }
         });
     </script>
 </body>
