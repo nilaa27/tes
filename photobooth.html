@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Photobooth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="photobooth.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-camera"></i> Interactive Photobooth</h1>
+                <div class="header-controls">
+                    <button id="toggleCamera" class="btn-icon" title="Toggle Camera">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button id="settingsBtn" class="btn-icon" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Camera Section -->
+            <section class="camera-section">
+                <div class="camera-container">
+                    <video id="cameraPreview" autoplay muted playsinline></video>
+                    <canvas id="photoCanvas" style="display: none;"></canvas>
+                    <div class="camera-overlay">
+                        <div class="countdown" id="countdown"></div>
+                        <div class="camera-status" id="cameraStatus">
+                            <i class="fas fa-camera-slash"></i>
+                            <p>Camera not active</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Camera Controls -->
+                <div class="camera-controls">
+                    <button id="captureBtn" class="btn-capture" disabled>
+                        <i class="fas fa-camera"></i>
+                        <span>Capture Photo</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <h3><i class="fas fa-palette"></i> Filters</h3>
+                <div class="filters-grid">
+                    <button class="filter-btn active" data-filter="none">
+                        <div class="filter-preview original"></div>
+                        <span>Original</span>
+                    </button>
+                    <button class="filter-btn" data-filter="vintage">
+                        <div class="filter-preview vintage"></div>
+                        <span>Vintage</span>
+                    </button>
+                    <button class="filter-btn" data-filter="bw">
+                        <div class="filter-preview bw"></div>
+                        <span>B&W</span>
+                    </button>
+                    <button class="filter-btn" data-filter="sepia">
+                        <div class="filter-preview sepia"></div>
+                        <span>Sepia</span>
+                    </button>
+                    <button class="filter-btn" data-filter="blur">
+                        <div class="filter-preview blur"></div>
+                        <span>Blur</span>
+                    </button>
+                    <button class="filter-btn" data-filter="bright">
+                        <div class="filter-preview bright"></div>
+                        <span>Bright</span>
+                    </button>
+                    <button class="filter-btn" data-filter="contrast">
+                        <div class="filter-preview contrast"></div>
+                        <span>Contrast</span>
+                    </button>
+                    <button class="filter-btn" data-filter="invert">
+                        <div class="filter-preview invert"></div>
+                        <span>Invert</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Layout Options -->
+            <div class="sidebar-section">
+                <h3><i class="fas fa-th-large"></i> Layout</h3>
+                <div class="layout-options">
+                    <button class="layout-btn active" data-layout="single">
+                        <div class="layout-preview single"></div>
+                        <span>Single</span>
+                    </button>
+                    <button class="layout-btn" data-layout="strip">
+                        <div class="layout-preview strip"></div>
+                        <span>Strip</span>
+                    </button>
+                    <button class="layout-btn" data-layout="grid">
+                        <div class="layout-preview grid"></div>
+                        <span>2x2 Grid</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Photo Gallery -->
+            <div class="sidebar-section">
+                <h3><i class="fas fa-images"></i> Gallery</h3>
+                <div class="gallery" id="photoGallery">
+                    <div class="gallery-empty">
+                        <i class="fas fa-image"></i>
+                        <p>No photos taken yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="sidebar-section">
+                <button id="printBtn" class="btn-action" disabled>
+                    <i class="fas fa-print"></i>
+                    <span>Print</span>
+                </button>
+                <button id="downloadBtn" class="btn-action" disabled>
+                    <i class="fas fa-download"></i>
+                    <span>Download</span>
+                </button>
+                <button id="clearBtn" class="btn-action" disabled>
+                    <i class="fas fa-trash"></i>
+                    <span>Clear All</span>
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Settings</h3>
+                <button class="btn-close" id="closeSettings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div class="setting-group">
+                    <label for="cameraSelect">Camera:</label>
+                    <select id="cameraSelect">
+                        <option value="">Select Camera</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label for="resolutionSelect">Resolution:</label>
+                    <select id="resolutionSelect">
+                        <option value="1920x1080">1920x1080 (HD)</option>
+                        <option value="1280x720">1280x720 (720p)</option>
+                        <option value="640x480">640x480 (480p)</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label for="timerSelect">Timer:</label>
+                    <select id="timerSelect">
+                        <option value="0">No Timer</option>
+                        <option value="3">3 seconds</option>
+                        <option value="5">5 seconds</option>
+                        <option value="10">10 seconds</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="flipCamera"> Flip Camera Horizontally
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="soundEnabled" checked> Enable Sound Effects
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo Preview Modal -->
+    <div class="modal-overlay" id="photoModal">
+        <div class="modal photo-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-image"></i> Photo Preview</h3>
+                <button class="btn-close" id="closePhoto">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div class="photo-preview-container">
+                    <img id="photoPreview" src="" alt="Photo Preview">
+                </div>
+                <div class="photo-actions">
+                    <button id="downloadSingle" class="btn-action">
+                        <i class="fas fa-download"></i>
+                        <span>Download</span>
+                    </button>
+                    <button id="printSingle" class="btn-action">
+                        <i class="fas fa-print"></i>
+                        <span>Print</span>
+                    </button>
+                    <button id="deleteSingle" class="btn-action danger">
+                        <i class="fas fa-trash"></i>
+                        <span>Delete</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="photobooth.js"></script>
+</body>
+</html>
